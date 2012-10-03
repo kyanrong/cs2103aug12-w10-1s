@@ -91,7 +91,6 @@ namespace Type
             {
                 case Key.Enter:
                     // @yanrong Should parse and process the command here.
-                    
 
                     textBox1.Clear();
                     this.Hide();
@@ -99,7 +98,6 @@ namespace Type
 
                 case Key.Tab:
                     // @yanrong Should autocomplete here
-
 
                     break;
 

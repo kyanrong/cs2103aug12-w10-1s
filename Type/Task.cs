@@ -10,8 +10,9 @@ namespace Type
     {
         // Store's the user's raw input
         private string rawText;
-
+        
         // Standard Properties of all tasks
+        private int id;
         private bool done;
         private bool archive;
 
@@ -36,6 +37,14 @@ namespace Type
 
            // parse the input
 
+        }
+
+        public int Id
+        {
+            get
+            {
+                return id;
+            }
         }
 
         public string RawText
