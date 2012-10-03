@@ -45,7 +45,7 @@ namespace Type
             return (userInput.StartsWith(COMMAND_PREFIX));
         }
 
-        public void ParseCommand(string userInput)
+        public void ExecuteCommand(string userInput)
         {
             if (IsDefaultCommand(userInput))
             {
