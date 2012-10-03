@@ -60,6 +60,11 @@ namespace Type
             textBox1.Select(textBox1.Text.Length, 0);
         }
 
+        public void UpdateDisplay(List<Task> task)
+        {
+            
+        }
+
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (textBox1.Text.Trim() == "")
