@@ -10,6 +10,8 @@ namespace Type
     {
         private string rawText;
 
+        private int id;
+
         private bool done;
         private bool archive;
 
@@ -19,6 +21,14 @@ namespace Type
         private List<string> tags;
 
         private List<Tuple<string, int>> tokens;
+
+        public int Id
+        {
+            get
+            {
+                return id;
+            }
+        }
 
         public string RawText
         {
