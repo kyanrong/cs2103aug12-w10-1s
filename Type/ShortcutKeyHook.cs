@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 
 namespace Type
 {
+    delegate void UIDisplayHandler();
+
     class ShortcutKeyHook
     {
         private const int WH_KEYBOARD_LL = 13;
@@ -18,7 +20,7 @@ namespace Type
 
         private static Keys[] combination;
         private static int combinationIndex;
-        private static Controller parent;
+        private static UIDisplayHandler showUI;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -56,7 +58,7 @@ namespace Type
                     combinationIndex++;
                     if (combinationIndex == (combination.Length))
                     {
-                        parent.ShowUi();
+                        showUI();
                         combinationIndex = 0;
                     }
                 }
@@ -68,9 +70,9 @@ namespace Type
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
-        public ShortcutKeyHook(Controller parent, Key[] combination)
+        public ShortcutKeyHook(UIDisplayHandler handler, Key[] combination)
         {
-            ShortcutKeyHook.parent = parent;
+            ShortcutKeyHook.showUI = handler;
 
             ShortcutKeyHook.combination = new Keys[combination.Length];
             for (int i = 0; i < combination.Length; i++)
