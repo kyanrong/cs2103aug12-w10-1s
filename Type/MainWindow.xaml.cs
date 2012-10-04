@@ -20,7 +20,6 @@ namespace Type
     public partial class MainWindow : Window
     {
         private const string INPUT_WELCOME_TEXT = "Start typng...";
-
         private Controller parent;
 
         private Boolean showingWelcomeText;
@@ -60,9 +59,9 @@ namespace Type
             textBox1.Select(textBox1.Text.Length, 0);
         }
 
-        internal void UpdateDisplay()
+        private void RedrawContents(IList<Task> tasks)
         {
-            IList<Task> tasks = parent.GetTasksToDisplay();
+            // @yanrong
         }
 
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
@@ -96,7 +95,7 @@ namespace Type
             {
                 case Key.Enter:
                     // @yanrong Should parse and process the command here.
-                    parent.ExecuteCommand(textBox1.Text);
+                    parent.ExecuteCommand(textBox1.Text, RedrawContents);
                     textBox1.Clear();
                     this.Hide();
                     break;

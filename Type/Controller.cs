@@ -6,6 +6,8 @@ using System.Windows.Input;
 
 namespace Type
 {
+    delegate void UIRedrawHandler(IList<Task> updateData);
+
     public class Controller
     {
         private string COMMAND_PREFIX = ":";
@@ -15,7 +17,6 @@ namespace Type
         private MainWindow ui;
 
         private List<Task> tasks;
-        private List<Task> displaySet;
 
         public Controller()
         {
@@ -48,13 +49,12 @@ namespace Type
             return (!userInput.StartsWith(COMMAND_PREFIX));
         }
 
-        internal void ExecuteCommand(string userInput)
+        internal void ExecuteCommand(string userInput, UIRedrawHandler redrawHandler)
         {
             // the default command is 'add'
             if (IsDefaultCommand(userInput))
             {
-                Task newTask = new Task(userInput);
-                tasks.Add(newTask);
+                tasks.Add(new Task(userInput));
             }
             else
             {
@@ -75,7 +75,7 @@ namespace Type
                         break;
                 }
             }
-            ui.UpdateDisplay();
+            redrawHandler(tasks.AsReadOnly());
         }
 
         private Task FindTaskByText(string rawText)
@@ -83,16 +83,20 @@ namespace Type
             return (tasks.First(task => task.RawText == rawText));
         }
 
-        internal IList<Task> GetTasksToDisplay(int count = 5, List<string>? tags = null)
+        internal IList<Task> GetTasksToDisplay(int count = 5, List<string> tags = null)
         {
             if (tags == null)
             {
-                var resultSet = tasks.Where(t => t.Tags.Intersect(tags.Value).Equals(tags.Value));
-                return (resultSet.Take(count).ToList().AsReadOnly());
+                return (tasks.Take(count).ToList().AsReadOnly());
             }
             else
             {
-                return (tasks.Take(count).ToList().AsReadOnly());
+                var resultSet = new HashSet<Task>();
+                foreach (string tag in tags)
+                {
+                    resultSet.UnionWith(tasks.Where(t => t.Tags.Contains(tag)));
+                }
+                return (resultSet.Take(count).ToList().AsReadOnly());
             }
         }
     }
