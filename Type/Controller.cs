@@ -58,22 +58,22 @@ namespace Type
             else
             {
                 string command = ExtractCommandToken(ref userInput);
-                int taskId = GetTaskId(userInput);
-                Task selectedTask = tasks.Single((Task t) => (t.Id == taskId));
-                switch (command)
-                {
-                    case "done":
-                        selectedTask.Done = true;
-                        break;
+                //int taskId = GetTaskId(userInput);
+                //Task selectedTask = tasks.Single((Task t) => (t.Id == taskId));
+                //switch (command)
+                //{
+                //    case "done":
+                //        selectedTask.Done = true;
+                //        break;
 
-                    case "archive":
-                        selectedTask.Archive = true;
-                        break;
+                //    case "archive":
+                //        selectedTask.Archive = true;
+                //        break;
 
-                    case "edit":
-                        tasks.Remove(selectedTask);
-                        break;
-                }
+                //    case "edit":
+                //        tasks.Remove(selectedTask);
+                //        break;
+                //}
             }
             ui.UpdateDisplay();
         }
