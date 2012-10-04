@@ -60,7 +60,7 @@ namespace Type
             textBox1.Select(textBox1.Text.Length, 0);
         }
 
-        public void UpdateDisplay()
+        internal void UpdateDisplay()
         {
             IList<Task> tasks = parent.GetTasksToDisplay();
         }
