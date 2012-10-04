@@ -1,0 +1,9 @@
+syntax: glob
+Type\bin\**
+Type\obj\**
+*.suo
+*.exe
+*.manifest
+*.cache
+*.swp
+*.un~
