@@ -29,7 +29,7 @@ namespace Type
             globalHook.StopListening();
         }
 
-        public void ShowUi()
+        internal void ShowUi()
         {
             ui.Show();
         }
