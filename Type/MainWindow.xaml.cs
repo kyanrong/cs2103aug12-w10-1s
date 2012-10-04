@@ -60,9 +60,9 @@ namespace Type
             textBox1.Select(textBox1.Text.Length, 0);
         }
 
-        public void UpdateDisplay(List<Task> task)
+        public void UpdateDisplay()
         {
-            
+            IList<Task> tasks = parent.GetTasksToDisplay();
         }
 
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
