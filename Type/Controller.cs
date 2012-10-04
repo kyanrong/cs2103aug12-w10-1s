@@ -21,7 +21,7 @@ namespace Type
         public Controller()
         {
             ui = new MainWindow(this);
-            globalHook = new ShortcutKeyHook(this, START_KEY_COMBINATION);
+            globalHook = new ShortcutKeyHook(ShowUi, START_KEY_COMBINATION);
 
             tasks = new List<Task>();
         }
@@ -31,7 +31,7 @@ namespace Type
             globalHook.StopListening();
         }
 
-        internal void ShowUi()
+        private void ShowUi()
         {
             ui.Show();
         }
