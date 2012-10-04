@@ -39,21 +39,16 @@ namespace Type
 
         }
 
-        public int Id
+        public bool Done
         {
-            get
-            {
-                return id;
-            }
+            get { return done; }
+            set { done = value; }
         }
-
-        public string RawText
+        public bool Archive 
         {
-            get { return rawText; }
+            get { return archive; }
+            set { archive = value; }
         }
-
-        public bool Done { get; set; }
-        public bool Archive { get; set; }
 
         // only getters
         public DateTime Start
@@ -71,6 +66,14 @@ namespace Type
         public IList<Tuple<string, int>> Tokens
         {
             get { return tokens.AsReadOnly(); }
+        }
+        public string RawText
+        {
+            get { return rawText; }
+        }
+        public int Id
+        {
+            get { return id; }
         }
     }
 }
