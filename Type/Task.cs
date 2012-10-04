@@ -56,9 +56,21 @@ namespace Type
         public bool Archive { get; set; }
 
         // only getters
-        public DateTime Start { get; }
-        public DateTime End { get; }
-        public IList<string> Tags { get; }
-        public IList<Tuple<string, int>> Tokens { get; }
+        public DateTime Start
+        {
+            get { return start; }
+        }
+        public DateTime End
+        {
+            get { return end; }
+        }
+        public IList<string> Tags
+        {
+            get { return tags.AsReadOnly(); }
+        }
+        public IList<Tuple<string, int>> Tokens
+        {
+            get { return tokens.AsReadOnly(); }
+        }
     }
 }

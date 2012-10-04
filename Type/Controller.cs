@@ -78,7 +78,12 @@ namespace Type
                         break;
                 }
             }
-            ui.UpdateDisplay(tasks);
+            ui.UpdateDisplay();
+        }
+
+        internal IList<Task> GetTasksToDisplay()
+        {
+            return tasks.AsReadOnly();
         }
     }
 }
