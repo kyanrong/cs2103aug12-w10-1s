@@ -14,6 +14,8 @@ namespace Type
         private ShortcutKeyHook globalHook;
         private MainWindow ui;
 
+        private List<Task> tasks;
+
         public Controller()
         {
             ui = new MainWindow(this);
@@ -45,32 +47,38 @@ namespace Type
             return (userInput.StartsWith(COMMAND_PREFIX));
         }
 
-        public void ExecuteCommand(string userInput)
+        public void ExecuteCommand(string userInput, int? taskId)
         {
+            // the default command is 'add'
             if (IsDefaultCommand(userInput))
             {
-                // Add
-
+                Task newTask = new Task(userInput);
+                tasks.Add(newTask);
             }
             else
             {
+                if (taskId == null)
+                {
+                    throw new ArgumentNullException();
+                }
                 string command = ExtractCommandToken(ref userInput);
+                Task selectedTask = tasks.Single((Task t) => (t.Id == taskId));
                 switch (command)
                 {
                     case "done":
-
+                        selectedTask.Done = true;
                         break;
 
                     case "archive":
-
+                        selectedTask.Archive = true;
                         break;
 
                     case "edit":
-
+                        tasks.Remove(selectedTask);
                         break;
                 }
             }
-
+            ui.UpdateDisplay(tasks);
         }
     }
 }
