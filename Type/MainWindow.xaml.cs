@@ -96,7 +96,7 @@ namespace Type
             {
                 case Key.Enter:
                     // @yanrong Should parse and process the command here.
-                    parent.ExecuteCommand(textBox1.Text, null);
+                    parent.ExecuteCommand(textBox1.Text);
                     textBox1.Clear();
                     this.Hide();
                     break;
