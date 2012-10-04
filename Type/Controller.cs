@@ -47,7 +47,7 @@ namespace Type
             return (userInput.StartsWith(COMMAND_PREFIX));
         }
 
-        public void ExecuteCommand(string userInput, int? taskId)
+        internal void ExecuteCommand(string userInput)
         {
             // the default command is 'add'
             if (IsDefaultCommand(userInput))
@@ -57,11 +57,8 @@ namespace Type
             }
             else
             {
-                if (taskId == null)
-                {
-                    throw new ArgumentNullException();
-                }
                 string command = ExtractCommandToken(ref userInput);
+                int taskId = GetTaskId(userInput);
                 Task selectedTask = tasks.Single((Task t) => (t.Id == taskId));
                 switch (command)
                 {
@@ -79,6 +76,12 @@ namespace Type
                 }
             }
             ui.UpdateDisplay();
+        }
+
+        private int GetTaskId(string userInput)
+        {
+            return 0;
+
         }
 
         internal IList<Task> GetTasksToDisplay()
