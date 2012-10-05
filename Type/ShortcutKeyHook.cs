@@ -13,20 +13,24 @@ namespace Type
 
     class ShortcutKeyHook
     {
+        private delegate IntPtr GlobalKeypressEventCallback(int nCode, IntPtr wParam, IntPtr lParam);
+
         private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN = 0x0100;
-        private const int KEYPRESS_DELAY = 300;
+        private const int KEYPRESS_DELAY = 200;
 
-        private static LowLevelKeyboardProc _proc = HookCallback;
-        private static IntPtr _hookID = IntPtr.Zero;
+        private GlobalKeypressEventCallback callback;
+        private IntPtr hookId = IntPtr.Zero;
 
-        private static Keys[] combination;
-        private static int combinationIndex;
-        private static UIDisplayHandler showUI;
-        private static DateTime lastPressed;
+        private UIDisplayHandler UIHandler;
+
+        private HashSet<Keys> requiredCombination;
+        private HashSet<Keys> currentCombination;
+        private DateTime firstKey;
+        private bool hasKeys;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+        private static extern IntPtr SetWindowsHookEx(int idHook, GlobalKeypressEventCallback lpfn, IntPtr hMod, uint dwThreadId);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -38,7 +42,7 @@ namespace Type
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
 
-        private static IntPtr SetHook(LowLevelKeyboardProc proc)
+        private static IntPtr SetHook(GlobalKeypressEventCallback proc)
         {
             using (Process curProcess = Process.GetCurrentProcess())
             using (ProcessModule curModule = curProcess.MainModule)
@@ -47,65 +51,76 @@ namespace Type
             }
         }
 
-        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-
-        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        private IntPtr GlobalKeypressEventHandler(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (IsCallback(nCode, wParam))
             {
                 int vkCode = Marshal.ReadInt32(lParam);
                 Keys pressed = (Keys)vkCode;
 
-                if (IsNextValidKeystroke(pressed))
+                if (requiredCombination.Contains(pressed))
                 {
-                    if (IsFirstKeystroke())
-                    {
-                        lastPressed = DateTime.Now;
-                    }
-
-                    combinationIndex++;
-
-                    if (PressedWithin(KEYPRESS_DELAY))
-                    {
-                        if (IsLastKeystroke())
-                        {
-                            showUI();
-                            combinationIndex = 0;
-                        }
-                    }
-                    else
-                    {
-                        combinationIndex = 0;;
-                    }
+                    ProcessValidKeypress(pressed);
                 }
                 else
                 {
-                    combinationIndex = 0;
+                    ResetCurrentCombination();
                 }
             }
-            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+            return CallNextHookEx(hookId, nCode, wParam, lParam);
         }
 
-        private static bool IsFirstKeystroke()
+        private void ProcessValidKeypress(Keys pressed)
         {
-            return combinationIndex == 0;
+            currentCombination.Add(pressed);
+
+            if (hasKeys)
+            {
+                ProcessCombination();
+            }
+            else
+            {
+                RecordFirstValidKeypress();
+            }
         }
 
-        private static bool PressedWithin(int delay)
+        private void ProcessCombination()
         {
-            TimeSpan elapsed = DateTime.Now.Subtract(lastPressed);
+            if (IsRequiredCombination())
+            {
+                if (IsWithin(KEYPRESS_DELAY, firstKey))
+                {
+                    UIHandler();
+                }
+                else
+                {
+                    ResetCurrentCombination();
+                }
+            }
+        }
+
+        private bool IsRequiredCombination()
+        {
+            return currentCombination.Count == requiredCombination.Count;
+        }
+
+        private void RecordFirstValidKeypress()
+        {
+            firstKey = DateTime.Now;
+            hasKeys = true;
+        }
+
+        private bool IsWithin(int delay, DateTime time)
+        {
+            TimeSpan elapsed = DateTime.Now - time;
             TimeSpan limit = new TimeSpan(0, 0, 0, 0, delay);
-            return elapsed.CompareTo(limit) <= 0;
+            return elapsed <= limit;
         }
 
-        private static bool IsNextValidKeystroke(Keys pressed)
+        private void ResetCurrentCombination()
         {
-            return pressed == combination[combinationIndex];
-        }
-
-        private static bool IsLastKeystroke()
-        {
-            return combinationIndex == combination.Length;
+            currentCombination.Clear();
+            hasKeys = false;
         }
 
         private static bool IsCallback(int nCode, IntPtr wParam)
@@ -113,29 +128,36 @@ namespace Type
             return nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN;
         }
 
-        public ShortcutKeyHook(UIDisplayHandler handler, Key[] combination)
+        public ShortcutKeyHook(UIDisplayHandler UIHandler, Key[] combination)
         {
-            ShortcutKeyHook.showUI = handler;
+            callback = GlobalKeypressEventHandler;
 
-            ShortcutKeyHook.combination = new Keys[combination.Length];
-            for (int i = 0; i < combination.Length; i++)
-            {
-                ShortcutKeyHook.combination[i] = (Keys)KeyInterop.VirtualKeyFromKey(combination[i]);
-            }
+            this.UIHandler = UIHandler;
+            requiredCombination = new HashSet<Keys>();
+            currentCombination = new HashSet<Keys>();
+            hasKeys = false;
 
-            combinationIndex = 0;
+            BuildRequiredKeyCombinationSet(combination);
 
             StartListening();
         }
 
+        private void BuildRequiredKeyCombinationSet(Key[] combination)
+        {
+            foreach (Key key in combination)
+            {
+                requiredCombination.Add((Keys)KeyInterop.VirtualKeyFromKey(key));
+            }
+        }
+
         private void StartListening()
         {
-            _hookID = SetHook(_proc);
+            hookId = ShortcutKeyHook.SetHook(callback);
         }
 
         public void StopListening()
         {
-            UnhookWindowsHookEx(_hookID);
+            ShortcutKeyHook.UnhookWindowsHookEx(hookId);
         }
     }
 }
