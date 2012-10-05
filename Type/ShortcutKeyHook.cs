@@ -15,12 +15,15 @@ namespace Type
     {
         private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN = 0x0100;
+        private const int KEYPRESS_DELAY = 300;
+
         private static LowLevelKeyboardProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;
 
         private static Keys[] combination;
         private static int combinationIndex;
         private static UIDisplayHandler showUI;
+        private static DateTime lastPressed;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -55,12 +58,24 @@ namespace Type
 
                 if (IsNextValidKeystroke(pressed))
                 {
+                    if (IsFirstKeystroke())
+                    {
+                        lastPressed = DateTime.Now;
+                    }
+
                     combinationIndex++;
 
-                    if (IsLastKeystroke())
+                    if (PressedWithin(KEYPRESS_DELAY))
                     {
-                        showUI();
-                        combinationIndex = 0;
+                        if (IsLastKeystroke())
+                        {
+                            showUI();
+                            combinationIndex = 0;
+                        }
+                    }
+                    else
+                    {
+                        combinationIndex = 0;;
                     }
                 }
                 else
@@ -71,6 +86,18 @@ namespace Type
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
+        private static bool IsFirstKeystroke()
+        {
+            return combinationIndex == 0;
+        }
+
+        private static bool PressedWithin(int delay)
+        {
+            TimeSpan elapsed = DateTime.Now.Subtract(lastPressed);
+            TimeSpan limit = new TimeSpan(0, 0, 0, 0, delay);
+            return elapsed.CompareTo(limit) <= 0;
+        }
+
         private static bool IsNextValidKeystroke(Keys pressed)
         {
             return pressed == combination[combinationIndex];
@@ -78,7 +105,7 @@ namespace Type
 
         private static bool IsLastKeystroke()
         {
-            return combinationIndex == (combination.Length);
+            return combinationIndex == combination.Length;
         }
 
         private static bool IsCallback(int nCode, IntPtr wParam)
