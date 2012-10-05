@@ -11,7 +11,7 @@ namespace Type
 {
     delegate void UIDisplayHandler();
 
-    class ShortcutKeyHook
+    class GlobalKeyCombinationHook
     {
         private delegate IntPtr GlobalKeypressEventCallback(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -128,7 +128,7 @@ namespace Type
             return nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN;
         }
 
-        public ShortcutKeyHook(UIDisplayHandler UIHandler, Key[] combination)
+        public GlobalKeyCombinationHook(UIDisplayHandler UIHandler, Key[] combination)
         {
             callback = GlobalKeypressEventHandler;
 
@@ -152,12 +152,12 @@ namespace Type
 
         private void StartListening()
         {
-            hookId = ShortcutKeyHook.SetHook(callback);
+            hookId = GlobalKeyCombinationHook.SetHook(callback);
         }
 
         public void StopListening()
         {
-            ShortcutKeyHook.UnhookWindowsHookEx(hookId);
+            GlobalKeyCombinationHook.UnhookWindowsHookEx(hookId);
         }
     }
 }
