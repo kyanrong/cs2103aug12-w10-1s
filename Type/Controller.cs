@@ -13,7 +13,7 @@ namespace Type
         private string COMMAND_PREFIX = ":";
         private Key[] START_KEY_COMBINATION = { Key.LeftShift, Key.Space };
 
-        private ShortcutKeyHook globalHook;
+        private GlobalKeyCombinationHook globalHook;
         private MainWindow ui;
 
         private List<Task> tasks;
@@ -21,7 +21,7 @@ namespace Type
         public Controller()
         {
             ui = new MainWindow(this);
-            globalHook = new ShortcutKeyHook(ShowUi, START_KEY_COMBINATION);
+            globalHook = new GlobalKeyCombinationHook(ShowUi, START_KEY_COMBINATION);
 
             tasks = new List<Task>();
         }

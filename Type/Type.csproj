@@ -76,7 +76,7 @@
     </ApplicationDefinition>
     <Compile Include="Controller.cs" />
     <Compile Include="LocalInstaller.cs" />
-    <Compile Include="ShortcutKeyHook.cs" />
+    <Compile Include="GlobalKeyCombinationHook.cs" />
     <Compile Include="Task.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
