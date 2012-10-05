@@ -9,9 +9,6 @@ namespace Type
     /// </summary>
     public class AutoComplete
     {
-        //Initialized once and used in hash-matching LCP algorithm.
-        private static HashSet<String> lcpHs;
-
         //Stores list of valid strings.
         private SortedSet<String> dictionary;
 
@@ -21,8 +18,6 @@ namespace Type
         /// <param name="dictionary">Array of valid strings to build into a dictionary.</param>
         public AutoComplete(string[] dictionary)
         {
-            lcpHs = new HashSet<String>();
-
             this.dictionary = new SortedSet<String>();
             Load(dictionary);
         }
@@ -122,49 +117,34 @@ namespace Type
         //Finds the common prefix of a set of strings.
         private string FindCommonPrefix(SortedSet<String> results)
         {
-            int lcpIndex = LCPIndex(results.ElementAt(0), results.ElementAt(1));
-            string substr = results.ElementAt(0).Substring(0, lcpIndex);
+            int lcpLength = LCPIndex(results.ElementAt(0), results.ElementAt(1)) + 1;
+            string substr = results.ElementAt(0).Substring(0, lcpLength);
             for (int i = 2; i < results.Count; i++)
             {
-                int newLcpIndex = LCPIndex(substr, results.ElementAt(i));
-                if (newLcpIndex != lcpIndex)
+                int newLcpLength = LCPIndex(substr, results.ElementAt(i)) + 1;
+                if (newLcpLength != lcpLength)
                 {
-                    lcpIndex = newLcpIndex;
-                    substr = results.ElementAt(i).Substring(0, lcpIndex);
+                    lcpLength = newLcpLength;
+                    substr = results.ElementAt(i).Substring(0, lcpLength);
                 }
             }
-            return (results.ElementAt(0).Substring(0, lcpIndex));
+            return (results.ElementAt(0).Substring(0, lcpLength));
         }
 
         //Uses hashing and binary search to determine the longest common prefix of a and b.
         private int LCPIndex(string a, string b)
         {
-            lcpHs.Clear();
-
-            int low = 0;
-            int high = Math.Min(a.Length, b.Length);
-            int mid = 0;
             int found = -1;
-
-            while (low <= high)
+            for (int i = 0; i < Math.Min(a.Length, b.Length); i++)
             {
-                mid = (low + high) / 2;
-                string subA = a.Substring(0, mid);
-                string subB = b.Substring(0, mid);
-
-                lcpHs.Add(subA);
-
-                if (lcpHs.Contains(subB))
+                if (a[i] == b[i])
                 {
-                    found = mid;
-                    low = (mid + 1);
+                    found = i;
                 }
                 else
                 {
-                    high = (mid - 1);
+                    break;
                 }
-
-                lcpHs.Clear();
             }
 
             return found;
