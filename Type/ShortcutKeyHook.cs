@@ -48,15 +48,16 @@ namespace Type
 
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+            if (IsCallback(nCode, wParam))
             {
                 int vkCode = Marshal.ReadInt32(lParam);
                 Keys pressed = (Keys)vkCode;
 
-                if (pressed == combination[combinationIndex])
+                if (IsNextValidKeystroke(pressed))
                 {
                     combinationIndex++;
-                    if (combinationIndex == (combination.Length))
+
+                    if (IsLastKeystroke())
                     {
                         showUI();
                         combinationIndex = 0;
@@ -70,6 +71,21 @@ namespace Type
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
+        private static bool IsNextValidKeystroke(Keys pressed)
+        {
+            return pressed == combination[combinationIndex];
+        }
+
+        private static bool IsLastKeystroke()
+        {
+            return combinationIndex == (combination.Length);
+        }
+
+        private static bool IsCallback(int nCode, IntPtr wParam)
+        {
+            return nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN;
+        }
+
         public ShortcutKeyHook(UIDisplayHandler handler, Key[] combination)
         {
             ShortcutKeyHook.showUI = handler;
@@ -77,7 +93,7 @@ namespace Type
             ShortcutKeyHook.combination = new Keys[combination.Length];
             for (int i = 0; i < combination.Length; i++)
             {
-                ShortcutKeyHook.combination[i] = (Keys) KeyInterop.VirtualKeyFromKey(combination[i]);
+                ShortcutKeyHook.combination[i] = (Keys)KeyInterop.VirtualKeyFromKey(combination[i]);
             }
 
             combinationIndex = 0;
