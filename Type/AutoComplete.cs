@@ -131,7 +131,7 @@ namespace Type
             return (results.ElementAt(0).Substring(0, lcpLength));
         }
 
-        //Uses hashing and binary search to determine the longest common prefix of a and b.
+        //Finds the longest common prefix of a and b.
         private int LCPIndex(string a, string b)
         {
             int found = -1;
