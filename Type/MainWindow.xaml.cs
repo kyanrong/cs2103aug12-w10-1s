@@ -19,7 +19,7 @@ namespace Type
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string INPUT_WELCOME_TEXT = "Start typng...";
+        private const string INPUT_WELCOME_TEXT = "Start typing...";
         private Controller parent;
 
         private Boolean showingWelcomeText;
@@ -62,6 +62,7 @@ namespace Type
         private void RedrawContents(IList<Task> tasks)
         {
             // @yanrong
+            listBox1.DataContext = tasks;
         }
 
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
