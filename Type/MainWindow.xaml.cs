@@ -65,6 +65,11 @@ namespace Type
             listBox1.DataContext = tasks;
         }
 
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (textBox1.Text.Trim() == "")
