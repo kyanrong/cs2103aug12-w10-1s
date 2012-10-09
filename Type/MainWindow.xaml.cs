@@ -61,14 +61,8 @@ namespace Type
 
         private void RedrawContents(IList<Task> tasks)
         {
-            // @yanrong
-            listBox1.DataContext = tasks;
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
+            listBox1.ItemsSource = tasks;
+        } 
 
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
