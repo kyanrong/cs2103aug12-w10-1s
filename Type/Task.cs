@@ -79,7 +79,7 @@ namespace Type
         public override string ToString()
         {
             //@civics, return the name of the task
-            return base.ToString();
+            return rawText;
         }
     }
 }
