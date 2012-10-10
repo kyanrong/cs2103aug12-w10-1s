@@ -5,5 +5,6 @@
     <Grid>
         <TextBox Height="36" HorizontalAlignment="Left" Margin="12,12,0,0" Name="textBox1" VerticalAlignment="Top" Width="479" TextChanged="textBox1_TextChanged" KeyUp="textBox1_KeyUp" FontFamily="GillSans" FontSize="20" Padding="3" />
         <ListBox Height="245" HorizontalAlignment="Left" Margin="12,54,0,0" Name="listBox1" VerticalAlignment="Top" Width="479" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="16"></ListBox>
+        <Label Height="34" HorizontalAlignment="Left" Margin="206,71,0,0" Name="label1" VerticalAlignment="Top" Width="75" FontFamily="GillSans" FontSize="18" Content="no tasks." />
     </Grid>
 </Window>
