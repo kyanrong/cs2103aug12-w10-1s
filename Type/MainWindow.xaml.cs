@@ -20,6 +20,7 @@ namespace Type
     public partial class MainWindow : Window
     {
         private const string INPUT_WELCOME_TEXT = "Start typing...";
+        private const string INPUT_NOTASKS_TEXT = "no tasks.";
         private Controller parent;
 
         private Boolean showingWelcomeText;
@@ -61,8 +62,22 @@ namespace Type
 
         private void RedrawContents(IList<Task> tasks)
         {
+            DisplayNoTasksText(tasks);
             listBox1.ItemsSource = tasks;
         } 
+
+        private void DisplayNoTasksText(IList<Task> tasks)
+        {
+            if (tasks.Count == 0)
+            {
+                label1.Content = INPUT_NOTASKS_TEXT;
+            }
+            else
+            {
+                label1.Content = "";
+            }
+        }
+
 
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
