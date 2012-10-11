@@ -42,18 +42,16 @@ namespace Type
 
         private static IntPtr SetHook(GlobalKeypressEventCallback proc)
         {
-            using (Process curProcess = Process.GetCurrentProcess())
-            using (ProcessModule curModule = curProcess.MainModule)
-            {
-                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
-            }
+            var curProcess = Process.GetCurrentProcess();
+            var curModule = curProcess.MainModule;
+            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
         }
 
         private IntPtr GlobalKeypressEventHandler(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (IsCallback(nCode, wParam))
             {
-                int vkCode = Marshal.ReadInt32(lParam);
+                var vkCode = Marshal.ReadInt32(lParam);
                 Keys pressed = (Keys)vkCode;
 
                 if (requiredCombination.Contains(pressed))
@@ -111,7 +109,7 @@ namespace Type
         private bool IsWithin(int delay, DateTime time)
         {
             TimeSpan elapsed = DateTime.Now - time;
-            TimeSpan limit = new TimeSpan(0, 0, 0, 0, delay);
+            var limit = new TimeSpan(0, 0, 0, 0, delay);
             return elapsed <= limit;
         }
 

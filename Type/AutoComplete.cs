@@ -88,7 +88,7 @@ namespace Type
         public string[] GetSuggestions(string query)
         {
             SortedSet<String> results = QueryResultSet(query);
-            string[] suggestions = new string[results.Count];
+            var suggestions = new string[results.Count];
             results.CopyTo(suggestions);
             return suggestions;
         }
