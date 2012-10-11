@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Type
 {
-    delegate void UIDisplayHandler();
+    internal delegate void UIDisplayHandler();
 
     class GlobalKeyCombinationHook
     {
