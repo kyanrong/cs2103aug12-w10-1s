@@ -22,7 +22,7 @@ namespace Type
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string INPUT_WELCOME_TEXT = "Start typing...";
+        private const string INPUT_WELCOME_TEXT = "start typing...";
         private const string INPUT_NOTASKS_TEXT = "no tasks.";
 
         private CommandProcessor ExecuteCommand;
