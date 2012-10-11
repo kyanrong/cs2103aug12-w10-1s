@@ -7,19 +7,30 @@ namespace Type
     /// <summary>
     /// Provides functionality to suggest strings based on a query, and complete a partial query up to its common prefix.
     /// </summary>
-    public class AutoComplete
+    public class AutoComplete:IAutoComplete
     {
         //Stores list of valid strings.
         private SortedSet<String> dictionary;
 
         /// <summary>
+        /// Builds an empty AutoComplete object.
+        /// </summary>
+        public AutoComplete()
+        {
+            this.dictionary = new SortedSet<String>();
+        }
+
+        /// <summary>
         /// Builds an AutoComplete object with a given dictionary of strings.
         /// </summary>
         /// <param name="dictionary">Array of valid strings to build into a dictionary.</param>
-        public AutoComplete(string[] dictionary)
+        public AutoComplete(string[] dictionary = null)
         {
             this.dictionary = new SortedSet<String>();
-            Load(dictionary);
+            if (dictionary != null)
+            {
+                Load(dictionary);
+            }
         }
 
         private void Load(string[] dictionary)
