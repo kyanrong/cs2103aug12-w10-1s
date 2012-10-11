@@ -126,7 +126,7 @@ namespace Type
 
                 case Key.Tab:
                     string completedQuery = tasksAutoComplete.CompleteToCommonPrefix(textBox1.Text);
-                    textBox1.Text = completedQuery;
+                    textBox1.Text += completedQuery;
                     break;
 
                 case Key.Escape:
