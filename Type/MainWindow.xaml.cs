@@ -14,6 +14,9 @@ using System.Windows.Shapes;
 
 namespace Type
 {
+    internal delegate void CommandProcessor(string userInput, UIRedrawHandler redrawHandler);
+    internal delegate IList<string> TaskSuggestor(string partialInput);
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -21,18 +24,24 @@ namespace Type
     {
         private const string INPUT_WELCOME_TEXT = "Start typing...";
         private const string INPUT_NOTASKS_TEXT = "no tasks.";
-        private Controller parent;
-        private AutoComplete autocomplete;
 
         private Boolean showingWelcomeText;
 
-        public MainWindow(Controller parent)
-        {
-            this.parent = parent;
+        private CommandProcessor ExecuteCommand;
+        private TaskSuggestor GetSuggestions;
 
+        public MainWindow()
+        {
             InitializeComponent();
 
             textBox1.Focus();
+        }
+
+        internal MainWindow setCallbacks(CommandProcessor cp, TaskSuggestor ts)
+        {
+            ExecuteCommand = cp;
+            GetSuggestions = ts;
+            return this;
         }
 
         private void ShowWelcomeText()
@@ -110,9 +119,9 @@ namespace Type
             switch (e.Key)
             {
                 case Key.Enter:
-                    parent.ExecuteCommand(textBox1.Text, RedrawContents);
+                    // @yanrong Should parse and process the command here.
+                    ExecuteCommand(textBox1.Text, RedrawContents);
                     textBox1.Clear();
-                   //this.Hide();
                     break;
 
                 case Key.Tab:

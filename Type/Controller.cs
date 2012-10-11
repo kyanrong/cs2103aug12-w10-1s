@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace Type
 {
-    delegate void UIRedrawHandler(IList<Task> updateData);
+    internal delegate void UIRedrawHandler(IList<Task> updateData);
 
     public class Controller
     {
@@ -20,7 +20,8 @@ namespace Type
 
         public Controller()
         {
-            ui = new MainWindow(this);
+            ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetTaskSuggestions);
+
             globalHook = new GlobalKeyCombinationHook(ShowUi, START_KEY_COMBINATION);
 
             tasks = new List<Task>();
@@ -83,7 +84,7 @@ namespace Type
             return (tasks.First(task => task.RawText == rawText));
         }
 
-        internal IList<Task> GetTasksToDisplay(int count = 5, List<string> tags = null)
+        private IList<Task> GetTasksToDisplay(int count = 5, List<string> tags = null)
         {
             if (tags == null)
             {
@@ -98,6 +99,11 @@ namespace Type
                 }
                 return (resultSet.Take(count).ToList().AsReadOnly());
             }
+        }
+
+        private IList<string> GetTaskSuggestions(string partialInput)
+        {
+            throw new NotImplementedException();
         }
     }
 }
