@@ -17,14 +17,20 @@ namespace Type
         private MainWindow ui;
 
         private List<Task> tasks;
+        private AutoComplete tasksAutoComplete;
 
         public Controller()
         {
+            //Sequence is important here. We need to initialize backend storage first,
+            //followed by instantiating the UI, and finally, listening on the keyboard
+            //hook. Messing up the sequence may result in race conditions.
+
+            tasks = new List<Task>();
+            tasksAutoComplete = new AutoComplete();
+
             ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetTaskSuggestions);
 
             globalHook = new GlobalKeyCombinationHook(ShowUi, START_KEY_COMBINATION);
-
-            tasks = new List<Task>();
         }
 
         ~Controller()
@@ -101,9 +107,9 @@ namespace Type
             }
         }
 
-        private IList<string> GetTaskSuggestions(string partialInput)
+        private IAutoComplete GetTaskSuggestions()
         {
-            throw new NotImplementedException();
+            return tasksAutoComplete;
         }
     }
 }

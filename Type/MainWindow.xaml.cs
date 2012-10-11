@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 namespace Type
 {
     internal delegate void CommandProcessor(string userInput, UIRedrawHandler redrawHandler);
-    internal delegate IList<string> TaskSuggestor(string partialInput);
+    internal delegate IAutoComplete AutocompleteAccessor();
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -28,7 +28,7 @@ namespace Type
         private Boolean showingWelcomeText;
 
         private CommandProcessor ExecuteCommand;
-        private TaskSuggestor GetSuggestions;
+        private IAutoComplete tasksAutoComplete;
 
         public MainWindow()
         {
@@ -37,10 +37,10 @@ namespace Type
             textBox1.Focus();
         }
 
-        internal MainWindow setCallbacks(CommandProcessor cp, TaskSuggestor ts)
+        internal MainWindow setCallbacks(CommandProcessor cp, AutocompleteAccessor getAutoCompleteReference)
         {
             ExecuteCommand = cp;
-            GetSuggestions = ts;
+            tasksAutoComplete = getAutoCompleteReference();
             return this;
         }
 
@@ -125,7 +125,7 @@ namespace Type
                     break;
 
                 case Key.Tab:
-                    string completedQuery = autocomplete.CompleteToCommonPrefix(textBox1.Text);
+                    string completedQuery = tasksAutoComplete.CompleteToCommonPrefix(textBox1.Text);
                     textBox1.Text = completedQuery;
                     break;
 
