@@ -101,7 +101,7 @@ namespace Type
             else
             {
                 var resultSet = new HashSet<Task>();
-                foreach (string tag in tags)
+                foreach (var tag in tags)
                 {
                     resultSet.UnionWith(tasks.Where(t => t.Tags.Contains(tag)));
                 }
