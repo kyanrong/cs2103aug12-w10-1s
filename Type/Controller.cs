@@ -58,10 +58,11 @@ namespace Type
 
         internal void ExecuteCommand(string userInput, UIRedrawHandler redrawHandler)
         {
-            // the default command is 'add'
+            //The default command is 'add'
             if (IsDefaultCommand(userInput))
             {
                 tasks.Add(new Task(userInput));
+                tasksAutoComplete.AddSuggestion(userInput);
             }
             else
             {
@@ -79,6 +80,7 @@ namespace Type
 
                     case "edit":
                         tasks.Remove(selectedTask);
+                        tasksAutoComplete.RemoveSuggestion(selectedTask.RawText);
                         break;
                 }
             }
