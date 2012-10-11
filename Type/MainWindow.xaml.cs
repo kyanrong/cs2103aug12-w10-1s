@@ -22,6 +22,7 @@ namespace Type
         private const string INPUT_WELCOME_TEXT = "Start typing...";
         private const string INPUT_NOTASKS_TEXT = "no tasks.";
         private Controller parent;
+        private AutoComplete autocomplete;
 
         private Boolean showingWelcomeText;
 
@@ -109,15 +110,14 @@ namespace Type
             switch (e.Key)
             {
                 case Key.Enter:
-                    // @yanrong Should parse and process the command here.
                     parent.ExecuteCommand(textBox1.Text, RedrawContents);
                     textBox1.Clear();
-                    this.Hide();
+                   //this.Hide();
                     break;
 
                 case Key.Tab:
-                    // @yanrong Should autocomplete here
-
+                    string completedQuery = autocomplete.CompleteToCommonPrefix(textBox1.Text);
+                    textBox1.Text = completedQuery;
                     break;
 
                 case Key.Escape:
