@@ -60,7 +60,7 @@ namespace Type
         // 0 - msg is empty, don't try to read it.
         // 1 - msg is the raw text of an edited task
         // 2 - msg is an error message (task ambiguous match or task not found)
-        private void ExecuteResultCallback(IList<Task> tasks, int msgCode = 0, string msg = null)
+        private void ExecuteResultCallback(IList<Task> tasks, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null)
         {
             DisplayNoTasksText(tasks);
             listBox1.ItemsSource = tasks;

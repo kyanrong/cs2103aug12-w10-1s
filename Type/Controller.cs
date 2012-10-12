@@ -7,7 +7,14 @@ using System.Windows.Input;
 
 namespace Type
 {
-    internal delegate void UIRedrawHandler(IList<Task> updateData, int msgCode = 0, string msg = null);
+    internal delegate void UIRedrawHandler(IList<Task> updateData, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null);
+
+    internal enum UIRedrawMsgCode
+    {
+        EMPTY,
+        EDITED_TEXT,
+        ERROR
+    }
 
     public class Controller
     {
@@ -21,6 +28,13 @@ namespace Type
         private List<Task> tasks;
         private AutoComplete tasksAutoComplete;
 
+        private enum FindTaskResult
+        {
+            NOT_FOUND,
+            AMBIGUOUS,
+            FOUND
+        }
+
         public Controller()
         {
             //Sequence is important here. We need to initialize backend storage first,
@@ -29,7 +43,7 @@ namespace Type
             tasks = new List<Task>();
             tasksAutoComplete = new AutoComplete();
 
-            ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetTaskSuggestions);
+            ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetAutoCompleteReference);
 
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
@@ -45,11 +59,9 @@ namespace Type
             ui.Show();
         }
 
-
-
         internal void ExecuteCommand(string command, string content, UIRedrawHandler redrawHandler)
         {
-            int msgCode = 0;
+            UIRedrawMsgCode msgCode = 0;
             string msg = null;
 
             if (command == "add")
@@ -59,35 +71,61 @@ namespace Type
             }
             else
             {
-                Task selectedTask = FindTaskByText(content);
-                switch (command)
+                var idResult = FindTaskByText(content);
+                if (idResult.Item1 == FindTaskResult.AMBIGUOUS || idResult.Item1 == FindTaskResult.NOT_FOUND)
                 {
-                    case "done":
-                        selectedTask.Done = true;
-                        break;
+                    msgCode = UIRedrawMsgCode.ERROR;
+                }
+                else
+                {
+                    var selectedTask = idResult.Item2;
+                    switch (command)
+                    {
+                        case "done":
+                            selectedTask.Done = true;
+                            break;
 
-                    case "archive":
-                        selectedTask.Archive = true;
-                        break;
+                        case "archive":
+                            selectedTask.Archive = true;
+                            break;
                         
-                    case "edit":
-                        //Remove the original task from the model.
-                        tasks.Remove(selectedTask);
-                        tasksAutoComplete.RemoveSuggestion(selectedTask.RawText);
+                        case "edit":
+                            //Remove the original task from the model.
+                            tasks.Remove(selectedTask);
+                            tasksAutoComplete.RemoveSuggestion(selectedTask.RawText);
 
-                        //Return the text to the UI for editing.
-                        msgCode = 2;
-                        msg = selectedTask.RawText;
-                        break;
+                            //Return the text to the UI for editing.
+                            msgCode = UIRedrawMsgCode.EDITED_TEXT;
+                            msg = selectedTask.RawText;
+                            break;
+                    }
                 }
             }
 
             redrawHandler(tasks.AsReadOnly(), msgCode, msg);
         }
 
-        private Task FindTaskByText(string rawText)
+        private Tuple<FindTaskResult, Task> FindTaskByText(string rawText)
         {
-            return (tasks.First(task => task.RawText == rawText));
+            int querySize;
+            FindTaskResult queryStatus;
+            Task result = null;
+
+            if ((querySize = tasks.Count(task => task.RawText == rawText)) == 0)
+            {
+                queryStatus = FindTaskResult.NOT_FOUND;
+            }
+            else if (querySize > 1)
+            {
+                queryStatus = FindTaskResult.AMBIGUOUS;
+            }
+            else
+            {
+                queryStatus = FindTaskResult.FOUND;
+                result = tasks.First(task => task.RawText == rawText);
+            }
+
+            return new Tuple<FindTaskResult, Task>(queryStatus, result);
         }
 
         private IList<Task> GetTasksToDisplay(int count = 5, List<string> tags = null)
@@ -107,7 +145,7 @@ namespace Type
             }
         }
 
-        private IAutoComplete GetTaskSuggestions()
+        private IAutoComplete GetAutoCompleteReference()
         {
             return tasksAutoComplete;
         }
