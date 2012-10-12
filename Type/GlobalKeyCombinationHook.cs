@@ -119,7 +119,7 @@ namespace Type
         private short CreateAtom()
         {
             short atom = GlobalAddAtom(ATOM_NAME);
-            
+
             if (atom == 0)
             {
                 throw new Win32Exception(Marshal.GetLastWin32Error());
@@ -138,7 +138,7 @@ namespace Type
 
             return IntPtr.Zero;
         }
-        
+
         //Win32 functions
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -155,13 +155,13 @@ namespace Type
         public static extern short GlobalDeleteAtom(short nAtom);
 
         //fsModifiers defined by Win32 RegisterHotKey
-        public const uint MOD_ALT      = 0x0001;
-        public const uint MOD_CONTROL  = 0x0002;
-        public const uint MOD_SHIFT    = 0x0004;
-        public const uint MOD_WIN      = 0x0008;
+        public const uint MOD_ALT = 0x0001;
+        public const uint MOD_CONTROL = 0x0002;
+        public const uint MOD_SHIFT = 0x0004;
+        public const uint MOD_WIN = 0x0008;
         public const uint MOD_NOREPEAT = 0x4000;
 
         //WM_HOTKEY value
-        private const int WM_HOTKEY   = 0x0312;
+        private const int WM_HOTKEY = 0x0312;
     }
 }

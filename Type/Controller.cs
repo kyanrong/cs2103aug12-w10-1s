@@ -7,11 +7,10 @@ using System.Windows.Input;
 
 namespace Type
 {
-    internal delegate void UIRedrawHandler(IList<Task> updateData);
+    internal delegate void UIRedrawHandler(IList<Task> updateData, int msgCode = 0, string msg = null);
 
     public class Controller
     {
-        private const string COMMAND_PREFIX = ":";
         private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
         private const uint COMBINATION_TRIGGER = 0x20;
 
@@ -46,31 +45,21 @@ namespace Type
             ui.Show();
         }
 
-        private string ExtractCommandToken(ref string userInput)
-        {
-            int spIndex = userInput.IndexOf(' ');
-            string commandToken = userInput.Substring(1, spIndex - 1);
-            userInput = userInput.Substring(spIndex + 1);
-            return commandToken;
-        }
 
-        private bool IsDefaultCommand(string userInput)
-        {
-            return (!userInput.StartsWith(COMMAND_PREFIX));
-        }
 
-        internal void ExecuteCommand(string userInput, UIRedrawHandler redrawHandler)
+        internal void ExecuteCommand(string command, string content, UIRedrawHandler redrawHandler)
         {
-            //The default command is 'add'
-            if (IsDefaultCommand(userInput))
+            int msgCode = 0;
+            string msg = null;
+
+            if (command == "add")
             {
-                tasks.Add(new Task(userInput));
-                tasksAutoComplete.AddSuggestion(userInput);
+                tasks.Add(new Task(content));
+                tasksAutoComplete.AddSuggestion(content);
             }
             else
             {
-                string command = ExtractCommandToken(ref userInput);
-                Task selectedTask = FindTaskByText(userInput);
+                Task selectedTask = FindTaskByText(content);
                 switch (command)
                 {
                     case "done":
@@ -80,14 +69,20 @@ namespace Type
                     case "archive":
                         selectedTask.Archive = true;
                         break;
-
+                        
                     case "edit":
+                        //Remove the original task from the model.
                         tasks.Remove(selectedTask);
                         tasksAutoComplete.RemoveSuggestion(selectedTask.RawText);
+
+                        //Return the text to the UI for editing.
+                        msgCode = 2;
+                        msg = selectedTask.RawText;
                         break;
                 }
             }
-            redrawHandler(tasks.AsReadOnly());
+
+            redrawHandler(tasks.AsReadOnly(), msgCode, msg);
         }
 
         private Task FindTaskByText(string rawText)
