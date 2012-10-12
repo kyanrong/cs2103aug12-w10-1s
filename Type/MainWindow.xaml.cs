@@ -80,7 +80,6 @@ namespace Type
             DisplayWelcomeText();
             string[] suggestions = GetSuggestions(textBox1.Text);
             RedrawContents(suggestions);
-            DisplayPopUp(suggestions);
         }
 
         private void MoveCursorToEndOfWord()
@@ -97,20 +96,7 @@ namespace Type
 
         private void RedrawContents(string[] suggestions)
         {
-            listBox2.ItemsSource = suggestions;
-        }
-
-        private void DisplayPopUp(string[] suggestions)
-        {
-            if (suggestions.Length == 0 || textBox1.Text == "")
-            {
-                popUp.IsOpen = false;
-            }
-            else
-            {
-                popUp.IsOpen = true;
-            }
-            
+            listBox1.ItemsSource = suggestions;
         }
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
