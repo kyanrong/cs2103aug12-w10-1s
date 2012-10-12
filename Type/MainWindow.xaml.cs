@@ -75,11 +75,39 @@ namespace Type
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             DisplayWelcomeText();
+            string[] suggestions = GetSuggestions(textBox1.Text);
+            RedrawContents(suggestions);
+            DisplayPopUp(suggestions);
         }
 
         private void MoveCursorToEndOfWord()
         {
             textBox1.Select(textBox1.Text.Length, 0);
+        }
+
+        private string[] GetSuggestions(string input)
+        {
+            string[] suggestions;
+            suggestions = tasksAutoComplete.GetSuggestions(input);
+            return suggestions;
+        }
+
+        private void RedrawContents(string[] suggestions)
+        {
+            listBox2.ItemsSource = suggestions;
+        }
+
+        private void DisplayPopUp(string[] suggestions)
+        {
+            if (suggestions.Length == 0 || textBox1.Text == "")
+            {
+                popUp.IsOpen = false;
+            }
+            else
+            {
+                popUp.IsOpen = true;
+            }
+            
         }
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
