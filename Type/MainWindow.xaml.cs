@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace Type
 {
-    internal delegate void CommandProcessor(string userInput, UIRedrawHandler redrawHandler);
+    internal delegate void ExecuteHandler(string command, string content, UIRedrawHandler redrawHandler);
     internal delegate IAutoComplete AutocompleteAccessor();
 
     /// <summary>
@@ -22,10 +22,12 @@ namespace Type
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string COMMAND_PREFIX = ":";
+
         private const string INPUT_WELCOME_TEXT = "start typing...";
         private const string INPUT_NOTASKS_TEXT = "no tasks.";
 
-        private CommandProcessor ExecuteCommand;
+        private ExecuteHandler ExecuteCommand;
         private IAutoComplete tasksAutoComplete;
 
         public MainWindow()
@@ -35,7 +37,7 @@ namespace Type
             textBox1.Focus();
         }
 
-        internal MainWindow setCallbacks(CommandProcessor cp, AutocompleteAccessor getAutoCompleteReference)
+        internal MainWindow setCallbacks(ExecuteHandler cp, AutocompleteAccessor getAutoCompleteReference)
         {
             ExecuteCommand = cp;
             tasksAutoComplete = getAutoCompleteReference();
@@ -54,7 +56,11 @@ namespace Type
             }
         }
 
-        private void RedrawContents(IList<Task> tasks)
+        //@yanrong You can decide what to do with msg based on msgCode
+        // 0 - msg is empty, don't try to read it.
+        // 1 - msg is the raw text of an edited task
+        // 2 - msg is an error message (task ambiguous match or task not found)
+        private void ExecuteResultCallback(IList<Task> tasks, int msgCode = 0, string msg = null)
         {
             DisplayNoTasksText(tasks);
             listBox1.ItemsSource = tasks;
@@ -115,8 +121,9 @@ namespace Type
             switch (e.Key)
             {
                 case Key.Enter:
-                    // @yanrong Should parse and process the command here.
-                    ExecuteCommand(textBox1.Text, RedrawContents);
+                    //@yanrong Should parse and process the command here.
+                    var tokenizeResult = TokenizeInput(textBox1.Text);
+                    ExecuteCommand(tokenizeResult.Item1, tokenizeResult.Item2, ExecuteResultCallback);
                     textBox1.Clear();
                     break;
 
@@ -130,6 +137,25 @@ namespace Type
                     this.Hide();
                     break;
             }
+        }
+
+        //@yanrong The functions below were moved from the controller.
+        private Tuple<string, string> TokenizeInput(string userInput)
+        {
+            string command;
+
+            if (!userInput.StartsWith(COMMAND_PREFIX))
+            {
+                command = "add";
+            }
+            else
+            {
+                var spIndex = userInput.IndexOf(' ');
+                command = userInput.Substring(1, spIndex - 1);
+                userInput = userInput.Substring(spIndex + 1);
+            }
+
+            return new Tuple<string, string>(command, userInput);
         }
     }
 }
