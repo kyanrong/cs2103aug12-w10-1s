@@ -7,13 +7,21 @@ using System.Windows.Input;
 
 namespace Type
 {
-    internal delegate void UIRedrawHandler(IList<Task> updateData);
+    internal delegate void UIRedrawHandler(IList<Task> updateData, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null);
+    internal enum UIRedrawMsgCode
+    {
+        EMPTY,
+        EDITED_TEXT,
+        ERROR,
+        WARNING
+    }
 
     public class Controller
     {
-        private const string COMMAND_PREFIX = ":";
         private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
         private const uint COMBINATION_TRIGGER = 0x20;
+        private const string FIND_NOT_FOUND = "no matches found";
+        private const string FIND_AMBIGIOUS = "more than one match found";
 
         private GlobalKeyCombinationHook globalHook;
 
@@ -21,6 +29,13 @@ namespace Type
 
         private List<Task> tasks;
         private AutoComplete tasksAutoComplete;
+
+        private enum FindTaskResult
+        {
+            NOT_FOUND,
+            AMBIGUOUS,
+            FOUND
+        }
 
         public Controller()
         {
@@ -30,7 +45,7 @@ namespace Type
             tasks = new List<Task>();
             tasksAutoComplete = new AutoComplete();
 
-            ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetTaskSuggestions);
+            ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetAutoCompleteReference);
 
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
@@ -46,53 +61,80 @@ namespace Type
             ui.Show();
         }
 
-        private string ExtractCommandToken(ref string userInput)
+        internal void ExecuteCommand(string command, string content, UIRedrawHandler redrawHandler)
         {
-            int spIndex = userInput.IndexOf(' ');
-            string commandToken = userInput.Substring(1, spIndex - 1);
-            userInput = userInput.Substring(spIndex + 1);
-            return commandToken;
-        }
+            UIRedrawMsgCode msgCode = 0;
+            string msg = null;
 
-        private bool IsDefaultCommand(string userInput)
-        {
-            return (!userInput.StartsWith(COMMAND_PREFIX));
-        }
-
-        internal void ExecuteCommand(string userInput, UIRedrawHandler redrawHandler)
-        {
-            //The default command is 'add'
-            if (IsDefaultCommand(userInput))
+            if (command == "add")
             {
-                tasks.Add(new Task(userInput));
-                tasksAutoComplete.AddSuggestion(userInput);
+                tasks.Add(new Task(content));
+                tasksAutoComplete.AddSuggestion(content);
             }
             else
             {
-                string command = ExtractCommandToken(ref userInput);
-                Task selectedTask = FindTaskByText(userInput);
-                switch (command)
+                var idResult = FindTaskByText(content);
+                if (idResult.Item1 == FindTaskResult.NOT_FOUND)
                 {
-                    case "done":
-                        selectedTask.Done = true;
-                        break;
+                    msgCode = UIRedrawMsgCode.ERROR;
+                    msg = FIND_NOT_FOUND;
+                }
+                else
+                {
+                    if (idResult.Item1 == FindTaskResult.AMBIGUOUS)
+                    {
+                        msgCode = UIRedrawMsgCode.WARNING;
+                        msg = FIND_AMBIGIOUS;
+                    }
 
-                    case "archive":
-                        selectedTask.Archive = true;
-                        break;
+                    var selectedTask = idResult.Item2;
+                    switch (command)
+                    {
+                        case "done":
+                            selectedTask.Done = true;
+                            break;
 
-                    case "edit":
-                        tasks.Remove(selectedTask);
-                        tasksAutoComplete.RemoveSuggestion(selectedTask.RawText);
-                        break;
+                        case "archive":
+                            selectedTask.Archive = true;
+                            break;
+
+                        case "edit":
+                            //Remove the original task from the model.
+                            tasks.Remove(selectedTask);
+                            tasksAutoComplete.RemoveSuggestion(selectedTask.RawText);
+
+                            //Return the text to the UI for editing.
+                            msgCode = UIRedrawMsgCode.EDITED_TEXT;
+                            msg = selectedTask.RawText;
+                            break;
+                    }
                 }
             }
-            redrawHandler(tasks.AsReadOnly());
+
+            redrawHandler(tasks.AsReadOnly(), msgCode, msg);
         }
 
-        private Task FindTaskByText(string rawText)
+        private Tuple<FindTaskResult, Task> FindTaskByText(string rawText)
         {
-            return (tasks.First(task => task.RawText == rawText));
+            int querySize;
+            FindTaskResult queryStatus;
+            Task result = null;
+
+            if ((querySize = tasks.Count(task => task.RawText == rawText)) == 0)
+            {
+                queryStatus = FindTaskResult.NOT_FOUND;
+            }
+            else if (querySize > 1)
+            {
+                queryStatus = FindTaskResult.AMBIGUOUS;
+            }
+            else
+            {
+                queryStatus = FindTaskResult.FOUND;
+                result = tasks.First(task => task.RawText == rawText);
+            }
+
+            return new Tuple<FindTaskResult, Task>(queryStatus, result);
         }
 
         private IList<Task> GetTasksToDisplay(int count = 5, List<string> tags = null)
@@ -112,7 +154,7 @@ namespace Type
             }
         }
 
-        private IAutoComplete GetTaskSuggestions()
+        private IAutoComplete GetAutoCompleteReference()
         {
             return tasksAutoComplete;
         }
