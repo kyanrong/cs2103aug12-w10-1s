@@ -8,18 +8,20 @@ using System.Windows.Input;
 namespace Type
 {
     internal delegate void UIRedrawHandler(IList<Task> updateData, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null);
-
     internal enum UIRedrawMsgCode
     {
         EMPTY,
         EDITED_TEXT,
-        ERROR
+        ERROR,
+        WARNING
     }
 
     public class Controller
     {
         private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
         private const uint COMBINATION_TRIGGER = 0x20;
+        private const string FIND_NOT_FOUND = "no matches found";
+        private const string FIND_AMBIGIOUS = "more than one match found";
 
         private GlobalKeyCombinationHook globalHook;
 
@@ -72,12 +74,19 @@ namespace Type
             else
             {
                 var idResult = FindTaskByText(content);
-                if (idResult.Item1 == FindTaskResult.AMBIGUOUS || idResult.Item1 == FindTaskResult.NOT_FOUND)
+                if (idResult.Item1 == FindTaskResult.NOT_FOUND)
                 {
                     msgCode = UIRedrawMsgCode.ERROR;
+                    msg = FIND_NOT_FOUND;
                 }
                 else
                 {
+                    if (idResult.Item1 == FindTaskResult.AMBIGUOUS)
+                    {
+                        msgCode = UIRedrawMsgCode.WARNING;
+                        msg = FIND_AMBIGIOUS;
+                    }
+
                     var selectedTask = idResult.Item2;
                     switch (command)
                     {
@@ -88,7 +97,7 @@ namespace Type
                         case "archive":
                             selectedTask.Archive = true;
                             break;
-                        
+
                         case "edit":
                             //Remove the original task from the model.
                             tasks.Remove(selectedTask);
