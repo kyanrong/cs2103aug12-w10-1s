@@ -77,6 +77,11 @@ namespace Type
             DisplayWelcomeText();
         }
 
+        private void MoveCursorToEndOfWord()
+        {
+            textBox1.Select(textBox1.Text.Length, 0);
+        }
+
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -90,6 +95,7 @@ namespace Type
                 case Key.Tab:
                     string completedQuery = tasksAutoComplete.CompleteToCommonPrefix(textBox1.Text);
                     textBox1.Text += completedQuery;
+                    MoveCursorToEndOfWord();
                     break;
 
                 case Key.Escape:
