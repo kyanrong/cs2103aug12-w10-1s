@@ -46,7 +46,7 @@ namespace Type
         private string ExtractCommandToken(ref string userInput)
         {
             int spIndex = userInput.IndexOf(' ');
-            string commandToken = userInput.Substring(0, spIndex);
+            string commandToken = userInput.Substring(1, spIndex - 1);
             userInput = userInput.Substring(spIndex + 1);
             return commandToken;
         }
