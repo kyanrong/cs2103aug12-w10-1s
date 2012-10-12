@@ -1,0 +1,19 @@
+syntax: glob
+
+Type\bin\**
+Type\obj\**
+
+AutoCompleteTests\bin\**
+AutoCompleteTests\obj\**
+
+TestResults\**
+
+*.suo
+*.exe
+*.manifest
+*.cache
+*.swp
+*.un~
+*.trx
+*.dll
+*.pdb
