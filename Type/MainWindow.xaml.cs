@@ -57,9 +57,6 @@ namespace Type
         }
 
         //@yanrong You can decide what to do with msg based on msgCode
-        // 0 - msg is empty, don't try to read it.
-        // 1 - msg is the raw text of an edited task
-        // 2 - msg is an error message (task ambiguous match or task not found)
         private void ExecuteResultCallback(IList<Task> tasks, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null)
         {
             DisplayNoTasksText(tasks);
