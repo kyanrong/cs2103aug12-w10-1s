@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Type
@@ -10,10 +11,12 @@ namespace Type
 
     public class Controller
     {
-        private string COMMAND_PREFIX = ":";
-        private Key[] START_KEY_COMBINATION = { Key.LeftShift, Key.Space };
+        private const string COMMAND_PREFIX = ":";
+        private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
+        private const uint COMBINATION_TRIGGER = 0x20;
 
         private GlobalKeyCombinationHook globalHook;
+
         private MainWindow ui;
 
         private List<Task> tasks;
@@ -24,17 +27,17 @@ namespace Type
             //Sequence is important here. We need to initialize backend storage first,
             //followed by instantiating the UI, and finally, listening on the keyboard
             //hook. Messing up the sequence may result in race conditions.
-
             tasks = new List<Task>();
             tasksAutoComplete = new AutoComplete();
 
             ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetTaskSuggestions);
 
-            globalHook = new GlobalKeyCombinationHook(ShowUi, START_KEY_COMBINATION);
+            globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
 
         ~Controller()
         {
+            //We need to unregister the hotkey when the application closes to be a good Windows citizen.
             globalHook.StopListening();
         }
 
