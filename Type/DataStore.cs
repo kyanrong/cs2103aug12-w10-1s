@@ -25,10 +25,16 @@ namespace Type
                 foreach (int index in allRows.Keys)
                 {
                     // update index
-                    nextIndex = index;
+                    nextIndex = index + 1;
                 }
-
             }
+            else
+            {
+                // Create file since it does not exist.
+                FileStream fs = File.Create(path);
+                fs.Close();
+            }
+
         }
 
         // Insert New Row to file
@@ -54,31 +60,30 @@ namespace Type
             // read file contents
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
-            
 
             List<string> list = new List<string>();
-            Tuple<int, List<string>> processedRow;
 
             while (!sr.EndOfStream)
             {
                 string rawString = sr.ReadLine();
-                processedRow = ProcessRow(rawString);
+                Tuple<int, List<string>> processedRow = ProcessRow(rawString);
+
                 if (processedRow.Item1 != index)
                 {
                     list.Add(rawString);
                 }
                 else
                 {
-                    list.Add(ProcessListToString(processedRow.Item1, processedRow.Item2));
+                    list.Add(ProcessListToString(index, row));
                 }
             }
-
-            // replace the contents of the file with new contents.
-            WriteToFile(list);
 
             // close file/writer
             sr.Close();
             fs.Close();
+
+            // replace the contents of the file with new contents.
+            WriteToFile(list);
         }
 
         // returns row given index
@@ -170,7 +175,7 @@ namespace Type
             {
                 sw.WriteLine(str);
             }
-            
+
             // close file/write
             sw.Close();
             fs.Close();
@@ -181,17 +186,17 @@ namespace Type
         {
             // split comma separated line into tokens
             string[] tokens = rawString.Split(',');
-            
+
             // coerce first value to index.
             int index = int.Parse(tokens[0]);
-            
+
             // build row contents
             List<string> contents = new List<string>();
             for (int i = 1; i < tokens.Length; i++)
             {
                 contents.Add(tokens[i]);
             }
-            
+
             return Tuple.Create(index, contents);
         }
     }

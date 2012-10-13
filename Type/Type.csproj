@@ -77,6 +77,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Class1.cs" />
+    <Compile Include="DataStore.cs" />
     <Compile Include="TaskCollection.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="IAutoComplete.cs" />
@@ -84,7 +86,6 @@
     <Compile Include="GlobalKeyCombinationHook.cs" />
     <Compile Include="RegExp.cs" />
     <Compile Include="Task.cs" />
-    <Compile Include="TypeFile.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
