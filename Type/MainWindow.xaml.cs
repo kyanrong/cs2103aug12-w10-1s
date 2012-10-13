@@ -32,6 +32,10 @@ namespace Type
         private FilterSuggestionsCallback GetFilterSuggestions;
         private GetTasksCallback GetTasks;
 
+        private IList<Task> renderedTasks;
+        private bool editState;
+        private int editIndex;
+
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
         {
             InitializeComponent();
@@ -48,8 +52,8 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
-            IList<Task> tasks = GetTasks(8);
-            RenderTasks(tasks);
+            renderedTasks = GetTasks(8);
+            RenderTasks();
         }
 
         // Input Label
@@ -66,10 +70,10 @@ namespace Type
         }
 
         // Render List of Tasks
-        private void RenderTasks(IList<Task> Tasks)
+        private void RenderTasks()
         {
             tasksGrid.Children.Clear();
-            if (Tasks.Count == 0)
+            if (renderedTasks.Count == 0)
             {
                 // display no tasks text.
                 StackPanel noTasksText = new StackPanel();
@@ -89,16 +93,20 @@ namespace Type
             {
                 // loop over each task and create task view
                 // append each to tasks grid
-                foreach (Task task in Tasks)
+                foreach (Task task in renderedTasks)
                 {
-                    //TODO
                     // create single stacked panel w/ info
                     StackPanel taskView = new StackPanel();
                     TextBlock text = new TextBlock();
                     text.Text = task.RawText;
 
-                    text.FontSize = 20;
+                    // style accordingly
+                    if (task.Done)
+                    {
+                        text.TextDecorations = TextDecorations.Strikethrough;
+                    }
 
+                    text.FontSize = 20;
                     taskView.Children.Add(text);
 
                     // append task view to grid view
@@ -111,8 +119,12 @@ namespace Type
         private void InputBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             DisplayInputLabel();
-            
+
             // TODO.
+
+            // display filtered tasks
+            renderedTasks = GetFilterSuggestions(inputBox.Text);
+            RenderTasks();
         }
 
         // Used for auto complete.
@@ -175,14 +187,22 @@ namespace Type
             switch (e.Key)
             {
                 case Key.Enter:
-                    // check if input is empty
-                    // TODO.
+                    // get input text
+                    string inputText = inputBox.Text;
 
-                    ExecuteCommand(inputBox.Text, null);
-                    var tasks = GetTasks(8);
-
+                    if (inputText.StartsWith(COMMAND_PREFIX))
+                    {
+                        Task selectedTask = renderedTasks[0];
+                        ExecuteCommand(inputBox.Text, selectedTask);
+                    }
+                    else
+                    {
+                        // add command
+                        ExecuteCommand(inputBox.Text, null);
+                    }
                     // render tasks
-                    RenderTasks(tasks);
+                    renderedTasks = GetTasks(8);
+                    RenderTasks();
 
                     // clear input box
                     inputBox.Clear();
@@ -192,7 +212,6 @@ namespace Type
                 case Key.Tab:
                     // TODO
                     // autocomplete
-                    
                     break;
 
                 case Key.Escape:
