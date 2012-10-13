@@ -50,7 +50,7 @@ namespace Type
             ui.Show();
         }
 
-        private IList<Task> TextChangeSelector(string partialText)
+        private IList<Task> FilterSuggestions(string partialText)
         {
             return tasks.FilterAll(partialText);
         }
