@@ -6,6 +6,9 @@ Type\obj\**
 AutoCompleteTests\bin\**
 AutoCompleteTests\obj\**
 
+Language\bin\**
+Language\obj\**
+
 TestResults\**
 
 *.suo
