@@ -25,7 +25,14 @@ namespace Type
         // Fetch Tasks from Flatfile
         public void Fetch()
         {
-            // TODO.
+            Dictionary<int, List<string>> allRows = dataStore.Get();
+            foreach (KeyValuePair<int, List<string>> entry in allRows)
+            {
+                int index = entry.Key;
+                List<string> row = entry.Value;
+
+                // TODO.
+            }
         }
 
         // Create Task
@@ -40,6 +47,34 @@ namespace Type
         public Task Get(int id)
         {
             return tasks.Find(task => task.Id == id);
+        }
+
+        // Get All Tasks
+        public IList<Task> Get()
+        {
+            return tasks;
+        }
+
+        // Update Functions
+        // Update rawText
+        public Task UpdateRawText(int id, string str)
+        {
+            // TODO
+            return this.Get(id);
+        }
+
+        // Update done
+        public Task UpdateDone(int id, bool done)
+        {
+            // TODO
+            return this.Get(id);
+        }
+
+        // Update archive
+        public Task UpdateArchive(int id, bool archive)
+        {
+            // TODO
+            return this.Get(id);
         }
 
         // Helper Methods

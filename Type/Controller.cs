@@ -95,11 +95,11 @@ namespace Type
                     switch (command)
                     {
                         case "done":
-                            selectedTask.ToggleDone();
+                            selectedTask.Done = false;
                             break;
 
                         case "archive":
-                            selectedTask.ToggleArchive();
+                            selectedTask.Archive = false;
                             break;
 
                         case "edit":
