@@ -61,20 +61,10 @@ namespace Type
         }
 
         // Task Done
-        public bool Done { get; private set; }
-        public bool ToggleDone()
-        {
-            done = !done;
-            return done;
-        }
+        public bool Done { get; set; }
 
         // Task Archive
-        public bool Archive { get; private set; }
-        public bool ToggleArchive()
-        {
-            archive = !archive;
-            return archive;
-        }
+        public bool Archive { get; set; }
 
         // Other Properties
         public int Id { get; set; }
