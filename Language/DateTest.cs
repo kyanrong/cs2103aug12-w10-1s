@@ -14,7 +14,7 @@ namespace Language
             List<string> l = new List<string>();
             l.Add("This should not match");
             l.Add("This 12 13 13 should not match");
-            l.Add("This 121212 should not match");
+            l.Add("This 12112 should not match");
             l.Add("This January");
 
             foreach (string x in l)
@@ -24,49 +24,56 @@ namespace Language
         }
 
         [TestMethod]
-        public void Dates2()
+        public void dd_m()
         {
             string x = "This should 12/1 match";
             Assert.AreEqual(RegExp.Date(x), "12/1");
         }
 
         [TestMethod]
-        public void Dates3()
+        public void dd_mm()
         {
             string x = "This should 12/11 match";
             Assert.AreEqual(RegExp.Date(x), "12/11");
         }
 
         [TestMethod]
-        public void Dates3_1()
+        public void dd_mm_yy()
         {
             string x = "This should 12/11/11 match";
             Assert.AreEqual(RegExp.Date(x), "12/11/11");
         }
 
         [TestMethod]
-        public void Dates3_2()
+        public void dd_mm_yyyy()
         {
             string x = "This should 12/11/2011 match";
             Assert.AreEqual(RegExp.Date(x), "12/11/2011");
         }
 
         [TestMethod]
-        public void Dates4()
+        public void dd_month()
         {
-            string x = "This should 11 Jan match";
-            Assert.AreEqual(RegExp.Date(x), "11 Jan");
+            string[] months = {
+               "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+               "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+            };
+            foreach (string month in months)
+            {
+                string x = "This should 11 " + month + " match";
+                Assert.AreEqual(RegExp.Date(x), "11 " + month);
+            }
         }
 
         [TestMethod]
-        public void Dates5()
+        public void dd_month_yyyy()
         {
             string x = "This should 12 march 2012 match";
             Assert.AreEqual(RegExp.Date(x), "12 march 2012");
         }
 
         [TestMethod]
-        public void Dates6()
+        public void dd_month_yy()
         {
             string x = "This should 12 march 12 match";
             Assert.AreEqual(RegExp.Date(x), "12 march 12");
