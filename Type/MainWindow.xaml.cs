@@ -27,6 +27,8 @@ namespace Type
         private const string INPUT_WELCOME_TEXT = "start typing...";
         private const string INPUT_NOTASKS_TEXT = "no tasks.";
 
+        private string content;
+
         private ExecuteHandler ExecuteCommand;
         private IAutoComplete tasksAutoComplete;
 
@@ -78,9 +80,18 @@ namespace Type
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             DisplayWelcomeText();
-            string[] suggestions = GetSuggestions(textBox1.Text);
-            RedrawContents(suggestions);
-            DisplayPopUp(suggestions);
+
+            bool continueCheck;
+
+            continueCheck = (isCommand(textBox1.Text));
+            int spIndex = getSpIndex(textBox1.Text);
+
+            if (continueCheck)
+            {               
+                content = getMessage(spIndex, textBox1.Text);
+                string[] suggestions = GetSuggestions(content);
+                RedrawContents(suggestions);
+            }
         }
 
         private void MoveCursorToEndOfWord()
@@ -97,20 +108,29 @@ namespace Type
 
         private void RedrawContents(string[] suggestions)
         {
-            listBox2.ItemsSource = suggestions;
+            listBox1.ItemsSource = suggestions;
         }
 
-        private void DisplayPopUp(string[] suggestions)
+        private bool isCommand(string input)
         {
-            if (suggestions.Length == 0 || textBox1.Text == "")
+            if (input.StartsWith(COMMAND_PREFIX))
             {
-                popUp.IsOpen = false;
+                return true;
             }
             else
             {
-                popUp.IsOpen = true;
+                return false;
             }
-            
+        }
+
+        private int getSpIndex(string input)
+        {
+            return input.IndexOf(" ");
+        }
+
+        private string getMessage(int spIndex, string input)
+        {
+            return input.Substring(spIndex + 1);
         }
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
@@ -125,7 +145,7 @@ namespace Type
                     break;
 
                 case Key.Tab:
-                    string completedQuery = tasksAutoComplete.CompleteToCommonPrefix(textBox1.Text);
+                    string completedQuery = tasksAutoComplete.CompleteToCommonPrefix(content);
                     textBox1.Text += completedQuery;
                     MoveCursorToEndOfWord();
                     break;
