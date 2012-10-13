@@ -9,10 +9,18 @@ namespace Language
     public class DateTest
     {
         [TestMethod]
-        public void Dates1()
+        public void NegativeTests()
         {
-            string x = "This should not match";
-            Assert.AreEqual(RegExp.Date(x), string.Empty);
+            List<string> l = new List<string>();
+            l.Add("This should not match");
+            l.Add("This 12 13 13 should not match");
+            l.Add("This 121212 should not match");
+            l.Add("This January");
+
+            foreach (string x in l)
+            {
+                Assert.AreEqual(RegExp.Date(x), string.Empty);
+            }
         }
 
         [TestMethod]
