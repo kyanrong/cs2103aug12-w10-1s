@@ -22,6 +22,7 @@ namespace Type
         private const uint COMBINATION_TRIGGER = 0x20;
         private const string FIND_NOT_FOUND = "no matches found";
         private const string FIND_AMBIGIOUS = "more than one match found";
+        private const string[] COMMANDS_ACCEPTED = { "done", "archive", "edit" };
 
         private GlobalKeyCombinationHook globalHook;
 
@@ -29,6 +30,8 @@ namespace Type
 
         private List<Task> tasks;
         private AutoComplete tasksAutoComplete;
+
+        private AutoComplete acceptedCommands;
 
         private enum FindTaskResult
         {
@@ -44,8 +47,9 @@ namespace Type
             //hook. Messing up the sequence may result in race conditions.
             tasks = new List<Task>();
             tasksAutoComplete = new AutoComplete();
+            acceptedCommands = new AutoComplete(COMMANDS_ACCEPTED);
 
-            ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetAutoCompleteReference);
+            ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetAutoCompleteReference, GetAcceptedCommandsReference);
 
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
@@ -157,6 +161,11 @@ namespace Type
         private IAutoComplete GetAutoCompleteReference()
         {
             return tasksAutoComplete;
+        }
+
+        private IAutoComplete GetAcceptedCommandsReference()
+        {
+            return acceptedCommands;
         }
     }
 }
