@@ -118,6 +118,13 @@ namespace Type
             redrawHandler(tasks.AsReadOnly(), msgCode, msg);
         }
 
+        /// <summary>
+        /// Gets the handle of a task based on its raw text.
+        /// </summary>
+        /// <param name="rawText">Raw text search key.</param>
+        /// <returns>A Tuple containing the find result, and the handle of the task if it is found.
+        /// If there is an ambiguous match, the handle of the first task matched is returned.
+        /// If there are no matches, a null value is returned.</returns>
         private Tuple<FindTaskResult, Task> FindTaskByText(string rawText)
         {
             int querySize;
@@ -143,6 +150,13 @@ namespace Type
             return new Tuple<FindTaskResult, Task>(queryStatus, result);
         }
 
+        /// <summary>
+        /// Builds a list of tasks to display based on the search criteria.
+        /// If a list of hash tags is specified in tags, the return value will contain only tasks that match at least one of the specified hash tags.
+        /// </summary>
+        /// <param name="count">Number of tasks to get.</param>
+        /// <param name="tags">List of hash tags.</param>
+        /// <returns>Read-only list of tasks to display.</returns>
         private IList<Task> GetTasksToDisplay(int count = 5, List<string> tags = null)
         {
             if (tags == null)
