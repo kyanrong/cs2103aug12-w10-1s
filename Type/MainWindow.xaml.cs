@@ -81,6 +81,7 @@ namespace Type
             }
         }
 
+        // For auto-suggesting tasks as each char is typed
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             DisplayWelcomeText();
@@ -110,11 +111,13 @@ namespace Type
             return suggestions;
         }
 
+        // Refreshes listbox1 to show the list of suggestions
         private void RedrawContents(string[] suggestions)
         {
             listBox1.ItemsSource = suggestions;
         }
 
+        // Checks if a command is typed. 
         private bool isCommand(string input)
         {
             if (input.StartsWith(COMMAND_PREFIX))
@@ -127,6 +130,7 @@ namespace Type
             }
         }
 
+        // Gets the index of the first whitespace. 
         private int getSpIndex(string input)
         {
             return input.IndexOf(" ");
