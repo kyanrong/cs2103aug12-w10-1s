@@ -14,9 +14,9 @@ using System.Windows.Shapes;
 
 namespace Type
 {
-    internal delegate IList<Task> FilterSuggestionsCallback(string partialText);
-    internal delegate void ExecuteCommandCallback(string rawText, Task selectedTask);
-    internal delegate IList<Task> GetTasksCallback(int num);
+    public delegate IList<Task> FilterSuggestionsCallback(string partialText);
+    public delegate void ExecuteCommandCallback(string rawText, Task selectedTask);
+    public delegate IList<Task> GetTasksCallback(int num);
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -32,9 +32,13 @@ namespace Type
         private FilterSuggestionsCallback GetFilterSuggestions;
         private GetTasksCallback GetTasks;
 
-        public MainWindow()
+        public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
         {
             InitializeComponent();
+
+            this.GetFilterSuggestions = GetFilterSuggestions;
+            this.ExecuteCommand = ExecuteCommand;
+            this.GetTasks = GetTasks;
 
             // focus cursor in input box
             inputBox.Focus();
@@ -44,16 +48,8 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
-            //IList<Task> tasks = GetTasks(8);
-            //RenderTasks(tasks);
-        }
-
-        internal MainWindow setCallbacks(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
-        {
-            this.GetFilterSuggestions = GetFilterSuggestions;
-            this.ExecuteCommand = ExecuteCommand;
-            this.GetTasks = GetTasks;
-            return this;
+            IList<Task> tasks = GetTasks(8);
+            RenderTasks(tasks);
         }
 
         // Input Label
