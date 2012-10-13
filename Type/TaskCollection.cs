@@ -60,7 +60,7 @@ namespace Type
         {
             // to prevent going over the range
             number = number < tasks.Count ? number : tasks.Count; 
-            return tasks.GetRange(skip, skip + number - 1);
+            return tasks.GetRange(skip, skip + number);
         }
 
         // Update Functions
