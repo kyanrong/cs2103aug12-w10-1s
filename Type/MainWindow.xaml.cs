@@ -76,6 +76,10 @@ namespace Type
 
                 TextBlock text = new TextBlock();
                 text.Text = INPUT_NOTASKS_TEXT;
+
+                text.TextAlignment = TextAlignment.Center;
+                text.FontSize = 20;
+
                 noTasksText.Children.Add(text);
 
                 // Append to tasksgrid.
@@ -92,6 +96,9 @@ namespace Type
                     StackPanel taskView = new StackPanel();
                     TextBlock text = new TextBlock();
                     text.Text = task.RawText;
+
+                    text.FontSize = 20;
+
                     taskView.Children.Add(text);
 
                     // append task view to grid view
@@ -168,6 +175,9 @@ namespace Type
             switch (e.Key)
             {
                 case Key.Enter:
+                    // check if input is empty
+                    // TODO.
+
                     ExecuteCommand(inputBox.Text, null);
                     var tasks = GetTasks(8);
 
