@@ -20,7 +20,15 @@ namespace Type
         private DateTime start;
         private DateTime end;
         private List<string> tags;
-        private List<Tuple<string, int>> tokens;
+        
+        // Parsed Types
+        private static enum types {
+            String,
+            Hashtag,
+            Datetime
+        };
+
+        private List<Tuple<string, types>> tokens;
 
         // Constructor
         public Task(string rawText)
@@ -36,7 +44,20 @@ namespace Type
            this.archive = false;
 
            // parse the input
+           this.parse();
+        }
 
+        private void parse()
+        {
+            List<Tuple<string, types>> result = new List<Tuple<string, types>>();
+
+            // TMP.
+            // TODO.
+            Tuple<string, types> t = Tuple.Create(this.rawText, types.String);
+            result.Add(t);
+            
+            // Set tokens
+            this.tokens = result;
         }
 
         public bool Done
@@ -63,7 +84,7 @@ namespace Type
         {
             get { return tags.AsReadOnly(); }
         }
-        public IList<Tuple<string, int>> Tokens
+        public IList<Tuple<string, types>> Tokens
         {
             get { return tokens.AsReadOnly(); }
         }
@@ -78,7 +99,6 @@ namespace Type
 
         public override string ToString()
         {
-            //@civics, return the name of the task
             return rawText;
         }
     }
