@@ -16,6 +16,7 @@ namespace Type
 {
     internal delegate IList<Task> FilterSuggestionsCallback(string partialText);
     internal delegate IList<Task> ExecuteCommandCallback(string rawText, Task selectedTask);
+    internal delegate IList<Task> GetTasksCallback(int num);
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -27,64 +28,77 @@ namespace Type
         private const string INPUT_WELCOME_TEXT = "start typing...";
         private const string INPUT_NOTASKS_TEXT = "no tasks.";
 
-        private string content;
-
         private ExecuteCommandCallback ExecuteCommand;
         private FilterSuggestionsCallback GetFilterSuggestions;
+        private GetTasksCallback GetTasks;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            textBox1.Focus();
+            // focus cursor in input box
+            inputBox.Focus();
+
+            // display input label
+            DisplayInputLabel();
         }
 
-        internal MainWindow setCallbacks(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand)
+        internal MainWindow setCallbacks(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
         {
             this.GetFilterSuggestions = GetFilterSuggestions;
             this.ExecuteCommand = ExecuteCommand;
+            this.GetTasks = GetTasks;
             return this;
         }
 
-        private void DisplayWelcomeText()
+        // Input Label
+        private void DisplayInputLabel()
         {
-            if (textBox1.Text.Trim() == "")
+            if (inputBox.Text.Trim() == "")
             {
-                label2.Content = INPUT_WELCOME_TEXT;
+                inputBoxLabel.Content = INPUT_WELCOME_TEXT;
             }
             else
             {
-                label2.Content = "";
+                inputBoxLabel.Content = "";
             }
         }
 
-        ////@yanrong You can decide what to do with msg based on msgCode
-        //// Refreshes listbox1 to display the list of tasks 
-        //private void ExecuteResultCallback(IList<Task> tasks, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null)
-        //{
-        //    DisplayNoTasksText(tasks);
-
-        //    DecideWhatToDo(msgCode, msg);
-
-        //    listBox1.ItemsSource = tasks;
-        //} 
-
-        private void DisplayNoTasksText(IList<Task> tasks)
+        // Render List of Tasks
+        private void RenderTasks(IList<Task> Tasks)
         {
-            if (tasks.Count == 0)
+            tasksGrid.Children.Clear();
+            if (Tasks.Count == 0)
             {
-                label1.Content = INPUT_NOTASKS_TEXT;
+                // display no tasks text.
+                StackPanel noTasksText = new StackPanel();
+
+                TextBlock text = new TextBlock();
+                text.Text = INPUT_NOTASKS_TEXT;
+                noTasksText.Children.Add(text);
+
+                // Append to tasksgrid.
+                tasksGrid.Children.Add(noTasksText);
             }
             else
             {
-                label1.Content = "";
+                // loop over each task and create task view
+                // append each to tasks grid
+                foreach (Task task in Tasks)
+                {
+                    //TODO
+                    // create single stacked panel w/ info
+                    StackPanel taskView = new StackPanel();
+
+                    tasksGrid.Children.Add(taskView);
+                }
             }
         }
 
         // For auto-suggesting tasks as each char is typed
-        private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
+        private void InputBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            DisplayWelcomeText();
+            DisplayInputLabel();
 
             //bool continueCheck = (isCommand(textBox1.Text));
            
@@ -99,7 +113,7 @@ namespace Type
 
         private void MoveCursorToEndOfWord()
         {
-            textBox1.Select(textBox1.Text.Length, 0);
+            inputBox.Select(inputBox.Text.Length, 0);
         }
 
         //private string[] GetSuggestions(string input)
@@ -112,7 +126,7 @@ namespace Type
         // Refreshes listbox1 to show the list of suggestions
         private void RedrawContents(string[] suggestions)
         {
-            listBox1.ItemsSource = suggestions;
+            // listBox1.ItemsSource = suggestions;
         }
 
         // Checks if a command is typed. 
