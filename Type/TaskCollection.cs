@@ -8,21 +8,24 @@ namespace Type
     public class TaskCollection
     {
         private List<Task> tasks;
+        private DataStore dataStore;
 
         // Constructor
         public TaskCollection()
         {
-            // load flat file into memory.
-            this.Fetch();
-
             // instantiate task models
             tasks = new List<Task>();
+            // create data store
+            dataStore = new DataStore("taskcollection.csv");
+
+            // load flat file into memory.
+            this.Fetch();
         }
 
         // Fetch Tasks from Flatfile
         public void Fetch()
         {
-            
+            // TODO.
         }
 
         // Create Task

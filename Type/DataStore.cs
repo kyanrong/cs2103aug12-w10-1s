@@ -18,8 +18,17 @@ namespace Type
             this.path = fileName;
 
             // if file exists. read file and load contents
-            // update nextIndex
-            // TODO
+            nextIndex = 1;
+            if (File.Exists(path))
+            {
+                Dictionary<int, List<string>> allRows = this.Get();
+                foreach (int index in allRows.Keys)
+                {
+                    // update index
+                    nextIndex = index;
+                }
+
+            }
         }
 
         // Insert New Row to file
