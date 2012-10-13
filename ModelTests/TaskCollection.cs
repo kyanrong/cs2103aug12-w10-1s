@@ -9,10 +9,10 @@ using Type;
 namespace ModelTests
 {
     [TestClass]
-    public class ModelTests
+    public class TaskCollection
     {
         [TestMethod]
-        public void TaskCollection()
+        public void FilterAll()
         {
             // Create Task Collection
             TaskCollection tc = new TaskCollection();
@@ -20,7 +20,7 @@ namespace ModelTests
             tc.Create("This is another task");
             tc.Create("Not another task");
 
-            List<Type.Task> result = tc.filter("This");
+            List<Type.Task> result = tc.filterAll("This");
 
             // Expected
             Assert.AreEqual(result.Count, 2);
