@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Language
 {
-    class RegExp
+    public class RegExp
     {
         public static List<string> HashTags(string input)
         {
