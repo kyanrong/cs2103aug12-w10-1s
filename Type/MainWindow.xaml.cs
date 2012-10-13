@@ -59,9 +59,13 @@ namespace Type
         }
 
         //@yanrong You can decide what to do with msg based on msgCode
+        // Refreshes listbox1 to display the list of tasks 
         private void ExecuteResultCallback(IList<Task> tasks, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null)
         {
             DisplayNoTasksText(tasks);
+
+            DecideWhatToDo(msgCode, msg);
+
             listBox1.ItemsSource = tasks;
         } 
 
@@ -131,6 +135,24 @@ namespace Type
         private string getMessage(int spIndex, string input)
         {
             return input.Substring(spIndex + 1);
+        }
+
+        private void DecideWhatToDo(UIRedrawMsgCode msgCode, string msg)
+        {
+            if (msgCode == UIRedrawMsgCode.EDITED_TEXT)
+            {
+                textBox1.Text = msg;
+            }
+            else if(msgCode == UIRedrawMsgCode.WARNING)
+            {
+
+            }
+            else if (msgCode == UIRedrawMsgCode.ERROR)
+            {
+            }
+            else
+            {
+            }
         }
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
