@@ -13,9 +13,16 @@ namespace Type
         public TaskCollection()
         {
             // load flat file into memory.
+            this.Fetch();
 
             // instantiate task models
             tasks = new List<Task>();
+        }
+
+        // Fetch Tasks from Flatfile
+        public void Fetch()
+        {
+            
         }
 
         // Create Task
@@ -24,6 +31,12 @@ namespace Type
             Task t = new Task(input);
             tasks.Add(t);
             return t;
+        }
+
+        // Get Task
+        public Task Get(int id)
+        {
+            return tasks.Find(task => task.Id == id);
         }
 
         // Helper Methods
