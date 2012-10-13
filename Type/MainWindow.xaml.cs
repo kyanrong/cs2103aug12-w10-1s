@@ -148,10 +148,13 @@ namespace Type
             }
             else if(msgCode == UIRedrawMsgCode.WARNING)
             {
-
+                popUp.IsOpen = true;
+                textBlock1.Text = msg;
             }
             else if (msgCode == UIRedrawMsgCode.ERROR)
             {
+                popUp.IsOpen = true;
+                textBlock1.Text = msg;
             }
             else
             {
