@@ -18,6 +18,7 @@ namespace ModelTests
             TaskCollection tc = new TaskCollection();
             tc.Create("This is a task");
             tc.Create("This is another task");
+            tc.Create("Not another task");
 
             List<Type.Task> result = tc.filter("This");
 

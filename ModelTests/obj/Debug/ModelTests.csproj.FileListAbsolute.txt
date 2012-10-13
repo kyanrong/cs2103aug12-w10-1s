@@ -1,0 +1,7 @@
+C:\Users\Michael\Desktop\cs2103aug12-w10-1s\ModelTests\obj\Debug\ModelTests.csprojResolveAssemblyReference.cache
+C:\Users\Michael\Desktop\cs2103aug12-w10-1s\ModelTests\bin\Debug\ModelTests.dll
+C:\Users\Michael\Desktop\cs2103aug12-w10-1s\ModelTests\bin\Debug\ModelTests.pdb
+C:\Users\Michael\Desktop\cs2103aug12-w10-1s\ModelTests\bin\Debug\Type.exe
+C:\Users\Michael\Desktop\cs2103aug12-w10-1s\ModelTests\bin\Debug\Type.pdb
+C:\Users\Michael\Desktop\cs2103aug12-w10-1s\ModelTests\obj\Debug\ModelTests.dll
+C:\Users\Michael\Desktop\cs2103aug12-w10-1s\ModelTests\obj\Debug\ModelTests.pdb
