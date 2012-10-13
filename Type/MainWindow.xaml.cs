@@ -41,11 +41,6 @@ namespace Type
 
             // display input label
             DisplayInputLabel();
-
-            // bootstrap tasks
-            // TODO. abstract this number.
-            //IList<Task> tasks = GetTasks(8);
-            //RenderTasks(tasks);
         }
 
         internal MainWindow setCallbacks(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
@@ -53,6 +48,11 @@ namespace Type
             this.GetFilterSuggestions = GetFilterSuggestions;
             this.ExecuteCommand = ExecuteCommand;
             this.GetTasks = GetTasks;
+
+            // Bootstrap tasks
+            IList<Task> tasks = GetTasks(8);
+            RenderTasks(tasks);
+
             return this;
         }
 
@@ -80,6 +80,10 @@ namespace Type
 
                 TextBlock text = new TextBlock();
                 text.Text = INPUT_NOTASKS_TEXT;
+
+                text.TextAlignment = TextAlignment.Center;
+                text.FontSize = 20;
+
                 noTasksText.Children.Add(text);
 
                 // Append to tasksgrid.
@@ -89,13 +93,21 @@ namespace Type
             {
                 // loop over each task and create task view
                 // append each to tasks grid
+                int offset = 0;
                 foreach (Task task in Tasks)
                 {
                     //TODO
                     // create single stacked panel w/ info
                     StackPanel taskView = new StackPanel();
+
+                    // style taskview
+                    taskView.Orientation = Orientation.Vertical;
+
                     TextBlock text = new TextBlock();
                     text.Text = task.RawText;
+
+                    text.FontSize = 20;
+
                     taskView.Children.Add(text);
 
                     // append task view to grid view
@@ -172,6 +184,9 @@ namespace Type
             switch (e.Key)
             {
                 case Key.Enter:
+                    // check if input is empty
+                    // TODO.
+
                     ExecuteCommand(inputBox.Text, null);
                     var tasks = GetTasks(8);
 
