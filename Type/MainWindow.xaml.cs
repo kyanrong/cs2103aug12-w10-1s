@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 namespace Type
 {
     internal delegate IList<Task> FilterSuggestionsCallback(string partialText);
-    internal delegate IList<Task> ExecuteCommandCallback(string rawText, Task selectedTask);
+    internal delegate void ExecuteCommandCallback(string rawText, Task selectedTask);
     internal delegate IList<Task> GetTasksCallback(int num);
 
     /// <summary>
@@ -172,8 +172,9 @@ namespace Type
             switch (e.Key)
             {
                 case Key.Enter:
-                    IList<Task> tasks = ExecuteCommand(inputBox.Text, null);
-                    
+                    ExecuteCommand(inputBox.Text, null);
+                    var tasks = GetTasks(8);
+
                     // render tasks
                     RenderTasks(tasks);
 
