@@ -23,8 +23,10 @@ namespace Type
         }
 
         // Fetch Tasks from Flatfile
-        public void Fetch()
+        public IList<Task> Fetch()
         {
+            throw new NotImplementedException();
+
             Dictionary<int, List<string>> allRows = dataStore.Get();
             foreach (KeyValuePair<int, List<string>> entry in allRows)
             {
@@ -79,11 +81,11 @@ namespace Type
 
         // Helper Methods
         // Filter All
-        public List<Task> filterAll(string input)
+        public IList<Task> filterAll(string input)
         {
             return tasks.FindAll(
                 task => task.RawText.StartsWith(input)
-            );
+            ).AsReadOnly();
         }
     }
 }
