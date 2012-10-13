@@ -15,16 +15,18 @@ namespace Type
             // load flat file into memory.
 
             // instantiate task models
-
+            tasks = new List<Task>();
         }
 
-        // Create
+        // Create Task
         public Task Create(string input)
         {
             Task t = new Task(input);
             tasks.Add(t);
             return t;
         }
+
+
 
         // Helper Methods
         // Filter
