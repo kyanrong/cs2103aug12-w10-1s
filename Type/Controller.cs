@@ -149,7 +149,7 @@ namespace Type
                 }
                 else
                 {
-                    cmd = input.Substring(1, spIndex);
+                    cmd = input.Substring(1, spIndex - 1);
                     input = input.Substring(spIndex + 1);
                 }
             }
