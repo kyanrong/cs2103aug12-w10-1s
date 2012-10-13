@@ -44,8 +44,8 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
-            IList<Task> tasks = GetTasks(8);
-            RenderTasks(tasks);
+            //IList<Task> tasks = GetTasks(8);
+            //RenderTasks(tasks);
         }
 
         internal MainWindow setCallbacks(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
@@ -177,6 +177,9 @@ namespace Type
 
                     // render tasks
                     RenderTasks(tasks);
+
+                    // clear input box
+                    inputBox.Clear();
 
                     break;
 

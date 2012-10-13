@@ -59,8 +59,8 @@ namespace Type
         public IList<Task> Get(int number, int skip = 0)
         {
             // to prevent going over the range
-            number = number > tasks.Count ? number : tasks.Count; 
-            return tasks.GetRange(skip, number);
+            number = number < tasks.Count ? number : tasks.Count; 
+            return tasks.GetRange(skip, skip + number - 1);
         }
 
         // Update Functions
