@@ -34,7 +34,7 @@ namespace Type
             tasks = new TaskCollection();
             //tasks = new List<Task>();
 
-            ui = new MainWindow();
+            ui = (new MainWindow()).setCallbacks(FilterSuggestions, ExecuteCommand, GetTasks);
 
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
