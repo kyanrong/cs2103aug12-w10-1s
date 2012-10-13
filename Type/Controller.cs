@@ -22,7 +22,7 @@ namespace Type
         private const uint COMBINATION_TRIGGER = 0x20;
         private const string FIND_NOT_FOUND = "no matches found";
         private const string FIND_AMBIGIOUS = "more than one match found";
-        private const string[] COMMANDS_ACCEPTED = { "done", "archive", "edit" };
+        private string[] COMMANDS_ACCEPTED = { "done", "archive", "edit" };
 
         private GlobalKeyCombinationHook globalHook;
 
