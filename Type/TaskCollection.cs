@@ -29,8 +29,8 @@ namespace Type
 
 
         // Helper Methods
-        // Filter
-        public List<Task> filter(string input)
+        // Filter All
+        public List<Task> filterAll(string input)
         {
             return tasks.FindAll(
                 task => task.RawText.StartsWith(input)
