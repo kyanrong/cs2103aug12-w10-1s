@@ -49,7 +49,8 @@ namespace Type
 
         private IList<Task> FilterSuggestions(string partialText)
         {
-            return tasks.FilterAll(partialText);
+            var parseResult = ParseCommand(partialText);
+            return tasks.FilterAll(parseResult.Item2);
         }
 
         private IList<Task> GetTasks(int num)
@@ -131,8 +132,16 @@ namespace Type
             if (input.StartsWith(COMMAND_TOKEN))
             {
                 int spIndex = input.IndexOf(' ');
-                cmd = input.Substring(1, spIndex);
-                input = input.Substring(spIndex + 1);
+                if (spIndex < 0)
+                {
+                    cmd = "INVALID";
+                    input = "";
+                }
+                else
+                {
+                    cmd = input.Substring(1, spIndex);
+                    input = input.Substring(spIndex + 1);
+                }
             }
             else
             {
