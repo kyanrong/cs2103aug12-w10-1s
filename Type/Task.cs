@@ -60,26 +60,28 @@ namespace Type
             this.tokens = result;
         }
 
-        public bool Done
+        // Task Done
+        public bool Done { get; private set; }
+        public bool ToggleDone()
         {
-            get { return done; }
-            set { done = value; }
-        }
-        public bool Archive 
-        {
-            get { return archive; }
-            set { archive = value; }
+            this.done = !this.done;
+            return this.done;
         }
 
-        // only getters
-        public DateTime Start
+        // Task Archive
+        public bool Archive { get; private set; }
+        public bool ToggleArchive()
         {
-            get { return start; }
+            this.archive = !this.archive;
+            return this.archive;
         }
-        public DateTime End
-        {
-            get { return end; }
-        }
+
+        // Other Properties
+        public string RawText { get; private set; }
+        public int Id { get; set; }
+        public DateTime Start { get; private set; }
+        public DateTime End { get; private set; }
+        
         public IList<string> Tags
         {
             get { return tags.AsReadOnly(); }
@@ -87,19 +89,6 @@ namespace Type
         public IList<Tuple<string, ParsedType>> Tokens
         {
             get { return tokens.AsReadOnly(); }
-        }
-        public string RawText
-        {
-            get { return rawText; }
-        }
-        public int Id
-        {
-            get { return id; }
-        }
-
-        public override string ToString()
-        {
-            return rawText;
         }
     }
 }
