@@ -22,11 +22,11 @@ namespace Type
         private List<string> tags;
         
         // Parsed Types
-        private static enum types {
-            String,
-            Hashtag,
-            Datetime
-        };
+        private static enum ParsedType {
+            STRING,
+            HASHTAG,
+            DATETIME
+        }
 
         private List<Tuple<string, types>> tokens;
 
