@@ -7,39 +7,23 @@ using System.Windows.Input;
 
 namespace Type
 {
-    internal delegate void UIRedrawHandler(IList<Task> updateData, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null);
-    internal enum UIRedrawMsgCode
-    {
-        EMPTY,
-        EDITED_TEXT,
-        ERROR,
-        WARNING
-    }
-
     public class Controller
     {
         private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
         private const uint COMBINATION_TRIGGER = 0x20;
         private const string FIND_NOT_FOUND = "no matches found";
         private const string FIND_AMBIGIOUS = "more than one match found";
-        private string[] COMMANDS_ACCEPTED = { "done", "archive", "edit" };
+        private const int UI_NUM_DISPLAY = 5;
+        private const string COMMAND_TOKEN = ":";
 
         private GlobalKeyCombinationHook globalHook;
 
         private MainWindow ui;
 
         private TaskCollection tasks;
-        //private List<Task> tasks;
-        private AutoComplete tasksAutoComplete;
 
-        private AutoComplete acceptedCommands;
-
-        private enum FindTaskResult
-        {
-            NOT_FOUND,
-            AMBIGUOUS,
-            FOUND
-        }
+        private bool editMode;
+        private Task editTask;
 
         public Controller()
         {
@@ -49,10 +33,8 @@ namespace Type
 
             tasks = new TaskCollection();
             //tasks = new List<Task>();
-            tasksAutoComplete = new AutoComplete();
-            acceptedCommands = new AutoComplete(COMMANDS_ACCEPTED);
 
-            ui = (new MainWindow()).setCallbacks(ExecuteCommand, GetAutoCompleteReference, GetAcceptedCommandsReference);
+            ui = new MainWindow();
 
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
@@ -68,123 +50,46 @@ namespace Type
             ui.Show();
         }
 
-        internal void ExecuteCommand(string command, string content, UIRedrawHandler redrawHandler)
+        private IList<Task> TextChangeSelector(string partialText)
         {
-            UIRedrawMsgCode msgCode = 0;
-            string msg = null;
+            return tasks.FilterAll(partialText);
+        }
 
-            if (command == "add")
+        private IList<Task> ExecuteCommand(string rawText, Task selected)
+        {
+            var parseResult = ParseCommand(rawText);
+            string cmd = parseResult.Item1;
+            string content = parseResult.Item2;
+
+            if (editMode)
             {
-                tasks.Create(content);
-                tasksAutoComplete.AddSuggestion(content);
+
             }
             else
             {
-                var idResult = FindTaskByText(content);
-                if (idResult.Item1 == FindTaskResult.NOT_FOUND)
-                {
-                    msgCode = UIRedrawMsgCode.ERROR;
-                    msg = FIND_NOT_FOUND;
-                }
-                else
-                {
-                    if (idResult.Item1 == FindTaskResult.AMBIGUOUS)
-                    {
-                        msgCode = UIRedrawMsgCode.WARNING;
-                        msg = FIND_AMBIGIOUS;
-                    }
 
-                    var selectedTask = idResult.Item2;
-                    switch (command)
-                    {
-                        case "done":
-                            tasks.UpdateDone(selectedTask, true);
-                            break;
-
-                        case "archive":
-                            tasks.UpdateArchive(selectedTask, true);
-                            break;
-
-                        case "edit":
-                            //Remove the original task from the model.
-                            tasks.Remove(selectedTask);
-                            tasksAutoComplete.RemoveSuggestion(selectedTask.RawText);
-
-                            //Return the text to the UI for editing.
-                            msgCode = UIRedrawMsgCode.EDITED_TEXT;
-                            msg = selectedTask.RawText;
-                            break;
-                    }
-                }
             }
 
-            redrawHandler(tasks.AsReadOnly(), msgCode, msg);
+            return tasks.Get(UI_NUM_DISPLAY);
         }
 
-        /// <summary>
-        /// Gets the handle of a task based on its raw text.
-        /// </summary>
-        /// <param name="rawText">Raw text search key.</param>
-        /// <returns>A Tuple containing the find result, and the handle of the task if it is found.
-        /// If there is an ambiguous match, the handle of the first task matched is returned.
-        /// If there are no matches, a null value is returned.</returns>
-        private Tuple<FindTaskResult, int> FindTaskByText(string rawText)
+
+
+        private Tuple<string, string> ParseCommand(string input)
         {
-            FindTaskResult queryStatus;
-            Task result = null;
-
-            var resultSet = tasks.filterAll(rawText);
-            if (resultSet.Count == 0)
+            string cmd;
+            if (input.StartsWith(COMMAND_TOKEN))
             {
-                queryStatus = FindTaskResult.NOT_FOUND;
-            }
-            else 
-            {
-                queryStatus = FindTaskResult.FOUND;
-
-                if (resultSet.Count > 1)
-                {
-                    queryStatus = FindTaskResult.AMBIGUOUS;
-                }
-
-                result = resultSet[0].Id;
-            }
-
-            return new Tuple<FindTaskResult, int>(queryStatus, result);
-        }
-
-        /// <summary>
-        /// Builds a list of tasks to display based on the search criteria.
-        /// If a list of hash tags is specified in tags, the return value will contain only tasks that match at least one of the specified hash tags.
-        /// </summary>
-        /// <param name="count">Number of tasks to get.</param>
-        /// <param name="tags">List of hash tags.</param>
-        /// <returns>Read-only list of tasks to display.</returns>
-        private IList<Task> GetTasksToDisplay(int count = 5, List<string> tags = null)
-        {
-            if (tags == null)
-            {
-                return (tasks.Take(count).ToList().AsReadOnly());
+                int spIndex = input.IndexOf(' ');
+                cmd = input.Substring(1, spIndex);
+                input = input.Substring(spIndex + 1);
             }
             else
             {
-                var resultSet = new HashSet<Task>();
-                foreach (var tag in tags)
-                {
-                    resultSet.UnionWith(tasks.Where(t => t.Tags.Contains(tag)));
-                }
-                return (resultSet.Take(count).ToList().AsReadOnly());
+                cmd = "add";
             }
-        }
 
-        private IAutoComplete GetAutoCompleteReference()
-        {
-            return tasksAutoComplete;
-        }
-
-        private IAutoComplete GetAcceptedCommandsReference()
-        {
-            return acceptedCommands;
+            return new Tuple<string, string>(cmd, input);
         }
     }
 }
