@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Type
 {
-    class Task
+    public class Task
     {
         // Store's the user's raw input
         private string rawText;

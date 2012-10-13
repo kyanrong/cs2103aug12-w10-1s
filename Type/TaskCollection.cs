@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Type
 {
-    class TaskCollection
+    public class TaskCollection
     {
         private List<Task> tasks;
 
@@ -16,7 +16,23 @@ namespace Type
 
             // instantiate task models
 
+        }
 
+        // Create
+        public Task Create(string input)
+        {
+            Task t = new Task(input);
+            tasks.Add(t);
+            return t;
+        }
+
+        // Helper Methods
+        // Filter
+        public List<Task> filter(string input)
+        {
+            return tasks.FindAll(
+                task => task.RawText.StartsWith(input)
+            );
         }
     }
 }
