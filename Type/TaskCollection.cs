@@ -74,8 +74,9 @@ namespace Type
         // Update done
         public Task UpdateDone(int id, bool done)
         {
-            // TODO
-            return this.GetTask(id);
+            Task t = this.GetTask(id);
+            t.Done = done;
+            return t;
         }
 
         // Update archive

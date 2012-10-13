@@ -123,8 +123,12 @@ namespace Type
             // TODO.
 
             // display filtered tasks
-            renderedTasks = GetFilterSuggestions(inputBox.Text);
-            RenderTasks();
+            IList<Task> filtered = GetFilterSuggestions(inputBox.Text);
+            if (filtered != null)
+            {
+                renderedTasks = filtered;
+                RenderTasks();
+            }
         }
 
         // Used for auto complete.
