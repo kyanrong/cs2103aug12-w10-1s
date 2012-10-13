@@ -196,8 +196,11 @@ namespace Type
 
                     if (inputText.StartsWith(COMMAND_PREFIX))
                     {
-                        Task selectedTask = renderedTasks[0];
-                        ExecuteCommand(inputBox.Text, selectedTask);
+                        if (renderedTasks.Count != 0)
+                        {
+                            Task selectedTask = renderedTasks[0];
+                            ExecuteCommand(inputBox.Text, selectedTask);
+                        }
                     }
                     else
                     {

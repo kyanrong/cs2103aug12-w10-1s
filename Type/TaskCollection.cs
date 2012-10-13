@@ -10,6 +10,8 @@ namespace Type
         private List<Task> tasks;
         private DataStore dataStore;
 
+        private int nextIndex;
+
         // Constructor
         public TaskCollection()
         {
@@ -17,6 +19,9 @@ namespace Type
             tasks = new List<Task>();
             // create data store
             dataStore = new DataStore("taskcollection.csv");
+
+            // HACK
+            nextIndex = 0;
 
             // load flat file into memory.
             this.Fetch();
@@ -39,6 +44,10 @@ namespace Type
         public Task Create(string input)
         {
             Task t = new Task(input);
+            
+            // HACK
+            t.Id = nextIndex++;
+            
             tasks.Add(t);
             return t;
         }
