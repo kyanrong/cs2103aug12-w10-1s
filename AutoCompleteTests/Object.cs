@@ -14,6 +14,16 @@ namespace AutoCompleteTests
         [TestMethod]
         public void CanInstantiate()
         {
+            //Act
+            AutoComplete ac = new AutoComplete();
+
+            //Assert
+            Assert.IsNotNull(ac);
+        }
+
+        [TestMethod]
+        public void CanInstantiateWithInitialDictionary()
+        {
             //Arrange
             string[] dict = { "adolph", "bucket sort", "charlie" };
 
@@ -25,7 +35,17 @@ namespace AutoCompleteTests
         }
 
         [TestMethod]
-        public void DictionaryBuiltSuccessfullyOnConstructor()
+        public void DictionaryEmptyOnEmptyConstructor()
+        {
+            //Act
+            AutoComplete ac = new AutoComplete();
+
+            //Assert
+            Assert.AreEqual(0, ac.DictionarySize);
+        }
+
+        [TestMethod]
+        public void DictionaryBuiltSuccessfullyWithInitialDictionary()
         {
             //Arrange
             string[] dict = { "adolph", "bucket sort", "charlie" };
