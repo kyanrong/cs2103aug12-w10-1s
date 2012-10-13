@@ -22,7 +22,7 @@ namespace Type
         private List<string> tags;
         
         // Parsed Types
-        private static enum ParsedType {
+        public enum ParsedType {
             STRING,
             HASHTAG,
             DATETIME
