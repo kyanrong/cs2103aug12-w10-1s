@@ -74,6 +74,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="TypeFile.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="LocalInstaller.cs" />
     <Compile Include="GlobalKeyCombinationHook.cs" />
