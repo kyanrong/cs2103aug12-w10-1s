@@ -58,6 +58,8 @@ namespace Type
         // Get number of Tasks starting from skip
         public IList<Task> Get(int number, int skip = 0)
         {
+            // to prevent going over the range
+            number = number > tasks.Count ? number : tasks.Count; 
             return tasks.GetRange(skip, number);
         }
 
