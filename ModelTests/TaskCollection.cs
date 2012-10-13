@@ -20,7 +20,7 @@ namespace ModelTests
             tc.Create("This is another task");
             tc.Create("Not another task");
 
-            List<Type.Task> result = tc.FilterAll("This");
+            IList<Type.Task> result = tc.FilterAll("This");
 
             // Expected
             Assert.AreEqual(result.Count, 2);
