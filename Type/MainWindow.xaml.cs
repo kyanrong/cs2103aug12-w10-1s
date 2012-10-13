@@ -14,8 +14,8 @@ using System.Windows.Shapes;
 
 namespace Type
 {
-    internal delegate IList<Task> FilterCallback(string partialText);
-    internal delegate IList<Task> ExecuteCallback(string rawText, Task selectedTask);
+    internal delegate IList<Task> FilterSuggestionsCallback(string partialText);
+    internal delegate IList<Task> ExecuteCommandCallback(string rawText, Task selectedTask);
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -29,8 +29,8 @@ namespace Type
 
         private string content;
 
-        private ExecuteCallback ExecuteCommand;
-        private FilterCallback GetFilterSuggestions;
+        private ExecuteCommandCallback ExecuteCommand;
+        private FilterSuggestionsCallback GetFilterSuggestions;
 
         public MainWindow()
         {
@@ -39,7 +39,7 @@ namespace Type
             textBox1.Focus();
         }
 
-        internal MainWindow setCallbacks(FilterCallback GetFilterSuggestions, ExecuteCallback ExecuteCommand)
+        internal MainWindow setCallbacks(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand)
         {
             this.GetFilterSuggestions = GetFilterSuggestions;
             this.ExecuteCommand = ExecuteCommand;
