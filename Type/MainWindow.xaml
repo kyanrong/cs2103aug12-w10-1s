@@ -7,7 +7,7 @@
             <RowDefinition Height="144*" />
             <RowDefinition Height="167*" />
         </Grid.RowDefinitions>
-        <TextBox Height="36" HorizontalAlignment="Left" Margin="12,12,0,0" Name="inputBox" VerticalAlignment="Top" Width="479" TextChanged="InputBoxTextChanged" KeyUp="textBox1_KeyUp" FontFamily="GillSans" FontSize="20" Padding="3" />
+        <TextBox Height="36" HorizontalAlignment="Left" Margin="12,12,0,0" Name="inputBox" VerticalAlignment="Top" Width="479" TextChanged="InputBoxTextChanged" KeyUp="InputBoxKeyUp" FontFamily="GillSans" FontSize="20" Padding="3" />
         <Label Height="36" HorizontalAlignment="Left" Margin="14,12,0,0" Name="inputBoxLabel" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" />
         <Grid Height="244" HorizontalAlignment="Left" Margin="12,54,0,0" Name="tasksGrid" VerticalAlignment="Top" Width="479" Grid.RowSpan="2" />
     </Grid>
