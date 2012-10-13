@@ -77,10 +77,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="TaskCollection.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="IAutoComplete.cs" />
     <Compile Include="LocalInstaller.cs" />
     <Compile Include="GlobalKeyCombinationHook.cs" />
+    <Compile Include="RegExp.cs" />
     <Compile Include="Task.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
