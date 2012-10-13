@@ -28,7 +28,8 @@ namespace Type
 
         private MainWindow ui;
 
-        private List<Task> tasks;
+        private TaskCollection tasks;
+        //private List<Task> tasks;
         private AutoComplete tasksAutoComplete;
 
         private AutoComplete acceptedCommands;
@@ -45,7 +46,9 @@ namespace Type
             //Sequence is important here. We need to initialize backend storage first,
             //followed by instantiating the UI, and finally, listening on the keyboard
             //hook. Messing up the sequence may result in race conditions.
-            tasks = new List<Task>();
+
+            tasks = new TaskCollection();
+            //tasks = new List<Task>();
             tasksAutoComplete = new AutoComplete();
             acceptedCommands = new AutoComplete(COMMANDS_ACCEPTED);
 
@@ -72,7 +75,7 @@ namespace Type
 
             if (command == "add")
             {
-                tasks.Add(new Task(content));
+                tasks.Create(content);
                 tasksAutoComplete.AddSuggestion(content);
             }
             else
@@ -95,11 +98,11 @@ namespace Type
                     switch (command)
                     {
                         case "done":
-                            selectedTask.Done = false;
+                            tasks.UpdateDone(selectedTask, true);
                             break;
 
                         case "archive":
-                            selectedTask.Archive = false;
+                            tasks.UpdateArchive(selectedTask, true);
                             break;
 
                         case "edit":
@@ -125,13 +128,13 @@ namespace Type
         /// <returns>A Tuple containing the find result, and the handle of the task if it is found.
         /// If there is an ambiguous match, the handle of the first task matched is returned.
         /// If there are no matches, a null value is returned.</returns>
-        private Tuple<FindTaskResult, Task> FindTaskByText(string rawText)
+        private Tuple<FindTaskResult, int> FindTaskByText(string rawText)
         {
-            int querySize;
             FindTaskResult queryStatus;
             Task result = null;
 
-            if ((querySize = tasks.Count(task => task.RawText == rawText)) == 0)
+            var resultSet = tasks.filterAll(rawText);
+            if (resultSet.Count == 0)
             {
                 queryStatus = FindTaskResult.NOT_FOUND;
             }
@@ -139,15 +142,15 @@ namespace Type
             {
                 queryStatus = FindTaskResult.FOUND;
 
-                if (querySize > 1)
+                if (resultSet.Count > 1)
                 {
                     queryStatus = FindTaskResult.AMBIGUOUS;
                 }
 
-                result = tasks.First(task => task.RawText == rawText);
+                result = resultSet[0].Id;
             }
 
-            return new Tuple<FindTaskResult, Task>(queryStatus, result);
+            return new Tuple<FindTaskResult, int>(queryStatus, result);
         }
 
         /// <summary>
