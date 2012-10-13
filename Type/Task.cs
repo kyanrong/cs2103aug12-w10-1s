@@ -28,7 +28,7 @@ namespace Type
             DATETIME
         }
 
-        private List<Tuple<string, types>> tokens;
+        private List<Tuple<string, ParsedType>> tokens;
 
         // Constructor
         public Task(string rawText)
@@ -49,11 +49,11 @@ namespace Type
 
         private void parse()
         {
-            List<Tuple<string, types>> result = new List<Tuple<string, types>>();
+            List<Tuple<string, ParsedType>> result = new List<Tuple<string, ParsedType>>();
 
             // TMP.
             // TODO.
-            Tuple<string, types> t = Tuple.Create(this.rawText, types.String);
+            Tuple<string, ParsedType> t = Tuple.Create(this.rawText, ParsedType.STRING);
             result.Add(t);
             
             // Set tokens
@@ -84,7 +84,7 @@ namespace Type
         {
             get { return tags.AsReadOnly(); }
         }
-        public IList<Tuple<string, types>> Tokens
+        public IList<Tuple<string, ParsedType>> Tokens
         {
             get { return tokens.AsReadOnly(); }
         }
