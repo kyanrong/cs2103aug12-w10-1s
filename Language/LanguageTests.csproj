@@ -49,9 +49,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HashTagsTest.cs" />
-    <Compile Include="RegExp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DateTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Type\Type.csproj">
+      <Project>{C7D40343-6B61-4304-94AA-CDE2536F829D}</Project>
+      <Name>Type</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

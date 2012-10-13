@@ -64,24 +64,35 @@ namespace Type
         public bool Done { get; private set; }
         public bool ToggleDone()
         {
-            this.done = !this.done;
-            return this.done;
+            done = !done;
+            return done;
         }
 
         // Task Archive
         public bool Archive { get; private set; }
         public bool ToggleArchive()
         {
-            this.archive = !this.archive;
-            return this.archive;
+            archive = !archive;
+            return archive;
         }
 
         // Other Properties
-        public string RawText { get; private set; }
         public int Id { get; set; }
         public DateTime Start { get; private set; }
         public DateTime End { get; private set; }
-        
+
+        public string RawText {
+            get { return rawText; }
+            set
+            {
+                // reset new raw text for task
+                this.rawText = value;
+                
+                // re-parse task obj
+                this.parse();
+            }
+        }
+
         public IList<string> Tags
         {
             get { return tags.AsReadOnly(); }
