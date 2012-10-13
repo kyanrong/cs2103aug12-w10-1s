@@ -128,13 +128,15 @@ namespace Type
             {
                 queryStatus = FindTaskResult.NOT_FOUND;
             }
-            else if (querySize > 1)
-            {
-                queryStatus = FindTaskResult.AMBIGUOUS;
-            }
-            else
+            else 
             {
                 queryStatus = FindTaskResult.FOUND;
+
+                if (querySize > 1)
+                {
+                    queryStatus = FindTaskResult.AMBIGUOUS;
+                }
+
                 result = tasks.First(task => task.RawText == rawText);
             }
 
