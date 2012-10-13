@@ -34,22 +34,30 @@ namespace Type
         }
         protected int Add(List<string> task)
         {
+            int nextTaskID = getCurrentTaskID() + 1;
+            string str = processListToString(nextTaskID, task);
+            AppendStringToFile(str);
+            return nextTaskID;
+        }
+        private int getCurrentTaskID()
+        {
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
-           
-            int nextTaskID = int.Parse(sr.ReadLine())+1;
-            
-            List<string> rawStringList = new List<string>();
-            while (!sr.EndOfStream)
-            {
-                rawStringList.Add(sr.ReadLine());
-            }
+
+            int currentTaskID = int.Parse(sr.ReadLine());
+
             fs.Close();
             sr.Close();
-            
-            WriteToFile(nextTaskID, rawStringList);
 
-            return nextTaskID;
+            return currentTaskID;
+        }
+        private void AppendStringToFile(string str)
+        {
+            FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write);
+            StreamWriter sw = new StreamWriter(fs);
+            sw.WriteLine(str);
+            fs.Close();
+            sw.Close();
         }
         private void WriteToFile(int latestTaskID, List<string> list)
         {
