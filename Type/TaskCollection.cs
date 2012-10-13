@@ -46,7 +46,7 @@ namespace Type
         }
 
         // Get Task
-        public Task Get(int id)
+        public Task GetTask(int id)
         {
             return tasks.Find(task => task.Id == id);
         }
@@ -57,26 +57,32 @@ namespace Type
             return tasks;
         }
 
+        // Get number of Tasks starting from skip
+        public IList<Task> Get(int number, int skip = 0)
+        {
+            return tasks.GetRange(skip, number);
+        }
+
         // Update Functions
         // Update rawText
         public Task UpdateRawText(int id, string str)
         {
             // TODO
-            return this.Get(id);
+            return this.GetTask(id);
         }
 
         // Update done
         public Task UpdateDone(int id, bool done)
         {
             // TODO
-            return this.Get(id);
+            return this.GetTask(id);
         }
 
         // Update archive
         public Task UpdateArchive(int id, bool archive)
         {
             // TODO
-            return this.Get(id);
+            return this.GetTask(id);
         }
 
         // Helper Methods
