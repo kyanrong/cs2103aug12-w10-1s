@@ -14,8 +14,8 @@ using System.Windows.Shapes;
 
 namespace Type
 {
-    internal delegate void ExecuteHandler(string command, string content, UIRedrawHandler redrawHandler);
-    internal delegate IAutoComplete AutoCompleteAccessor();
+    internal delegate IList<Task> FilterCallback(string partialText);
+    internal delegate IList<Task> ExecuteCallback(string rawText, Task selectedTask);
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -29,8 +29,8 @@ namespace Type
 
         private string content;
 
-        private ExecuteHandler ExecuteCommand;
-        private IAutoComplete tasksAutoComplete;
+        private ExecuteCallback ExecuteCommand;
+        private FilterCallback GetFilterSuggestions;
 
         public MainWindow()
         {
@@ -39,10 +39,10 @@ namespace Type
             textBox1.Focus();
         }
 
-        internal MainWindow setCallbacks(ExecuteHandler cp, AutoCompleteAccessor getAutoCompleteReference, AutoCompleteAccessor getAcceptedCommands)
+        internal MainWindow setCallbacks(FilterCallback GetFilterSuggestions, ExecuteCallback ExecuteCommand)
         {
-            ExecuteCommand = cp;
-            tasksAutoComplete = getAutoCompleteReference();
+            this.GetFilterSuggestions = GetFilterSuggestions;
+            this.ExecuteCommand = ExecuteCommand;
             return this;
         }
 
@@ -58,16 +58,16 @@ namespace Type
             }
         }
 
-        //@yanrong You can decide what to do with msg based on msgCode
-        // Refreshes listbox1 to display the list of tasks 
-        private void ExecuteResultCallback(IList<Task> tasks, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null)
-        {
-            DisplayNoTasksText(tasks);
+        ////@yanrong You can decide what to do with msg based on msgCode
+        //// Refreshes listbox1 to display the list of tasks 
+        //private void ExecuteResultCallback(IList<Task> tasks, UIRedrawMsgCode msgCode = UIRedrawMsgCode.EMPTY, string msg = null)
+        //{
+        //    DisplayNoTasksText(tasks);
 
-            DecideWhatToDo(msgCode, msg);
+        //    DecideWhatToDo(msgCode, msg);
 
-            listBox1.ItemsSource = tasks;
-        } 
+        //    listBox1.ItemsSource = tasks;
+        //} 
 
         private void DisplayNoTasksText(IList<Task> tasks)
         {
@@ -86,15 +86,15 @@ namespace Type
         {
             DisplayWelcomeText();
 
-            bool continueCheck = (isCommand(textBox1.Text));
+            //bool continueCheck = (isCommand(textBox1.Text));
            
-            if (continueCheck)
-            {   
-                int spIndex = getSpIndex(textBox1.Text);            
-                content = getMessage(spIndex, textBox1.Text);
-                string[] suggestions = GetSuggestions(content);
-                RedrawContents(suggestions);
-            }
+            //if (continueCheck)
+            //{   
+            //    int spIndex = getSpIndex(textBox1.Text);            
+            //    content = getMessage(spIndex, textBox1.Text);
+            //    string[] suggestions = GetSuggestions(content);
+            //    RedrawContents(suggestions);
+            //}
         }
 
         private void MoveCursorToEndOfWord()
@@ -102,12 +102,12 @@ namespace Type
             textBox1.Select(textBox1.Text.Length, 0);
         }
 
-        private string[] GetSuggestions(string input)
-        {
-            string[] suggestions;
-            suggestions = tasksAutoComplete.GetSuggestions(input);
-            return suggestions;
-        }
+        //private string[] GetSuggestions(string input)
+        //{
+        //    string[] suggestions;
+        //    suggestions = tasksAutoComplete.GetSuggestions(input);
+        //    return suggestions;
+        //}
 
         // Refreshes listbox1 to show the list of suggestions
         private void RedrawContents(string[] suggestions)
@@ -116,66 +116,62 @@ namespace Type
         }
 
         // Checks if a command is typed. 
-        private bool isCommand(string input)
-        {
-            if (input.StartsWith(COMMAND_PREFIX))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        //private bool isCommand(string input)
+        //{
+        //    if (input.StartsWith(COMMAND_PREFIX))
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
 
         // Gets the index of the first whitespace. 
-        private int getSpIndex(string input)
-        {
-            return input.IndexOf(" ");
-        }
+        //private int getSpIndex(string input)
+        //{
+        //    return input.IndexOf(" ");
+        //}
 
-        private string getMessage(int spIndex, string input)
-        {
-            return input.Substring(spIndex + 1);
-        }
+        //private string getMessage(int spIndex, string input)
+        //{
+        //    return input.Substring(spIndex + 1);
+        //}
 
-        private void DecideWhatToDo(UIRedrawMsgCode msgCode, string msg)
-        {
-            if (msgCode == UIRedrawMsgCode.EDITED_TEXT)
-            {
-                textBox1.Text = msg;
-                MoveCursorToEndOfWord();
-            }
-            else if(msgCode == UIRedrawMsgCode.WARNING)
-            {
-                popUp.IsOpen = true;
-                textBlock1.Text = msg;
-            }
-            else if (msgCode == UIRedrawMsgCode.ERROR)
-            {
-                popUp.IsOpen = true;
-                textBlock1.Text = msg;
-            }
-            else
-            {
-                textBox1.Clear();
-            }
-        }
+        //private void DecideWhatToDo(UIRedrawMsgCode msgCode, string msg)
+        //{
+        //    if (msgCode == UIRedrawMsgCode.EDITED_TEXT)
+        //    {
+        //        textBox1.Text = msg;
+        //        MoveCursorToEndOfWord();
+        //    }
+        //    else if(msgCode == UIRedrawMsgCode.WARNING)
+        //    {
+        //        popUp.IsOpen = true;
+        //        textBlock1.Text = msg;
+        //    }
+        //    else if (msgCode == UIRedrawMsgCode.ERROR)
+        //    {
+        //        popUp.IsOpen = true;
+        //        textBlock1.Text = msg;
+        //    }
+        //    else
+        //    {
+        //        textBox1.Clear();
+        //    }
+        //}
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
                 case Key.Enter:
-                    //@yanrong Should parse and process the command here.
-                    var tokenizeResult = TokenizeInput(textBox1.Text);
-                    ExecuteCommand(tokenizeResult.Item1, tokenizeResult.Item2, ExecuteResultCallback);
+                    
                     break;
 
                 case Key.Tab:
-                    string completedQuery = tasksAutoComplete.CompleteToCommonPrefix(content);
-                    textBox1.Text += completedQuery;
-                    MoveCursorToEndOfWord();
+                    
                     break;
 
                 case Key.Escape:
@@ -184,23 +180,22 @@ namespace Type
             }
         }
 
-        //@yanrong The functions below were moved from the controller.
-        private Tuple<string, string> TokenizeInput(string userInput)
-        {
-            string command;
+        //private Tuple<string, string> TokenizeInput(string userInput)
+        //{
+        //    string command;
 
-            if (!userInput.StartsWith(COMMAND_PREFIX))
-            {
-                command = "add";
-            }
-            else
-            {
-                var spIndex = userInput.IndexOf(' ');
-                command = userInput.Substring(1, spIndex - 1);
-                userInput = userInput.Substring(spIndex + 1);
-            }
+        //    if (!userInput.StartsWith(COMMAND_PREFIX))
+        //    {
+        //        command = "add";
+        //    }
+        //    else
+        //    {
+        //        var spIndex = userInput.IndexOf(' ');
+        //        command = userInput.Substring(1, spIndex - 1);
+        //        userInput = userInput.Substring(spIndex + 1);
+        //    }
 
-            return new Tuple<string, string>(command, userInput);
-        }
+        //    return new Tuple<string, string>(command, userInput);
+        //}
     }
 }
