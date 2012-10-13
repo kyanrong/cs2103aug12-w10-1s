@@ -67,9 +67,14 @@ namespace Type
         // Get number of Tasks starting from skip
         public IList<Task> Get(int number, int skip = 0)
         {
+            // only return pending tasks
+            List<Task> pending = tasks.FindAll(
+                task => task.Archive == false
+            );
+
             // to prevent going over the range
-            number = number < tasks.Count ? number : tasks.Count; 
-            return tasks.GetRange(skip, skip + number);
+            number = number < pending.Count ? number : pending.Count;
+            return pending.GetRange(skip, skip + number);
         }
 
         // Update Functions
@@ -91,8 +96,9 @@ namespace Type
         // Update archive
         public Task UpdateArchive(int id, bool archive)
         {
-            // TODO
-            return this.GetTask(id);
+            Task t = this.GetTask(id);
+            t.Archive = archive;
+            return t;
         }
 
         // Helper Methods
