@@ -23,10 +23,8 @@ namespace Type
         }
 
         // Fetch Tasks from Flatfile
-        public IList<Task> Fetch()
+        public void Fetch()
         {
-            throw new NotImplementedException();
-
             Dictionary<int, List<string>> allRows = dataStore.Get();
             foreach (KeyValuePair<int, List<string>> entry in allRows)
             {
