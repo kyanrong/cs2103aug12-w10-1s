@@ -84,6 +84,7 @@
     <Compile Include="GlobalKeyCombinationHook.cs" />
     <Compile Include="RegExp.cs" />
     <Compile Include="Task.cs" />
+    <Compile Include="TypeFile.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
