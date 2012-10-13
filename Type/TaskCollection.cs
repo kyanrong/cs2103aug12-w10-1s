@@ -26,8 +26,6 @@ namespace Type
             return t;
         }
 
-
-
         // Helper Methods
         // Filter All
         public List<Task> filterAll(string input)

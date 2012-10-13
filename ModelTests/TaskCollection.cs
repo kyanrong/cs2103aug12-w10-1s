@@ -15,7 +15,7 @@ namespace ModelTests
         public void FilterAll()
         {
             // Create Task Collection
-            TaskCollection tc = new TaskCollection();
+            Type.TaskCollection tc = new Type.TaskCollection();
             tc.Create("This is a task");
             tc.Create("This is another task");
             tc.Create("Not another task");
