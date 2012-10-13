@@ -86,13 +86,11 @@ namespace Type
         {
             DisplayWelcomeText();
 
-            bool continueCheck;
-
-            continueCheck = (isCommand(textBox1.Text));
-            int spIndex = getSpIndex(textBox1.Text);
-
+            bool continueCheck = (isCommand(textBox1.Text));
+           
             if (continueCheck)
-            {               
+            {   
+                int spIndex = getSpIndex(textBox1.Text);            
                 content = getMessage(spIndex, textBox1.Text);
                 string[] suggestions = GetSuggestions(content);
                 RedrawContents(suggestions);
