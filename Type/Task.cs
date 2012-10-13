@@ -101,5 +101,10 @@ namespace Type
         {
             get { return tokens.AsReadOnly(); }
         }
+
+        public override string ToString()
+        {
+            return rawText;
+        }
     }
 }
