@@ -23,19 +23,13 @@ namespace Type
         private TaskCollection tasks;
 
         private bool editMode;
-        private Task editTask;
+        private Task selected;
 
         public Controller()
         {
-            //Sequence is important here. We need to initialize backend storage first,
-            //followed by instantiating the UI, and finally, listening on the keyboard
-            //hook. Messing up the sequence may result in race conditions.
-
+            //Sequence is important here. Messing up the sequence may result in race conditions.
             tasks = new TaskCollection();
-            //tasks = new List<Task>();
-
             ui = new MainWindow(FilterSuggestions, ProcessCommandHandler, GetTasks);
-
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
 
@@ -45,6 +39,9 @@ namespace Type
             globalHook.StopListening();
         }
 
+        /// <summary>
+        /// Displays the UI window. Called when a defined key combination is pressed.
+        /// </summary>
         private void ShowUi()
         {
             ui.Show();
@@ -66,6 +63,8 @@ namespace Type
             string cmd = parseResult.Item1;
             string content = parseResult.Item2;
 
+            //In edit mode, the only valid command is 'add'.
+            //Otherwise, accept all commands.
             if (editMode)
             {
                 EditModeSelectedTask(cmd, content);
@@ -78,6 +77,8 @@ namespace Type
 
         private void ExecuteCommand(string cmd, string content, Task selected)
         {
+            this.selected = selected;
+
             switch (cmd)
             {
                 case "add":
@@ -85,8 +86,9 @@ namespace Type
                     break;
 
                 case "edit":
+                    //The selected task is already stored. We set the editMode flag and return. The next command
+                    //should be an 'add' containing the edited raw text of the selected task.
                     editMode = true;
-                    editTask = selected;
                     break;
 
                 case "done":
@@ -107,15 +109,22 @@ namespace Type
         {
             if (cmd == "add")
             {
-                tasks.UpdateRawText(editTask.Id, content);
+                tasks.UpdateRawText(selected.Id, content);
             }
             else
             {
                 //This should not happen. Handle it somehow.
             }
+
+            //Escape from edit mode after this function call.
             editMode = false;
         }
 
+        /// <summary>
+        /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
+        /// </summary>
+        /// <param name="input">Input to parse. Commands should start with the symbol defined in COMMAND_TOKEN.</param>
+        /// <returns>A Tuple containing the command text and remaining input.</returns>
         private Tuple<string, string> ParseCommand(string input)
         {
             string cmd;
