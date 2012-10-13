@@ -9,6 +9,9 @@ AutoCompleteTests\obj\**
 Language\bin\**
 Language\obj\**
 
+ModelTests\bin\**
+ModelTests\obj\**
+
 TestResults\**
 
 *.suo

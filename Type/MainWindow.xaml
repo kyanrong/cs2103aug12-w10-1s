@@ -4,8 +4,23 @@
         Title="MainWindow" Height="350" Width="525" WindowStartupLocation="CenterScreen" Topmost="True" WindowStyle="None" ShowInTaskbar="False">
     <Grid>
         <TextBox Height="36" HorizontalAlignment="Left" Margin="12,12,0,0" Name="textBox1" VerticalAlignment="Top" Width="479" TextChanged="textBox1_TextChanged" KeyUp="textBox1_KeyUp" FontFamily="GillSans" FontSize="20" Padding="3" />
-        <ListBox MinHeight="48" HorizontalAlignment="Left" Margin="12,54,0,0" Name="listBox1" VerticalAlignment="Top" Width="479" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="18" Padding="8" KeyboardNavigation.TabNavigation="None" ></ListBox>
+        <ListBox MinHeight="48" HorizontalAlignment="Left" Margin="12,54,0,0" Name="listBox1" VerticalAlignment="Top" Width="479" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="18" Padding="8" KeyboardNavigation.TabNavigation="None" >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding RawText}" />
+                        <TextBlock Text=", Done=" />
+                        <TextBlock Text="{Binding Done}" />
+                        <TextBlock Text=", Archive=" />
+                        <TextBlock Text="{Binding Archive}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <Label Height="31" HorizontalAlignment="Left" Margin="206,62,0,0" Name="label1" VerticalAlignment="Top" Width="75" FontFamily="GillSans" FontSize="18" Content="no tasks." />
-        <Label Height="36" HorizontalAlignment="Left" Margin="14,12,0,0" Name="label2" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" />     
+        <Label Height="36" HorizontalAlignment="Left" Margin="14,12,0,0" Name="label2" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" />
+        <Popup Width="479"  PlacementTarget="{Binding ElementName=textBox1}" HorizontalOffset="0" VerticalOffset="0" Name="popUp" IsOpen="False" >
+            <TextBlock FontFamily="GillSans" FontSize="16" FontStyle="Italic" Foreground="#FF656565" Name="textBlock1"></TextBlock>
+        </Popup>
     </Grid>
 </Window>
