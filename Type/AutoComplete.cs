@@ -33,6 +33,7 @@ namespace Type
             }
         }
 
+        //Adds the contents of the specified array to the dictionary.
         private void Load(string[] dictionary)
         {
             foreach (string s in dictionary)
@@ -93,6 +94,7 @@ namespace Type
             return suggestions;
         }
 
+        //Returns a result set of strings that begin with the query (case-sensitive)
         private SortedSet<string> QueryResultSet(string query)
         {
             var results = new SortedSet<String>();
