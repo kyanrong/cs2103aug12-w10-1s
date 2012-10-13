@@ -53,6 +53,9 @@
   <PropertyGroup>
     <StartupObject>Type.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'language|x86'">
+    <OutputPath>bin\x86\language\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -74,10 +77,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="TypeFile.cs" />
+    <Compile Include="TaskCollection.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="IAutoComplete.cs" />
     <Compile Include="LocalInstaller.cs" />
     <Compile Include="GlobalKeyCombinationHook.cs" />
+    <Compile Include="RegExp.cs" />
     <Compile Include="Task.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

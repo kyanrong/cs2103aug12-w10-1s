@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Type
 {
-    class Task
+    public class Task
     {
         // Store's the user's raw input
         private string rawText;
@@ -20,7 +20,15 @@ namespace Type
         private DateTime start;
         private DateTime end;
         private List<string> tags;
-        private List<Tuple<string, int>> tokens;
+        
+        // Parsed Types
+        public enum ParsedType {
+            STRING,
+            HASHTAG,
+            DATETIME
+        }
+
+        private List<Tuple<string, ParsedType>> tokens;
 
         // Constructor
         public Task(string rawText)
@@ -36,50 +44,62 @@ namespace Type
            this.archive = false;
 
            // parse the input
-
+           this.parse();
         }
 
-        public bool Done
+        private void parse()
         {
-            get { return done; }
-            set { done = value; }
-        }
-        public bool Archive 
-        {
-            get { return archive; }
-            set { archive = value; }
+            List<Tuple<string, ParsedType>> result = new List<Tuple<string, ParsedType>>();
+
+            // TMP.
+            // TODO.
+            Tuple<string, ParsedType> t = Tuple.Create(this.rawText, ParsedType.STRING);
+            result.Add(t);
+            
+            // Set tokens
+            this.tokens = result;
         }
 
-        // only getters
-        public DateTime Start
+        // Task Done
+        public bool Done { get; private set; }
+        public bool ToggleDone()
         {
-            get { return start; }
+            done = !done;
+            return done;
         }
-        public DateTime End
+
+        // Task Archive
+        public bool Archive { get; private set; }
+        public bool ToggleArchive()
         {
-            get { return end; }
+            archive = !archive;
+            return archive;
         }
+
+        // Other Properties
+        public int Id { get; set; }
+        public DateTime Start { get; private set; }
+        public DateTime End { get; private set; }
+
+        public string RawText {
+            get { return rawText; }
+            set
+            {
+                // reset new raw text for task
+                this.rawText = value;
+                
+                // re-parse task obj
+                this.parse();
+            }
+        }
+
         public IList<string> Tags
         {
             get { return tags.AsReadOnly(); }
         }
-        public IList<Tuple<string, int>> Tokens
+        public IList<Tuple<string, ParsedType>> Tokens
         {
             get { return tokens.AsReadOnly(); }
-        }
-        public string RawText
-        {
-            get { return rawText; }
-        }
-        public int Id
-        {
-            get { return id; }
-        }
-
-        public override string ToString()
-        {
-            //@civics, return the name of the task
-            return base.ToString();
         }
     }
 }
