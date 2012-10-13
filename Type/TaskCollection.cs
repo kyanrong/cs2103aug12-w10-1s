@@ -81,7 +81,7 @@ namespace Type
 
         // Helper Methods
         // Filter All
-        public IList<Task> filterAll(string input)
+        public IList<Task> FilterAll(string input)
         {
             return tasks.FindAll(
                 task => task.RawText.StartsWith(input)
