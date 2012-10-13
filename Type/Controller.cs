@@ -34,7 +34,7 @@ namespace Type
             tasks = new TaskCollection();
             //tasks = new List<Task>();
 
-            ui = new MainWindow();
+            ui = (new MainWindow()).setCallbacks(FilterSuggestions, ExecuteCommand, GetTasks);
 
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
@@ -55,7 +55,12 @@ namespace Type
             return tasks.FilterAll(partialText);
         }
 
-        private IList<Task> ExecuteCommand(string rawText, Task selected)
+        private IList<Task> GetTasks(int num)
+        {
+            return tasks.Get(num);
+        }
+
+        private void ProcessCommandHandler(string rawText, Task selected)
         {
             var parseResult = ParseCommand(rawText);
             string cmd = parseResult.Item1;
@@ -63,17 +68,53 @@ namespace Type
 
             if (editMode)
             {
-
+                EditModeSelectedTask(cmd, content);
             }
             else
             {
-
+                ExecuteCommand(cmd, content, selected);
             }
-
-            return tasks.Get(UI_NUM_DISPLAY);
         }
 
+        private void ExecuteCommand(string cmd, string content, Task selected)
+        {
+            switch (cmd)
+            {
+                case "add":
+                    tasks.Create(content);
+                    break;
 
+                case "edit":
+                    editMode = true;
+                    editTask = selected;
+                    break;
+
+                case "done":
+                    tasks.UpdateDone(selected.Id, true);
+                    break;
+
+                case "archive":
+                    tasks.UpdateArchive(selected.Id, true);
+                    break;
+
+                default:
+                    //Do nothing.
+                    break;
+            }
+        }
+
+        private void EditModeSelectedTask(string cmd, string content)
+        {
+            if (cmd == "add")
+            {
+                tasks.UpdateRawText(editTask.Id, content);
+            }
+            else
+            {
+                //This should not happen. Handle it somehow.
+            }
+            editMode = false;
+        }
 
         private Tuple<string, string> ParseCommand(string input)
         {
