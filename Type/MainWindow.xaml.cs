@@ -144,16 +144,21 @@ namespace Type
             if (msgCode == UIRedrawMsgCode.EDITED_TEXT)
             {
                 textBox1.Text = msg;
+                MoveCursorToEndOfWord();
             }
             else if(msgCode == UIRedrawMsgCode.WARNING)
             {
-
+                popUp.IsOpen = true;
+                textBlock1.Text = msg;
             }
             else if (msgCode == UIRedrawMsgCode.ERROR)
             {
+                popUp.IsOpen = true;
+                textBlock1.Text = msg;
             }
             else
             {
+                textBox1.Clear();
             }
         }
 
@@ -165,7 +170,6 @@ namespace Type
                     //@yanrong Should parse and process the command here.
                     var tokenizeResult = TokenizeInput(textBox1.Text);
                     ExecuteCommand(tokenizeResult.Item1, tokenizeResult.Item2, ExecuteResultCallback);
-                    textBox1.Clear();
                     break;
 
                 case Key.Tab:
