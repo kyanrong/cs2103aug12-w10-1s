@@ -41,6 +41,11 @@ namespace Type
 
             // display input label
             DisplayInputLabel();
+
+            // bootstrap tasks
+            // TODO. abstract this number.
+            IList<Task> tasks = GetTasks(8);
+            RenderTasks(tasks);
         }
 
         internal MainWindow setCallbacks(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
@@ -89,45 +94,30 @@ namespace Type
                     //TODO
                     // create single stacked panel w/ info
                     StackPanel taskView = new StackPanel();
+                    TextBlock text = new TextBlock();
+                    text.Text = task.RawText;
+                    taskView.Children.Add(text);
 
+                    // append task view to grid view
                     tasksGrid.Children.Add(taskView);
                 }
             }
         }
 
-        // For auto-suggesting tasks as each char is typed
+        // Event Listener when Input Box text changes.
         private void InputBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             DisplayInputLabel();
-
-            //bool continueCheck = (isCommand(textBox1.Text));
-           
-            //if (continueCheck)
-            //{   
-            //    int spIndex = getSpIndex(textBox1.Text);            
-            //    content = getMessage(spIndex, textBox1.Text);
-            //    string[] suggestions = GetSuggestions(content);
-            //    RedrawContents(suggestions);
-            //}
+            
+            // TODO.
         }
 
+        // Used for auto complete.
         private void MoveCursorToEndOfWord()
         {
             inputBox.Select(inputBox.Text.Length, 0);
         }
 
-        //private string[] GetSuggestions(string input)
-        //{
-        //    string[] suggestions;
-        //    suggestions = tasksAutoComplete.GetSuggestions(input);
-        //    return suggestions;
-        //}
-
-        // Refreshes listbox1 to show the list of suggestions
-        private void RedrawContents(string[] suggestions)
-        {
-            // listBox1.ItemsSource = suggestions;
-        }
 
         // Checks if a command is typed. 
         //private bool isCommand(string input)
@@ -176,19 +166,27 @@ namespace Type
         //    }
         //}
 
-        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        // Event Listener, onKeyUp Input Box
+        private void InputBoxKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
                 case Key.Enter:
+                    IList<Task> tasks = ExecuteCommand(inputBox.Text, null);
                     
+                    // render tasks
+                    RenderTasks(tasks);
+
                     break;
 
                 case Key.Tab:
+                    // TODO
+                    // autocomplete
                     
                     break;
 
                 case Key.Escape:
+                    // Hide window
                     this.Hide();
                     break;
             }
