@@ -50,7 +50,17 @@ namespace Type
         private IList<Task> FilterSuggestions(string partialText)
         {
             var parseResult = ParseCommand(partialText);
-            return tasks.FilterAll(parseResult.Item2);
+            string cmd = parseResult.Item1;
+            string content = parseResult.Item2;
+
+            if (cmd == "add")
+            {
+                return null;
+            }
+            else
+            {
+                return tasks.FilterAll(content);
+            }
         }
 
         private IList<Task> GetTasks(int num)
