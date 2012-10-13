@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 namespace Type
 {
     internal delegate void ExecuteHandler(string command, string content, UIRedrawHandler redrawHandler);
-    internal delegate IAutoComplete AutocompleteAccessor();
+    internal delegate IAutoComplete AutoCompleteAccessor();
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -39,7 +39,7 @@ namespace Type
             textBox1.Focus();
         }
 
-        internal MainWindow setCallbacks(ExecuteHandler cp, AutocompleteAccessor getAutoCompleteReference)
+        internal MainWindow setCallbacks(ExecuteHandler cp, AutoCompleteAccessor getAutoCompleteReference, AutoCompleteAccessor getAcceptedCommands)
         {
             ExecuteCommand = cp;
             tasksAutoComplete = getAutoCompleteReference();
