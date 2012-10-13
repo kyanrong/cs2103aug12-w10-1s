@@ -53,6 +53,9 @@
   <PropertyGroup>
     <StartupObject>Type.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'language|x86'">
+    <OutputPath>bin\x86\language\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
