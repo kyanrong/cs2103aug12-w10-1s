@@ -9,19 +9,22 @@ namespace Type
 {
     public class Presenter
     {
+        //Key combination to catch.
         private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
         private const uint COMBINATION_TRIGGER = 0x20;
-        private const string FIND_NOT_FOUND = "no matches found";
-        private const string FIND_AMBIGIOUS = "more than one match found";
-        private const int UI_NUM_DISPLAY = 5;
-        private const string COMMAND_TOKEN = ":";
+
+        //Command strings.
+        private const string CMD_TOKEN = ":";
+        private const string CMD_INVALID = "invalid";
+        private const string CMD_ADD = "add";
+        private const string CMD_EDIT = "edit";
+        private const string CMD_DONE = "done";
+        private const string CMD_ARCHIVE = "archive";
+
 
         private GlobalKeyCombinationHook globalHook;
-
         private MainWindow ui;
-
         private TaskCollection tasks;
-
         private bool editMode;
         private Task selected;
 
@@ -29,7 +32,7 @@ namespace Type
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
             tasks = new TaskCollection();
-            ui = new MainWindow(FilterSuggestions, ProcessCommandHandler, GetTasks);
+            ui = new MainWindow(FilterSuggestions, HandleCommand, GetTasks);
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
 
@@ -42,7 +45,7 @@ namespace Type
         /// <summary>
         /// Displays the UI window. Called when a defined key combination is pressed.
         /// </summary>
-        private void ShowUi()
+        public void ShowUi()
         {
             ui.Show();
         }
@@ -52,13 +55,13 @@ namespace Type
         /// </summary>
         /// <param name="partialText">Prefix to match.</param>
         /// <returns>Read-only list of suggestions as strings.</returns>
-        private IList<Task> FilterSuggestions(string partialText)
+        public IList<Task> FilterSuggestions(string partialText)
         {
-            var parseResult = ParseCommand(partialText);
+            var parseResult = Parse(partialText);
             string cmd = parseResult.Item1;
             string content = parseResult.Item2;
 
-            if (cmd == "add")
+            if (cmd == CMD_ADD)
             {
                 return null;
             }
@@ -73,7 +76,7 @@ namespace Type
         /// </summary>
         /// <param name="num">Number of tasks to retrieve.</param>
         /// <returns>Read-only list of tasks.</returns>
-        private IList<Task> GetTasks(int num)
+        public IList<Task> GetTasks(int num)
         {
             return tasks.Get(num);
         }
@@ -84,9 +87,9 @@ namespace Type
         /// </summary>
         /// <param name="rawText">Text to parse.</param>
         /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
-        private void ProcessCommandHandler(string rawText, Task selected = null)
+        public void HandleCommand(string rawText, Task selected = null)
         {
-            var parseResult = ParseCommand(rawText);
+            var parseResult = Parse(rawText);
             string cmd = parseResult.Item1;
             string content = parseResult.Item2;
 
@@ -98,32 +101,32 @@ namespace Type
             }
             else
             {
-                ExecuteCommand(cmd, content, selected);
+                Execute(cmd, content, selected);
             }
         }
 
-        private void ExecuteCommand(string cmd, string content, Task selected)
+        private void Execute(string cmd, string content, Task selected)
         {
             //Store a reference to the selected task in case we need to use it again in edit mode.
             this.selected = selected;
 
             switch (cmd)
             {
-                case "add":
+                case CMD_ADD:
                     tasks.Create(content);
                     break;
 
-                case "edit":
+                case CMD_EDIT:
                     //The selected task is already stored. We set the editMode flag and return. The next command
                     //should be an 'add' containing the edited raw text of the selected task.
                     editMode = true;
                     break;
 
-                case "done":
+                case CMD_DONE:
                     tasks.UpdateDone(selected.Id, true);
                     break;
 
-                case "archive":
+                case CMD_ARCHIVE:
                     tasks.UpdateArchive(selected.Id, true);
                     break;
 
@@ -135,7 +138,7 @@ namespace Type
 
         private void EditModeSelectedTask(string cmd, string content)
         {
-            if (cmd == "add")
+            if (cmd == CMD_ADD)
             {
                 //The selected task should have been previously stored on the preceeding command.
                 tasks.UpdateRawText(selected.Id, content);
@@ -143,6 +146,7 @@ namespace Type
             else
             {
                 //This should not happen. Handle it somehow.
+                //TODO
             }
 
             //Escape from edit mode after this function call.
@@ -154,15 +158,15 @@ namespace Type
         /// </summary>
         /// <param name="input">Input to parse. Commands should start with the symbol defined in COMMAND_TOKEN.</param>
         /// <returns>A Tuple containing the command text and remaining input.</returns>
-        private Tuple<string, string> ParseCommand(string input)
+        private Tuple<string, string> Parse(string input)
         {
             string cmd;
-            if (input.StartsWith(COMMAND_TOKEN))
+            if (input.StartsWith(CMD_TOKEN))
             {
                 int spIndex = input.IndexOf(' ');
                 if (spIndex < 0)
                 {
-                    cmd = "INVALID";
+                    cmd = CMD_INVALID;
                     input = "";
                 }
                 else
@@ -173,7 +177,7 @@ namespace Type
             }
             else
             {
-                cmd = "add";
+                cmd = CMD_ADD;
             }
 
             return new Tuple<string, string>(cmd, input);
