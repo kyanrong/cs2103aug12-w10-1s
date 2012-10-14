@@ -14,8 +14,26 @@ using System.Windows.Shapes;
 
 namespace Type
 {
+    /// <summary>
+    /// Retrieves a list of suggestions that begin with a specified prefix.
+    /// </summary>
+    /// <param name="partialText">Prefix to match.</param>
+    /// <returns>Read-only list of suggestions as strings.</returns>
     public delegate IList<Task> FilterSuggestionsCallback(string partialText);
-    public delegate void ExecuteCommandCallback(string rawText, Task selectedTask);
+
+    /// <summary>
+    /// Parses a raw string and executes its command, if valid.
+    /// If no valid command is found, this method does nothing.
+    /// </summary>
+    /// <param name="rawText">Text to parse.</param>
+    /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
+    public delegate void ExecuteCommandCallback(string rawText, Task selectedTask = null);
+
+    /// <summary>
+    /// Retrieves a list of tasks to be displayed.
+    /// </summary>
+    /// <param name="num">Number of tasks to retrieve.</param>
+    /// <returns>Read-only list of tasks.</returns>
     public delegate IList<Task> GetTasksCallback(int num);
 
     /// <summary>

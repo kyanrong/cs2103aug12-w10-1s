@@ -47,6 +47,11 @@ namespace Type
             ui.Show();
         }
 
+        /// <summary>
+        /// Retrieves a list of suggestions that begin with a specified prefix.
+        /// </summary>
+        /// <param name="partialText">Prefix to match.</param>
+        /// <returns>Read-only list of suggestions as strings.</returns>
         private IList<Task> FilterSuggestions(string partialText)
         {
             var parseResult = ParseCommand(partialText);
@@ -63,12 +68,23 @@ namespace Type
             }
         }
 
+        /// <summary>
+        /// Retrieves a list of tasks to be displayed.
+        /// </summary>
+        /// <param name="num">Number of tasks to retrieve.</param>
+        /// <returns>Read-only list of tasks.</returns>
         private IList<Task> GetTasks(int num)
         {
             return tasks.Get(num);
         }
 
-        private void ProcessCommandHandler(string rawText, Task selected)
+        /// <summary>
+        /// Parses a raw string and executes its command, if valid.
+        /// If no valid command is found, this method does nothing.
+        /// </summary>
+        /// <param name="rawText">Text to parse.</param>
+        /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
+        private void ProcessCommandHandler(string rawText, Task selected = null)
         {
             var parseResult = ParseCommand(rawText);
             string cmd = parseResult.Item1;
