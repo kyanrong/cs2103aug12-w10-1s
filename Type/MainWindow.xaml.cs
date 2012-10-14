@@ -51,8 +51,6 @@ namespace Type
         private GetTasksCallback GetTasks;
 
         private IList<Task> renderedTasks;
-        private bool editState;
-        private int editIndex;
 
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
         {
