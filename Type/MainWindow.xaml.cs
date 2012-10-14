@@ -83,11 +83,26 @@ namespace Type
 
                 text.TextAlignment = TextAlignment.Center;
                 text.FontSize = 20;
+                text.FontFamily = new FontFamily("GillSans");
+                text.Padding = new Thickness(10);
 
                 noTasksText.Children.Add(text);
 
                 // Append to tasksgrid.
                 tasksGrid.Children.Add(noTasksText);
+
+                //display horizontal blue line below "no tasks" text
+                StackPanel horizontalLine = new StackPanel();
+                Line blueLine = DrawBlueLine();
+                horizontalLine.Children.Add(blueLine);
+                noTasksText.Children.Add(horizontalLine);
+
+                // display horizontal blue line below input box
+                StackPanel topHorizontalLine = new StackPanel();
+                Line topBlueLine = DrawBlueLine();
+                topHorizontalLine.Margin = new Thickness(12, 47, 0, 0);
+                topHorizontalLine.Children.Add(topBlueLine);
+                mainGrid.Children.Add(topHorizontalLine);
             }
             else
             {
@@ -104,15 +119,40 @@ namespace Type
                     if (task.Done)
                     {
                         text.TextDecorations = TextDecorations.Strikethrough;
+                        text.FontStyle = FontStyles.Italic;
+                        text.Foreground = Brushes.SlateGray;
                     }
 
                     text.FontSize = 20;
+                    text.FontFamily = new FontFamily("GillSans");
+                    text.Padding = new Thickness(10);
+                    text.Margin = new Thickness(15, 0, 0, 0);
+
                     taskView.Children.Add(text);
 
                     // append task view to grid view
                     tasksGrid.Children.Add(taskView);
+
+                    // display horizontal blue line after each new line
+                    StackPanel horizontalLine = new StackPanel();
+                    Line blueLine = DrawBlueLine();
+                    horizontalLine.Children.Add(blueLine);
+                    taskView.Children.Add(horizontalLine);
                 }
             }
+
+            // display bottom border
+            StackPanel bottomBorder = new StackPanel();
+            Rectangle dashedLine = DrawDashedLine();
+            bottomBorder.Children.Add(dashedLine);
+            tasksGrid.Children.Add(bottomBorder);
+
+            StackPanel verticalLine = new StackPanel();
+            verticalLine.Orientation = Orientation.Vertical;
+            verticalLine.Margin = new Thickness(25, 12, 0, 0);
+            Line redLine = DrawRedLine();
+            verticalLine.Children.Add(redLine);
+            mainGrid.Children.Add(verticalLine);
         }
 
         // Event Listener when Input Box text changes.
@@ -129,6 +169,46 @@ namespace Type
                 renderedTasks = filtered;
                 RenderTasks();
             }
+        }
+
+        private Line DrawBlueLine()
+        {
+            Line blueLine = new Line();
+
+            blueLine.Stroke = Brushes.SkyBlue;
+            blueLine.StrokeThickness = 0.5;
+            blueLine.X1 = 0;
+            blueLine.Y1 = 0;
+            blueLine.X2 = 479;
+            blueLine.Y2 = 0;
+
+            return blueLine;
+        }
+
+        private Line DrawRedLine()
+        {
+            Line redLine = new Line();
+
+            redLine.Stroke = Brushes.Salmon;
+            redLine.StrokeThickness = 0.5;
+            redLine.X1 = 0;
+            redLine.Y1 = 0;
+            redLine.X2 = 0;
+            redLine.Y2 = 244;
+
+            return redLine;
+        }
+
+        private Rectangle DrawDashedLine()
+        {
+            Rectangle dashedLine = new Rectangle();
+
+            dashedLine.Stroke = Brushes.SandyBrown;
+            dashedLine.StrokeThickness = 1;
+            dashedLine.StrokeDashArray = new DoubleCollection() { 4, 3 };
+            dashedLine.Margin = new Thickness(0, 20, 0, 0);
+
+            return dashedLine;
         }
 
         // Used for auto complete.
