@@ -104,6 +104,7 @@ namespace Type
 
         private void ExecuteCommand(string cmd, string content, Task selected)
         {
+            //Store a reference to the selected task in case we need to use it again in edit mode.
             this.selected = selected;
 
             switch (cmd)
@@ -136,6 +137,7 @@ namespace Type
         {
             if (cmd == "add")
             {
+                //The selected task should have been previously stored on the preceeding command.
                 tasks.UpdateRawText(selected.Id, content);
             }
             else
