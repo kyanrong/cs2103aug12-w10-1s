@@ -6,6 +6,9 @@ using System.ComponentModel;
 
 namespace Type
 {
+    /// <summary>
+    /// Handler to execute when a key combination is pressed.
+    /// </summary>
     internal delegate void KeyCombinationHandler();
 
     class GlobalKeyCombinationHook
