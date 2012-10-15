@@ -78,12 +78,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataStore.cs" />
+    <Compile Include="RegExp.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TaskCollection.cs" />
     <Compile Include="Presenter.cs" />
     <Compile Include="IAutoComplete.cs" />
     <Compile Include="LocalInstaller.cs" />
     <Compile Include="GlobalKeyCombinationHook.cs" />
-    <Compile Include="RegExp.cs" />
     <Compile Include="Task.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

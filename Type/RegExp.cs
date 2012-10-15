@@ -5,7 +5,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Language
+namespace Type
 {
     public class RegExp
     {
@@ -16,7 +16,7 @@ namespace Language
             Match m = r.Match(input);
             while (m.Success)
             {
-                result.Add(m.Groups[1].Value);
+                result.Add(m.Groups[0].Value);
                 m = m.NextMatch();
             }
             return result;

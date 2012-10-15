@@ -43,23 +43,24 @@ namespace Type
            this.done = false;
            this.archive = false;
 
+           // default token.
+           var result = new List<Tuple<string, ParsedType>>();
+           Tuple<string, ParsedType> t = Tuple.Create(this.rawText, ParsedType.STRING);
+           result.Add(t);
+           this.tokens = result;
+
            // parse the input
            this.parse();
         }
 
         private void parse()
         {
-            List<Tuple<string, ParsedType>> result = new List<Tuple<string, ParsedType>>();
+            // parse hashtags
+            List<string> hashtags = RegExp.HashTags(rawText);
 
-            // TMP.
-            // TODO.
-            Tuple<string, ParsedType> t = Tuple.Create(this.rawText, ParsedType.STRING);
-            result.Add(t);
 
-            result.Add(Tuple.Create("#test", ParsedType.HASHTAG));
+
             
-            // Set tokens
-            this.tokens = result;
         }
 
         // Task Done
