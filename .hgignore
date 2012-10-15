@@ -12,8 +12,8 @@ Language\obj\**
 ModelTests\bin\**
 ModelTests\obj\**
 
-DataStoreTests\bin\**
-DataStoreTests\obj\**
+DataStoreTest\bin\**
+DataStoreTest\obj\**
 
 TestResults\**
 
@@ -26,3 +26,4 @@ TestResults\**
 *.trx
 *.dll
 *.pdb
+*.vsmdi
