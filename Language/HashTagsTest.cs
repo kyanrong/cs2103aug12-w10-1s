@@ -24,7 +24,7 @@ namespace Language
         {
             string x = "This should #match";
             List<string> result = RegExp.HashTags(x);
-            Assert.AreEqual(result[0], "match");
+            Assert.AreEqual(result[0], "#match");
         }
 
         [TestMethod]
@@ -32,8 +32,8 @@ namespace Language
         {
             string x = "This #should #match #";
             List<string> result = RegExp.HashTags(x);
-            Assert.AreEqual(result[0], "should");
-            Assert.AreEqual(result[1], "match");
+            Assert.AreEqual(result[0], "#should");
+            Assert.AreEqual(result[1], "#match");
             Assert.AreEqual(result.Count, 2);
         }
     }
