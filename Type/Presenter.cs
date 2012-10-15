@@ -55,7 +55,7 @@ namespace Type
         /// </summary>
         /// <param name="partialText">Prefix to match.</param>
         /// <returns>Read-only list of suggestions as strings.</returns>
-        public IList<Task> FilterSuggestions(string partialText)
+        private IList<Task> FilterSuggestions(string partialText)
         {
             var parseResult = Parse(partialText);
             string cmd = parseResult.Item1;
@@ -76,7 +76,7 @@ namespace Type
         /// </summary>
         /// <param name="num">Number of tasks to retrieve.</param>
         /// <returns>Read-only list of tasks.</returns>
-        public IList<Task> GetTasks(int num)
+        private IList<Task> GetTasks(int num)
         {
             return tasks.Get(num);
         }
@@ -87,7 +87,7 @@ namespace Type
         /// </summary>
         /// <param name="rawText">Text to parse.</param>
         /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
-        public void HandleCommand(string rawText, Task selected = null)
+        private void HandleCommand(string rawText, Task selected = null)
         {
             var parseResult = Parse(rawText);
             string cmd = parseResult.Item1;
