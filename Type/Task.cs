@@ -43,21 +43,58 @@ namespace Type
            this.done = false;
            this.archive = false;
 
+           // default token.
+           var result = new List<Tuple<string, ParsedType>>();
+           Tuple<string, ParsedType> t = Tuple.Create(this.rawText, ParsedType.STRING);
+           result.Add(t);
+           this.tokens = result;
+
            // parse the input
            this.parse();
         }
 
         private void parse()
         {
-            List<Tuple<string, ParsedType>> result = new List<Tuple<string, ParsedType>>();
+            // parse hashtags
+            List<string> hashtags = RegExp.HashTags(rawText);
 
-            // TMP.
-            // TODO.
-            Tuple<string, ParsedType> t = Tuple.Create(this.rawText, ParsedType.STRING);
-            result.Add(t);
+            foreach (string hashtag in hashtags)
+            {
+                // find token contain hashtag.
+                var result = new List<Tuple<string, ParsedType>>();
+                foreach (Tuple<string, ParsedType> t in this.tokens)
+                {
+                    // if not a string. token has been parsed.
+                    if (t.Item2 != ParsedType.STRING)
+                    {
+                        // add to result.
+                        // no further processing required.
+                        result.Add(t);
+                    }
+                    else
+                    {
+                        if (t.Item1.Contains(hashtag))
+                        {
+                            string[] split = t.Item1.Split(new string[] { hashtag }, StringSplitOptions.None);
+                            result.Add(Tuple.Create(split[0], ParsedType.STRING));
+                            
+                            result.Add(Tuple.Create(hashtag, ParsedType.HASHTAG));
+
+                            result.Add(Tuple.Create(split[1], ParsedType.STRING));
+                        }
+                        else
+                        {
+                            // hashtag not in token.
+                            // add to result.
+                            result.Add(t);
+                        }
+                    }
+                }
+                // replace this.tokens.
+                this.tokens = result;
+            }
+
             
-            // Set tokens
-            this.tokens = result;
         }
 
         // Task Done
