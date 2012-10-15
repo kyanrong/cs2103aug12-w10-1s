@@ -58,7 +58,41 @@ namespace Type
             // parse hashtags
             List<string> hashtags = RegExp.HashTags(rawText);
 
+            foreach (string hashtag in hashtags)
+            {
+                // find token contain hashtag.
+                var result = new List<Tuple<string, ParsedType>>();
+                foreach (Tuple<string, ParsedType> t in this.tokens)
+                {
+                    // if not a string. token has been parsed.
+                    if (t.Item2 != ParsedType.STRING)
+                    {
+                        // add to result.
+                        // no further processing required.
+                        result.Add(t);
+                    }
+                    else
+                    {
+                        if (t.Item1.Contains(hashtag))
+                        {
+                            string[] split = t.Item1.Split(new string[] { hashtag }, StringSplitOptions.None);
+                            result.Add(Tuple.Create(split[0], ParsedType.STRING));
+                            
+                            result.Add(Tuple.Create(hashtag, ParsedType.HASHTAG));
 
+                            result.Add(Tuple.Create(split[1], ParsedType.STRING));
+                        }
+                        else
+                        {
+                            // hashtag not in token.
+                            // add to result.
+                            result.Add(t);
+                        }
+                    }
+                }
+                // replace this.tokens.
+                this.tokens = result;
+            }
 
             
         }
