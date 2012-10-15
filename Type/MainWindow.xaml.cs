@@ -145,12 +145,6 @@ namespace Type
                         }
 
                         text.Inlines.Add(run);
-
-                        // if tuple is not the last, append whitespace
-                        if (i != task.Tokens.Count - 1)
-                        {
-                            text.Inlines.Add(new Run(" "));
-                        }
                     }
 
                     // style accordingly
