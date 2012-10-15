@@ -14,7 +14,6 @@ namespace DataStoreTest
         [TestMethod]
         public void TestInsertRow()
         {
-
             DataStore myData = new DataStore("testInsert");
             List<string> myList = new List<string>();
 
@@ -22,6 +21,7 @@ namespace DataStoreTest
             myList.Add("try");
             myData.InsertRow(myList);
 
+            //read data from the file to check
             FileStream fs = new FileStream("testInsert", FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
             
@@ -34,7 +34,6 @@ namespace DataStoreTest
         [TestMethod]
         public void TestChangeRow()
         {
-
             DataStore myData = new DataStore("testChange");
             List<string> myList = new List<string>();
 
@@ -58,6 +57,7 @@ namespace DataStoreTest
 
             myData.ChangeRow(2, myList);
 
+            //read data from the file to check
             FileStream fs = new FileStream("testChange", FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
             
@@ -94,7 +94,6 @@ namespace DataStoreTest
             }
 
             actualList = myData.Get(2);
-
             for (int i = 0; i < 2; i++)
             {
                 Assert.AreEqual(myList2.ElementAt(i), actualList.ElementAt(i));
@@ -126,6 +125,7 @@ namespace DataStoreTest
 
             Dictionary<int, List<string>> actualTable = myData.Get();
 
+            //testing by comparing each string inside each list inside the table
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 2; j++)
@@ -134,27 +134,5 @@ namespace DataStoreTest
                 }
             }
         }
-
-
- /*       public void testc()
-        {
-            List<string> myList = new List<string>();
-
-            myList.Add("10");
-            myList.Add("try");
-            myData.InsertRow(myList);
-            myList.Clear();
-            myList.Add("ok");
-            myData.ChangeRow(3, myList);
-
-            foreach (List<string> list in myData.Get().Values)
-            {
-                foreach (string str in list)
-                {
-                    Console.Write(str);
-                }
-                Console.WriteLine();
-            }
-        }*/
     }
 }
