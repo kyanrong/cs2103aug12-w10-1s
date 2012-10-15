@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Type
 {
-    class DataStore
+    public class DataStore
     {
         private string path;
         private int nextIndex;
