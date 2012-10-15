@@ -129,7 +129,29 @@ namespace Type
                     // create single stacked panel w/ info
                     StackPanel taskView = new StackPanel();
                     TextBlock text = new TextBlock();
-                    text.Text = task.RawText;
+
+                    // style tokens within the textblock
+                    for (int i = 0; i< task.Tokens.Count; i++)
+                    {
+                        Tuple<string, Task.ParsedType> tuple = task.Tokens[i];
+
+                        Run run = new Run(tuple.Item1);
+                        // Style Runs
+                        if (tuple.Item2 == Task.ParsedType.HASHTAG)
+                        {
+                            // blue
+                            run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x23, 0x7f));
+                            run.FontWeight =  FontWeights.DemiBold;
+                        }
+
+                        text.Inlines.Add(run);
+
+                        // if tuple is not the last, append whitespace
+                        if (i != task.Tokens.Count - 1)
+                        {
+                            text.Inlines.Add(new Run(" "));
+                        }
+                    }
 
                     // style accordingly
                     if (task.Done)
@@ -163,6 +185,7 @@ namespace Type
             bottomBorder.Children.Add(dashedLine);
             tasksGrid.Children.Add(bottomBorder);
 
+            // display vertical redline
             StackPanel verticalLine = new StackPanel();
             verticalLine.Orientation = Orientation.Vertical;
             verticalLine.Margin = new Thickness(25, 12, 0, 0);

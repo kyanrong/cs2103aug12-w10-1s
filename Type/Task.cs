@@ -55,6 +55,8 @@ namespace Type
             // TODO.
             Tuple<string, ParsedType> t = Tuple.Create(this.rawText, ParsedType.STRING);
             result.Add(t);
+
+            result.Add(Tuple.Create("#test", ParsedType.HASHTAG));
             
             // Set tokens
             this.tokens = result;
