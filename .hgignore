@@ -12,6 +12,9 @@ Language\obj\**
 ModelTests\bin\**
 ModelTests\obj\**
 
+DataStoreTests\bin\**
+DataStoreTests\obj\**
+
 TestResults\**
 
 *.suo
