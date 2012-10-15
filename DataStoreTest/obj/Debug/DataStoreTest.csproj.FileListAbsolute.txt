@@ -1,7 +1,0 @@
-C:\Users\Ang Family\Desktop\CS2103 type\cs2103aug12-w10-1s\DataStoreTest\bin\Debug\DataStoreTest.dll
-C:\Users\Ang Family\Desktop\CS2103 type\cs2103aug12-w10-1s\DataStoreTest\bin\Debug\DataStoreTest.pdb
-C:\Users\Ang Family\Desktop\CS2103 type\cs2103aug12-w10-1s\DataStoreTest\bin\Debug\Type.exe
-C:\Users\Ang Family\Desktop\CS2103 type\cs2103aug12-w10-1s\DataStoreTest\bin\Debug\Type.pdb
-C:\Users\Ang Family\Desktop\CS2103 type\cs2103aug12-w10-1s\DataStoreTest\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Ang Family\Desktop\CS2103 type\cs2103aug12-w10-1s\DataStoreTest\obj\Debug\DataStoreTest.dll
-C:\Users\Ang Family\Desktop\CS2103 type\cs2103aug12-w10-1s\DataStoreTest\obj\Debug\DataStoreTest.pdb
