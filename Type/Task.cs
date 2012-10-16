@@ -7,56 +7,55 @@ using System.Text;
 namespace Type
 {
     public class Task
-    {
-        // Store's the user's raw input
-        private string rawText;
-        
-        // Standard Properties of all tasks
-        private int id;
-        private bool done;
-        private bool archive;
-
-        // Parsed Properties
-        private DateTime start;
-        private DateTime end;
-        private List<string> tags;
-        
+    {        
         // Parsed Types
         public enum ParsedType {
             STRING,
             HASHTAG,
             DATETIME
         }
-
         private List<Tuple<string, ParsedType>> tokens;
+        private List<string> tags;
 
         // Constructor
-        public Task(string rawText)
+        // from row.
+        public Task(List<string> row)
         {
             // saves the rawText
             // parsing should be idempotent
             // re-parsing on the same rawText
             // should return the same values
-            this.rawText = rawText;
+            this.RawText = row[0];
+            this.Done = Boolean.Parse(row[1]);
+            this.Archive = Boolean.Parse(row[2]);
+            this.Setup();
+        }
+        // from rawText
+        public Task(string rawText)
+        {
+            this.RawText = rawText;
+            this.Done = false;
+            this.Archive = false;
 
-           // default values
-           this.done = false;
-           this.archive = false;
-
-           // default token.
-           var result = new List<Tuple<string, ParsedType>>();
-           Tuple<string, ParsedType> t = Tuple.Create(this.rawText, ParsedType.STRING);
-           result.Add(t);
-           this.tokens = result;
-
-           // parse the input
-           this.parse();
+            this.Setup();
         }
 
-        private void parse()
+        private void Setup()
+        {
+            // default token.
+            var result = new List<Tuple<string, ParsedType>>();
+            Tuple<string, ParsedType> t = Tuple.Create(this.RawText, ParsedType.STRING);
+            result.Add(t);
+            this.tokens = result;
+
+            // parse the input
+            this.Parse();
+        }
+
+        private void Parse()
         {
             // parse hashtags
-            List<string> hashtags = RegExp.HashTags(rawText);
+            List<string> hashtags = RegExp.HashTags(this.RawText);
 
             foreach (string hashtag in hashtags)
             {
@@ -97,6 +96,16 @@ namespace Type
             
         }
 
+        // returns row of strings for storing
+        public List<string> ToRow()
+        {
+            var row = new List<string>();
+            row.Add(this.RawText);
+            row.Add(this.Done.ToString());
+            row.Add(this.Archive.ToString());
+            return row;
+        }
+
         // Task Done
         public bool Done { get; set; }
 
@@ -107,19 +116,7 @@ namespace Type
         public int Id { get; set; }
         public DateTime Start { get; private set; }
         public DateTime End { get; private set; }
-
-        public string RawText {
-            get { return rawText; }
-            set
-            {
-                // reset new raw text for task
-                this.rawText = value;
-                
-                // re-parse task obj
-                this.parse();
-            }
-        }
-
+        public string RawText { get; set; }
         public IList<string> Tags
         {
             get { return tags.AsReadOnly(); }
@@ -128,10 +125,9 @@ namespace Type
         {
             get { return tokens.AsReadOnly(); }
         }
-
         public override string ToString()
         {
-            return rawText;
+            return this.RawText;
         }
     }
 }

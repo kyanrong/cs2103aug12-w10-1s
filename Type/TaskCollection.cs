@@ -20,9 +20,6 @@ namespace Type
             // create data store
             dataStore = new DataStore("taskcollection.csv");
 
-            // HACK
-            nextIndex = 0;
-
             // load flat file into memory.
             this.Fetch();
         }
@@ -36,7 +33,12 @@ namespace Type
                 int index = entry.Key;
                 List<string> row = entry.Value;
 
-                // TODO.
+                var t = new Task(row);
+                
+                // set Id of task
+                t.Id = index;
+
+                tasks.Add(t);
             }
         }
 
@@ -44,11 +46,18 @@ namespace Type
         public Task Create(string input)
         {
             Task t = new Task(input);
-            
-            // HACK
-            t.Id = nextIndex++;
-            
             tasks.Add(t);
+            
+            // returns list of strings for storage 
+            var row = t.ToRow();
+
+            // save to datastore
+            int taskId = dataStore.InsertRow(row);
+
+            // assign id to task
+            t.Id = taskId;
+
+            // return task
             return t;
         }
 
@@ -81,15 +90,26 @@ namespace Type
         // Update rawText
         public Task UpdateRawText(int id, string str)
         {
-            // TODO
-            return this.GetTask(id);
+            Task t = this.GetTask(id);
+            t.RawText = str;
+
+            // change row in datastore
+            List<string> row = t.ToRow();
+            dataStore.ChangeRow(t.Id, row);
+
+            return t;
         }
 
         // Update done
         public Task UpdateDone(int id, bool done)
         {
             Task t = this.GetTask(id);
-            t.Done = done;
+            t.Done = true;
+            System.Diagnostics.Debug.Write(t.Done);
+            // change row in datastore
+            List<string> row = t.ToRow();
+            dataStore.ChangeRow(t.Id, row);
+
             return t;
         }
 
@@ -98,6 +118,11 @@ namespace Type
         {
             Task t = this.GetTask(id);
             t.Archive = archive;
+
+            // change row in datastore
+            List<string> row = t.ToRow();
+            dataStore.ChangeRow(t.Id, row);
+
             return t;
         }
 
