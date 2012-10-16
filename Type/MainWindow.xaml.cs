@@ -291,6 +291,7 @@ namespace Type
                             {
                                 // populate input box with edit text
                                 inputBox.Text = selectedTask.RawText;
+                                MoveCursorToEndOfWord();
                             }
                             else
                             {

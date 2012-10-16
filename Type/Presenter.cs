@@ -64,6 +64,15 @@ namespace Type
         private IList<Task> GetTasksByHashTags(string content)
         {
             var tags = content.Split(' ').ToList();
+            
+            //Prepend a hash to the tag name if it doesn't already have one.
+            for (int i = 0; i < tags.Count; i++)
+            {
+                if (!tags[i].StartsWith("#"))
+                {
+                    tags[i] = "#" + tags[i];
+                }
+            }
             return tasks.ByHashTags(tags);
         }
         
