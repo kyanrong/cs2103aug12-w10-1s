@@ -3,13 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525" WindowStartupLocation="CenterScreen" Topmost="True" WindowStyle="SingleBorderWindow" ShowInTaskbar="False" ResizeMode="NoResize">
     <Grid Name="mainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="493*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="11*" />
             <RowDefinition Height="115*" />
             <RowDefinition Height="185*" />
         </Grid.RowDefinitions>
-        <TextBox Height="36" HorizontalAlignment="Left" Margin="32,1,0,0" Name="inputBox" VerticalAlignment="Top" Width="459" TextChanged="InputBoxTextChanged" KeyUp="InputBoxKeyUp" FontFamily="GillSans" FontSize="20" Padding="3" BorderThickness="0" Grid.Row="1" />
-        <Label Height="36" HorizontalAlignment="Left" Margin="32,1,0,0" Name="inputBoxLabel" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" Grid.Row="1" />
-        <StackPanel Height="244" HorizontalAlignment="Left" Margin="12,32,0,0" Name="tasksGrid" VerticalAlignment="Top" Width="479" Grid.RowSpan="2" SizeChanged="tasksGrid_SizeChanged" Grid.Row="1" />
+        <TextBox Height="36" HorizontalAlignment="Left" Margin="22,1,0,0" Name="inputBox" VerticalAlignment="Top" Width="459" TextChanged="InputBoxTextChanged" KeyUp="InputBoxKeyUp" FontFamily="GillSans" FontSize="20" Padding="3" BorderThickness="0" Grid.Row="1" Grid.Column="1" />
+        <Label Height="36" HorizontalAlignment="Left" Margin="22,1,0,0" Name="inputBoxLabel" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" Grid.Row="1" Grid.Column="1" />
+        <Border BorderBrush="#9BFA8072" BorderThickness="0 0 0.5 0" Grid.ColumnSpan="2" Grid.RowSpan="3" Height="323" HorizontalAlignment="Left" Margin="1,0,0,0" Name="border1" VerticalAlignment="Top" Width="25"></Border>
+        <Border BorderBrush="SkyBlue" BorderThickness="0 0.5 0 0" Height="106" Name="blueBorder" Margin="0,35,23,159" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" />
+        <StackPanel Name="tasksGrid" Margin="0,35,23,12" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
+        </StackPanel>
     </Grid>
 </Window>
