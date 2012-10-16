@@ -122,8 +122,8 @@ namespace Type
             }
             else
             {
-                //This should not happen. Handle it somehow.
-                //TODO
+                // user changed his/her mind.
+                // forget edit mode and cont as per normal.
             }
 
             //Escape from edit mode after this function call.
