@@ -321,13 +321,14 @@ namespace Type
                     break;
 
                 case Key.Tab:
+                    //Autocomplete current input.
                     if (renderedTasks != null && renderedTasks.Count > 0)
                     {
                         var acParse = Parse(inputBox.Text);
                         string acText = acParse.Item2;
                         int completeBegin = LCPIndex(acText, renderedTasks[0].RawText);
 
-                        inputBox.Text += inputBox.Text.EndsWith(" ") ? "" : " " + renderedTasks[0].RawText.Substring(completeBegin + 1);
+                        inputBox.Text += (inputBox.Text.EndsWith(" ") ? "" : " ") + renderedTasks[0].RawText.Substring(completeBegin + 1);
                         MoveCursorToEndOfWord();
                     }
                     break;
@@ -339,6 +340,7 @@ namespace Type
             }
         }
 
+        //Finds the longest common prefix of a and b.
         private int LCPIndex(string a, string b)
         {
             int found = -1;
