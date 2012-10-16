@@ -104,21 +104,21 @@ namespace Type
 
             switch (cmd)
             {
-                case Commands.Add:
+                case Command.Add:
                     tasks.Create(content);
                     break;
 
-                case Commands.Edit:
+                case Command.Edit:
                     //The selected task is already stored. We set the editMode flag and return. The next command
                     //should be an 'add' containing the edited raw text of the selected task.
                     editMode = true;
                     break;
 
-                case Commands.Done:
+                case Command.Done:
                     tasks.UpdateDone(selected.Id, true);
                     break;
 
-                case Commands.Archive:
+                case Command.Archive:
                     tasks.UpdateArchive(selected.Id, true);
                     break;
 
@@ -130,7 +130,7 @@ namespace Type
 
         private void EditModeSelectedTask(string cmd, string content)
         {
-            if (cmd == Commands.Add)
+            if (cmd == Command.Add)
             {
                 //The selected task should have been previously stored on the preceeding command.
                 tasks.UpdateRawText(selected.Id, content);

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Type
 {
-    sealed class Commands
+    sealed class Command
     {
         public const string Token = ":";
         public const string Invalid = "invalid";
@@ -25,12 +25,12 @@ namespace Type
         public static Tuple<string, string> Parse(string input)
         {
             string cmd;
-            if (input.StartsWith(Commands.Token))
+            if (input.StartsWith(Command.Token))
             {
                 int spIndex = input.IndexOf(' ');
                 if (spIndex < 0)
                 {
-                    cmd = Commands.Invalid;
+                    cmd = Command.Invalid;
                     input = "";
                 }
                 else
@@ -39,14 +39,14 @@ namespace Type
                     input = input.Substring(spIndex + 1);
                 }
             }
-            else if (input.StartsWith(Commands.SearchToken))
+            else if (input.StartsWith(Command.SearchToken))
             {
-                cmd = Commands.Search;
-                input = input.Substring(Commands.SearchToken.Length);
+                cmd = Command.Search;
+                input = input.Substring(Command.SearchToken.Length);
             }
             else
             {
-                cmd = Commands.Add;
+                cmd = Command.Add;
             }
 
             return new Tuple<string, string>(cmd, input);

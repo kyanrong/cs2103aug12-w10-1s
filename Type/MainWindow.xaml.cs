@@ -187,10 +187,10 @@ namespace Type
             // TODO.
 
             // display filtered tasks
-            var parseResult = Commands.Parse(inputBox.Text);
+            var parseResult = Command.Parse(inputBox.Text);
             string cmd = parseResult.Item1;
             string content = parseResult.Item2;
-            if (cmd != Commands.Add)
+            if (cmd != Command.Add)
             {
                 IList<Task> filtered = GetFilterSuggestions(content);
                 renderedTasks = filtered;
@@ -237,30 +237,30 @@ namespace Type
             {
                 case Key.Enter:
                     // parse input
-                    var parseResult = Commands.Parse(inputBox.Text);
+                    var parseResult = Command.Parse(inputBox.Text);
                     string cmd = parseResult.Item1;
                     string content = parseResult.Item2;
 
                     // execute command
-                    if (cmd == Commands.Invalid)
+                    if (cmd == Command.Invalid)
                     {
                         // show an alert message?
                     }
-                    else if (cmd == Commands.Search)
+                    else if (cmd == Command.Search)
                     {
                         if (content.Trim() != string.Empty)
                         {
                             renderedTasks = GetTasksByHashTag(content.Trim());
                         }
                     }
-                    else if (cmd != Commands.Add)
+                    else if (cmd != Command.Add)
                     {
                         if (renderedTasks.Count != 0)
                         {
                             Task selectedTask = renderedTasks[0];
                             ExecuteCommand(cmd, content, selectedTask);
 
-                            if (cmd == Commands.Edit)
+                            if (cmd == Command.Edit)
                             {
                                 // populate input box with edit text
                                 inputBox.Text = selectedTask.RawText;
@@ -286,7 +286,7 @@ namespace Type
                     }
 
                     // render tasks
-                    if (cmd != Commands.Search)
+                    if (cmd != Command.Search)
                     {
                         renderedTasks = GetTasks(8);
                     }
@@ -297,7 +297,7 @@ namespace Type
                     //Autocomplete current input.
                     if (renderedTasks != null && renderedTasks.Count > 0)
                     {
-                        var acParse = Commands.Parse(inputBox.Text);
+                        var acParse = Command.Parse(inputBox.Text);
                         string acCommand = acParse.Item1;
                         string acText = acParse.Item2;
                         int completeBegin = LCPIndex(acText, renderedTasks[0].RawText);
