@@ -328,13 +328,21 @@ namespace Type
             if (renderedTasks != null && renderedTasks.Count > 0)
             {
                 var result = Command.Parse(inputBox.Text);
-                int completeBegin = LCPIndex(result.Text, renderedTasks[0].RawText);
-                if (inputBox.Text.EndsWith(result.CommandText))
+                if (result.CommandText != Command.Invalid)
                 {
-                    inputBox.Text += " ";
+                    int completeBegin = LCPIndex(result.Text, renderedTasks[0].RawText);
+                    
+                    if (inputBox.Text.EndsWith(result.CommandText))
+                    {
+                        inputBox.Text += " ";
+                    }
+
+                    if (completeBegin >= 0)
+                    {
+                        inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
+                        MoveCursorToEndOfWord();
+                    }
                 }
-                inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
-                MoveCursorToEndOfWord();
             }
         }
 
