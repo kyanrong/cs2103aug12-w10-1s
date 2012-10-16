@@ -160,19 +160,13 @@ namespace Type
 
                     taskView.Children.Add(text);
 
-                    // display horizontal blue line below input box
-                    StackPanel topHorizontalLine = new StackPanel();
-                    Line topBlueLine = DrawBlueLine();
-                    topHorizontalLine.Margin = new Thickness(12, 47, 0, 0);
-                    topHorizontalLine.Children.Add(topBlueLine);
-                    mainGrid.Children.Add(topHorizontalLine);
-
                     // append task view to grid view
                     tasksGrid.Children.Add(taskView);
 
                     // display horizontal blue line after each new line
                     StackPanel horizontalLine = new StackPanel();
                     Line blueLine = DrawBlueLine();
+                    
                     horizontalLine.Children.Add(blueLine);
                     taskView.Children.Add(horizontalLine);
                 }
@@ -183,14 +177,6 @@ namespace Type
             Rectangle dashedLine = DrawDashedLine();
             bottomBorder.Children.Add(dashedLine);
             tasksGrid.Children.Add(bottomBorder);
-
-            // display vertical redline
-            StackPanel verticalLine = new StackPanel();
-            verticalLine.Orientation = Orientation.Vertical;
-            verticalLine.Margin = new Thickness(25, 12, 0, 0);
-            Line redLine = DrawRedLine();
-            verticalLine.Children.Add(redLine);
-            mainGrid.Children.Add(verticalLine);
         }
 
         // Event Listener when Input Box text changes.
@@ -220,23 +206,10 @@ namespace Type
             blueLine.StrokeThickness = 0.5;
             blueLine.X1 = 0;
             blueLine.Y1 = 0;
-            blueLine.X2 = 479;
+            blueLine.X2 = 484;
             blueLine.Y2 = 0;
 
             return blueLine;
-        }
-
-        private Line DrawRedLine()
-        {
-            Line redLine = new Line();
-
-            redLine.Stroke = Brushes.Salmon;
-            redLine.StrokeThickness = 0.5;
-            redLine.X1 = 0;
-            redLine.Y1 = 0;
-            redLine.X2 = 0;
-            redLine.Y2 = this.Height;
-            return redLine;
         }
 
         private Rectangle DrawDashedLine()
@@ -244,7 +217,7 @@ namespace Type
             Rectangle dashedLine = new Rectangle();
 
             dashedLine.Stroke = Brushes.SandyBrown;
-            dashedLine.StrokeThickness = 1;
+            dashedLine.StrokeThickness = 0.5;
             dashedLine.StrokeDashArray = new DoubleCollection() { 4, 3 };
             dashedLine.Margin = new Thickness(0, 20, 0, 0);
 
@@ -366,16 +339,6 @@ namespace Type
             }
 
             return new Tuple<string, string>(cmd, input);
-        }
-
-        private void tasksGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
-
-        private void mainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
         }
     }
 }
