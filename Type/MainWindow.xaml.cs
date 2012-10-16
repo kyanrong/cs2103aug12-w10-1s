@@ -204,7 +204,7 @@ namespace Type
             var parseResult = Commands.Parse(inputBox.Text);
             string cmd = parseResult.Item1;
             string content = parseResult.Item2;
-            if (cmd != Commands.Add/* && content != string.Empty*/)
+            if (cmd != Commands.Add)
             {
                 IList<Task> filtered = GetFilterSuggestions(content);
                 renderedTasks = filtered;
@@ -325,10 +325,14 @@ namespace Type
                     if (renderedTasks != null && renderedTasks.Count > 0)
                     {
                         var acParse = Commands.Parse(inputBox.Text);
+                        string acCommand = acParse.Item1;
                         string acText = acParse.Item2;
                         int completeBegin = LCPIndex(acText, renderedTasks[0].RawText);
-
-                        inputBox.Text += (inputBox.Text.EndsWith(" ") ? "" : " ") + renderedTasks[0].RawText.Substring(completeBegin + 1);
+                        if (inputBox.Text.EndsWith(acCommand))
+                        {
+                            inputBox.Text += " ";
+                        }
+                        inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
                         MoveCursorToEndOfWord();
                     }
                     break;
