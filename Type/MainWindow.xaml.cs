@@ -25,9 +25,10 @@ namespace Type
     /// Parses a raw string and executes its command, if valid.
     /// If no valid command is found, this method does nothing.
     /// </summary>
-    /// <param name="rawText">Text to parse.</param>
+    /// <param name="cmd">Command.</param>
+    /// <param name="content">Text of the Command.</param>
     /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
-    public delegate void ExecuteCommandCallback(string rawText, Task selectedTask = null);
+    public delegate void ExecuteCommandCallback(string cmd, string content, Task selectedTask = null);
 
     /// <summary>
     /// Retrieves a list of tasks to be displayed.
@@ -196,9 +197,12 @@ namespace Type
             // TODO.
 
             // display filtered tasks
-            IList<Task> filtered = GetFilterSuggestions(inputBox.Text);
-            if (filtered != null)
+            var parseResult = Parse(inputBox.Text);
+            string cmd = parseResult.Item1;
+            string content = parseResult.Item2;
+            if (cmd != Commands.Add)
             {
+                IList<Task> filtered = GetFilterSuggestions(content);
                 renderedTasks = filtered;
                 RenderTasks();
             }
@@ -250,76 +254,34 @@ namespace Type
             inputBox.Select(inputBox.Text.Length, 0);
         }
 
-
-        // Checks if a command is typed. 
-        //private bool isCommand(string input)
-        //{
-        //    if (input.StartsWith(COMMAND_PREFIX))
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-
-        // Gets the index of the first whitespace. 
-        //private int getSpIndex(string input)
-        //{
-        //    return input.IndexOf(" ");
-        //}
-
-        //private string getMessage(int spIndex, string input)
-        //{
-        //    return input.Substring(spIndex + 1);
-        //}
-
-        //private void DecideWhatToDo(UIRedrawMsgCode msgCode, string msg)
-        //{
-        //    if (msgCode == UIRedrawMsgCode.EDITED_TEXT)
-        //    {
-        //        textBox1.Text = msg;
-        //        MoveCursorToEndOfWord();
-        //    }
-        //    else if(msgCode == UIRedrawMsgCode.WARNING)
-        //    {
-        //        popUp.IsOpen = true;
-        //        textBlock1.Text = msg;
-        //    }
-        //    else if (msgCode == UIRedrawMsgCode.ERROR)
-        //    {
-        //        popUp.IsOpen = true;
-        //        textBlock1.Text = msg;
-        //    }
-        //    else
-        //    {
-        //        textBox1.Clear();
-        //    }
-        //}
-
         // Event Listener, onKeyUp Input Box
         private void InputBoxKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
                 case Key.Enter:
-                    // get input text
-                    string inputText = inputBox.Text;
+                    // parse input
+                    var parseResult = Parse(inputBox.Text);
+                    string cmd = parseResult.Item1;
+                    string content = parseResult.Item2;
 
-                    if (inputText.StartsWith(COMMAND_PREFIX))
+                    // execute command
+                    if (cmd == Commands.Invalid)
+                    {
+                    }
+                    else if (cmd != Commands.Add)
                     {
                         if (renderedTasks.Count != 0)
                         {
                             Task selectedTask = renderedTasks[0];
-                            ExecuteCommand(inputBox.Text, selectedTask);
+                            ExecuteCommand(cmd, content, selectedTask);
                         }
                     }
                     else
                     {
-                        // add command
-                        ExecuteCommand(inputBox.Text, null);
+                        ExecuteCommand(cmd, content);
                     }
+
                     // render tasks
                     renderedTasks = GetTasks(8);
                     RenderTasks();
@@ -341,22 +303,34 @@ namespace Type
             }
         }
 
-        //private Tuple<string, string> TokenizeInput(string userInput)
-        //{
-        //    string command;
+        /// <summary>
+        /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
+        /// </summary>
+        /// <param name="input">Input to parse. Commands should start with the symbol defined in COMMAND_TOKEN.</param>
+        /// <returns>A Tuple containing the command text and remaining input.</returns>
+        private Tuple<string, string> Parse(string input)
+        {
+            string cmd;
+            if (input.StartsWith(Commands.Token))
+            {
+                int spIndex = input.IndexOf(' ');
+                if (spIndex < 0)
+                {
+                    cmd = Commands.Invalid;
+                    input = "";
+                }
+                else
+                {
+                    cmd = input.Substring(1, spIndex - 1);
+                    input = input.Substring(spIndex + 1);
+                }
+            }
+            else
+            {
+                cmd = Commands.Add;
+            }
 
-        //    if (!userInput.StartsWith(COMMAND_PREFIX))
-        //    {
-        //        command = "add";
-        //    }
-        //    else
-        //    {
-        //        var spIndex = userInput.IndexOf(' ');
-        //        command = userInput.Substring(1, spIndex - 1);
-        //        userInput = userInput.Substring(spIndex + 1);
-        //    }
-
-        //    return new Tuple<string, string>(command, userInput);
-        //}
+            return new Tuple<string, string>(cmd, input);
+        }
     }
 }
