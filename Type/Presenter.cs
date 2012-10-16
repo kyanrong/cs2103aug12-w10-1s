@@ -13,15 +13,6 @@ namespace Type
         private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
         private const uint COMBINATION_TRIGGER = 0x20;
 
-        //Command strings.
-        private const string CMD_TOKEN = ":";
-        private const string CMD_INVALID = "invalid";
-        private const string CMD_ADD = "add";
-        private const string CMD_EDIT = "edit";
-        private const string CMD_DONE = "done";
-        private const string CMD_ARCHIVE = "archive";
-
-
         private GlobalKeyCombinationHook globalHook;
         private MainWindow ui;
         private TaskCollection tasks;
@@ -57,18 +48,7 @@ namespace Type
         /// <returns>Read-only list of suggestions as strings.</returns>
         private IList<Task> FilterSuggestions(string partialText)
         {
-            var parseResult = Parse(partialText);
-            string cmd = parseResult.Item1;
-            string content = parseResult.Item2;
-
-            if (cmd == CMD_ADD)
-            {
-                return null;
-            }
-            else
-            {
-                return tasks.FilterAll(content);
-            }
+                return tasks.FilterAll(partialText);
         }
 
         /// <summary>
@@ -87,12 +67,8 @@ namespace Type
         /// </summary>
         /// <param name="rawText">Text to parse.</param>
         /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
-        private void HandleCommand(string rawText, Task selected = null)
+        private void HandleCommand(string cmd, string content, Task selected = null)
         {
-            var parseResult = Parse(rawText);
-            string cmd = parseResult.Item1;
-            string content = parseResult.Item2;
-
             //In edit mode, the only valid command is 'add'.
             //Otherwise, accept all commands.
             if (editMode)
@@ -112,21 +88,21 @@ namespace Type
 
             switch (cmd)
             {
-                case CMD_ADD:
+                case Commands.Add:
                     tasks.Create(content);
                     break;
 
-                case CMD_EDIT:
+                case Commands.Edit:
                     //The selected task is already stored. We set the editMode flag and return. The next command
                     //should be an 'add' containing the edited raw text of the selected task.
                     editMode = true;
                     break;
 
-                case CMD_DONE:
+                case Commands.Done:
                     tasks.UpdateDone(selected.Id, true);
                     break;
 
-                case CMD_ARCHIVE:
+                case Commands.Archive:
                     tasks.UpdateArchive(selected.Id, true);
                     break;
 
@@ -138,7 +114,7 @@ namespace Type
 
         private void EditModeSelectedTask(string cmd, string content)
         {
-            if (cmd == CMD_ADD)
+            if (cmd == Commands.Add)
             {
                 //The selected task should have been previously stored on the preceeding command.
                 tasks.UpdateRawText(selected.Id, content);
@@ -151,36 +127,6 @@ namespace Type
 
             //Escape from edit mode after this function call.
             editMode = false;
-        }
-
-        /// <summary>
-        /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
-        /// </summary>
-        /// <param name="input">Input to parse. Commands should start with the symbol defined in COMMAND_TOKEN.</param>
-        /// <returns>A Tuple containing the command text and remaining input.</returns>
-        private Tuple<string, string> Parse(string input)
-        {
-            string cmd;
-            if (input.StartsWith(CMD_TOKEN))
-            {
-                int spIndex = input.IndexOf(' ');
-                if (spIndex < 0)
-                {
-                    cmd = CMD_INVALID;
-                    input = "";
-                }
-                else
-                {
-                    cmd = input.Substring(1, spIndex - 1);
-                    input = input.Substring(spIndex + 1);
-                }
-            }
-            else
-            {
-                cmd = CMD_ADD;
-            }
-
-            return new Tuple<string, string>(cmd, input);
         }
     }
 }
