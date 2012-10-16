@@ -10,8 +10,6 @@ namespace Type
         private List<Task> tasks;
         private DataStore dataStore;
 
-        private int nextIndex;
-
         // Constructor
         public TaskCollection()
         {

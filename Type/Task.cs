@@ -62,9 +62,9 @@ namespace Type
             this.tokens = result;
 
             // parse hashtags
-            List<string> hashtags = RegExp.HashTags(this.RawText);
+            this.tags = RegExp.HashTags(this.RawText);
 
-            foreach (string hashtag in hashtags)
+            foreach (string hashtag in this.tags)
             {
                 // find token contain hashtag.
                 var res = new List<Tuple<string, ParsedType>>();

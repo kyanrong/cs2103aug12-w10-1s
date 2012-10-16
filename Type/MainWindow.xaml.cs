@@ -113,13 +113,6 @@ namespace Type
                 Line blueLine = DrawBlueLine();
                 horizontalLine.Children.Add(blueLine);
                 noTasksText.Children.Add(horizontalLine);
-
-                // display horizontal blue line below input box
-                StackPanel topHorizontalLine = new StackPanel();
-                Line topBlueLine = DrawBlueLine();
-                topHorizontalLine.Margin = new Thickness(12, 47, 0, 0);
-                topHorizontalLine.Children.Add(topBlueLine);
-                mainGrid.Children.Add(topHorizontalLine);
             }
             else
             {
@@ -163,6 +156,13 @@ namespace Type
 
                     taskView.Children.Add(text);
 
+                    // display horizontal blue line below input box
+                    StackPanel topHorizontalLine = new StackPanel();
+                    Line topBlueLine = DrawBlueLine();
+                    topHorizontalLine.Margin = new Thickness(12, 47, 0, 0);
+                    topHorizontalLine.Children.Add(topBlueLine);
+                    mainGrid.Children.Add(topHorizontalLine);
+
                     // append task view to grid view
                     tasksGrid.Children.Add(taskView);
 
@@ -173,7 +173,7 @@ namespace Type
                     taskView.Children.Add(horizontalLine);
                 }
             }
-
+            
             // display bottom border
             StackPanel bottomBorder = new StackPanel();
             Rectangle dashedLine = DrawDashedLine();
@@ -231,8 +231,7 @@ namespace Type
             redLine.X1 = 0;
             redLine.Y1 = 0;
             redLine.X2 = 0;
-            redLine.Y2 = 244;
-
+            redLine.Y2 = this.Height;
             return redLine;
         }
 
@@ -348,6 +347,16 @@ namespace Type
             }
 
             return new Tuple<string, string>(cmd, input);
+        }
+
+        private void tasksGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
+
+        private void mainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
         }
     }
 }

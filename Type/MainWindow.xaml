@@ -4,11 +4,12 @@
         Title="MainWindow" Height="350" Width="525" WindowStartupLocation="CenterScreen" Topmost="True" WindowStyle="SingleBorderWindow" ShowInTaskbar="False" ResizeMode="NoResize">
     <Grid Name="mainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="126*" />
+            <RowDefinition Height="11*" />
+            <RowDefinition Height="115*" />
             <RowDefinition Height="185*" />
         </Grid.RowDefinitions>
-        <TextBox Height="36" HorizontalAlignment="Left" Margin="32,12,0,0" Name="inputBox" VerticalAlignment="Top" Width="459" TextChanged="InputBoxTextChanged" KeyUp="InputBoxKeyUp" FontFamily="GillSans" FontSize="20" Padding="3" BorderThickness="0" />
-        <Label Height="36" HorizontalAlignment="Left" Margin="32,12,0,0" Name="inputBoxLabel" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" />
-        <StackPanel Height="244" HorizontalAlignment="Left" Margin="12,43,0,0" Name="tasksGrid" VerticalAlignment="Top" Width="479" Grid.RowSpan="2" />
+        <TextBox Height="36" HorizontalAlignment="Left" Margin="32,1,0,0" Name="inputBox" VerticalAlignment="Top" Width="459" TextChanged="InputBoxTextChanged" KeyUp="InputBoxKeyUp" FontFamily="GillSans" FontSize="20" Padding="3" BorderThickness="0" Grid.Row="1" />
+        <Label Height="36" HorizontalAlignment="Left" Margin="32,1,0,0" Name="inputBoxLabel" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" Grid.Row="1" />
+        <StackPanel Height="244" HorizontalAlignment="Left" Margin="12,32,0,0" Name="tasksGrid" VerticalAlignment="Top" Width="479" Grid.RowSpan="2" SizeChanged="tasksGrid_SizeChanged" Grid.Row="1" />
     </Grid>
 </Window>
