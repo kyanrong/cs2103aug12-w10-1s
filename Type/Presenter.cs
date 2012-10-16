@@ -61,6 +61,11 @@ namespace Type
             return tasks.Get(num);
         }
 
+        /// <summary>
+        /// Retrieves a list of tasks tagged with at least one hash tag.
+        /// </summary>
+        /// <param name="content">String containing hash tags separated by ' '.</param>
+        /// <returns>Read-only list of tasks.</returns>
         private IList<Task> GetTasksByHashTags(string content)
         {
             var tags = content.Split(' ').ToList();
@@ -135,11 +140,8 @@ namespace Type
                 //The selected task should have been previously stored on the preceeding command.
                 tasks.UpdateRawText(selected.Id, content);
             }
-            else
-            {
-                // user changed his/her mind.
-                // forget edit mode and cont as per normal.
-            }
+
+            //If the command was not "Add", we assume the user wants to exit edit mode.
 
             //Escape from edit mode after this function call.
             editMode = false;

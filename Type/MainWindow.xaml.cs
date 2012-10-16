@@ -37,17 +37,17 @@ namespace Type
     /// <returns>Read-only list of tasks.</returns>
     public delegate IList<Task> GetTasksCallback(int num);
 
+    /// <summary>
+    /// Retrieves a list of tasks tagged with at least one hash tag.
+    /// </summary>
+    /// <param name="content">String containing hash tags separated by ' '.</param>
+    /// <returns>Read-only list of tasks.</returns>
     public delegate IList<Task> GetTasksByHashTagCallback(string content);
 
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        private const string COMMAND_PREFIX = ":";
-
-        private const string INPUT_WELCOME_TEXT = "start typing...";
-        private const string INPUT_NOTASKS_TEXT = "no tasks.";
+        private const string TEXT_WELCOME = "start typing...";
+        private const string TEXT_NOTASKS = "no tasks.";
 
         private ExecuteCommandCallback ExecuteCommand;
         private FilterSuggestionsCallback GetFilterSuggestions;
@@ -82,7 +82,7 @@ namespace Type
         {
             if (inputBox.Text.Trim() == "")
             {
-                inputBoxLabel.Content = INPUT_WELCOME_TEXT;
+                inputBoxLabel.Content = TEXT_WELCOME;
             }
             else
             {
@@ -100,7 +100,7 @@ namespace Type
                 StackPanel noTasksText = new StackPanel();
 
                 TextBlock text = new TextBlock();
-                text.Text = INPUT_NOTASKS_TEXT;
+                text.Text = TEXT_NOTASKS;
 
                 text.TextAlignment = TextAlignment.Center;
                 text.FontSize = 20;
@@ -231,95 +231,130 @@ namespace Type
         // Event Listener, onKeyUp Input Box
         private void InputBoxKeyUp(object sender, KeyEventArgs e)
         {
-            Command result;
             switch (e.Key)
             {
                 case Key.Enter:
-                    // parse input
-                    result = Command.Parse(inputBox.Text);
-
-                    // execute command
-                    if (result.CommandText == Command.Invalid)
-                    {
-                        // show an alert message?
-                    }
-                    else if (result.CommandText == Command.Search)
-                    {
-                        if (result.Text.Trim() != string.Empty)
-                        {
-                            renderedTasks = GetTasksByHashTag(result.Text.Trim());
-                        }
-                    }
-                    else if (result.CommandText != Command.Add)
-                    {
-                        if (renderedTasks.Count != 0)
-                        {
-                            Task selectedTask = renderedTasks[0];
-                            ExecuteCommand(result.CommandText, result.Text, selectedTask);
-
-                            if (result.CommandText == Command.Edit)
-                            {
-                                // populate input box with edit text
-                                inputBox.Text = selectedTask.RawText;
-                                MoveCursorToEndOfWord();
-                            }
-                            else
-                            {
-                                // clear input box
-                                inputBox.Clear();
-                            }
-
-                        }
-                    }
-                    else
-                    {
-                        if (result.Text.Trim() != string.Empty)
-                        {
-                            // add command
-                            ExecuteCommand(result.CommandText, result.Text);
-                            // clear input box
-                            inputBox.Clear();
-                        }
-                    }
-
-                    // render tasks
-                    if (result.CommandText != Command.Search)
-                    {
-                        renderedTasks = GetTasks(8);
-                    }
-                    RenderTasks();
+                    HandleSendCommand();
                     break;
 
                 case Key.Tab:
-                    //Autocomplete current input.
-                    if (renderedTasks != null && renderedTasks.Count > 0)
-                    {
-                        result = Command.Parse(inputBox.Text);
-                        int completeBegin = LCPIndex(result.Text, renderedTasks[0].RawText);
-                        if (inputBox.Text.EndsWith(result.CommandText))
-                        {
-                            inputBox.Text += " ";
-                        }
-                        inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
-                        MoveCursorToEndOfWord();
-                    }
+                    HandleAutoComplete();
                     break;
 
                 case Key.Escape:
-                    // Hide window
-                    if (inputBox.Text != string.Empty)
-                    {
-                        inputBox.Clear();
-                    }
-                    else
-                    {
-                        if (inputBox.Text.Trim() == string.Empty)
-                        {
-                            inputBox.Clear();
-                        }
-                        this.Hide();
-                    }
+                    HandleHideWindow();
                     break;
+            }
+        }
+
+        private void HandleSendCommand()
+        {
+            //Parse input.
+            var result = Command.Parse(inputBox.Text);
+
+            if (result.CommandText == Command.Invalid)
+            {
+                //Alert the user somehow that the command was invalid.
+                //TODO
+            }
+            else if (result.CommandText == Command.Search)
+            {
+                DoSearch(result);
+            }
+            else if (result.CommandText != Command.Add)
+            {
+                DoOther(result);
+            }
+            else
+            {
+                DoAdd(result);
+            }
+
+            //Retrieve a list of tasks, unless the list has already been retrieved by Search.
+            if (result.CommandText != Command.Search)
+            {
+                renderedTasks = GetTasks(8);
+            }
+
+            RenderTasks();
+        }
+
+        private void DoAdd(Command result)
+        {
+            //The default command is "add".
+            if (result.Text.Trim() != string.Empty)
+            {
+                ExecuteCommand(result.CommandText, result.Text);
+                inputBox.Clear();
+            }
+        }
+
+        private void DoOther(Command result)
+        {
+            if (renderedTasks.Count != 0)
+            {
+                Task selectedTask = renderedTasks[0];
+                ExecuteCommand(result.CommandText, result.Text, selectedTask);
+
+                if (result.CommandText == Command.Edit)
+                {
+                    DoEdit(selectedTask);
+                }
+                else
+                {
+                    inputBox.Clear();
+                }
+            }
+        }
+
+        private void DoEdit(Task selectedTask)
+        {
+            //Populate inputBox with edit text.
+            inputBox.Text = selectedTask.RawText;
+            MoveCursorToEndOfWord();
+        }
+
+        private void DoSearch(Command result)
+        {
+            if (result.Text.Trim() != string.Empty)
+            {
+                renderedTasks = GetTasksByHashTag(result.Text.Trim());
+            }
+        }
+
+        private void HandleAutoComplete()
+        {
+            //AutoComplete is only defined if there are rendered tasks on screen.
+            if (renderedTasks != null && renderedTasks.Count > 0)
+            {
+                var result = Command.Parse(inputBox.Text);
+                int completeBegin = LCPIndex(result.Text, renderedTasks[0].RawText);
+                if (inputBox.Text.EndsWith(result.CommandText))
+                {
+                    inputBox.Text += " ";
+                }
+                inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
+                MoveCursorToEndOfWord();
+            }
+        }
+
+        private void HandleHideWindow()
+        {
+            //If the input box is not empty, we clear the input box, but do not hide the window.
+            //Otherwise, we hide the window.
+            //If the input box contains only whitespace (which will not be caught by the first condition),
+            //we clear it before hiding the window.
+            if (inputBox.Text.Trim() != string.Empty)
+            {
+                inputBox.Clear();
+            }
+            else
+            {
+                if (inputBox.Text.Trim() == string.Empty)
+                {
+                    inputBox.Clear();
+                }
+                this.Hide();
             }
         }
 
