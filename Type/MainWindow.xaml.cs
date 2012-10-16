@@ -200,7 +200,7 @@ namespace Type
             var parseResult = Parse(inputBox.Text);
             string cmd = parseResult.Item1;
             string content = parseResult.Item2;
-            if (cmd != Commands.Add)
+            if (cmd != Commands.Add && content != string.Empty)
             {
                 IList<Task> filtered = GetFilterSuggestions(content);
                 renderedTasks = filtered;
@@ -292,7 +292,7 @@ namespace Type
                     }
                     else
                     {
-                        if (content.Trim() != "")
+                        if (content.Trim() != string.Empty)
                         {
                             // add command
                             ExecuteCommand(cmd, content);
