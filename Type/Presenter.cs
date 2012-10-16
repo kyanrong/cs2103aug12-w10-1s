@@ -23,7 +23,7 @@ namespace Type
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
             tasks = new TaskCollection();
-            ui = new MainWindow(FilterSuggestions, HandleCommand, GetTasks);
+            ui = new MainWindow(FilterSuggestions, HandleCommand, GetTasks, GetTasksByHashTags);
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
 
@@ -59,6 +59,12 @@ namespace Type
         private IList<Task> GetTasks(int num)
         {
             return tasks.Get(num);
+        }
+
+        private IList<Task> GetTasksByHashTags(string content)
+        {
+            var tags = content.Split(' ').ToList();
+            return tasks.ByHashTags(tags);
         }
         
         /// <summary>
