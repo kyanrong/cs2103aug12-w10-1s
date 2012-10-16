@@ -28,6 +28,7 @@ namespace Type
         public void Fetch()
         {
             Dictionary<int, List<string>> allRows = dataStore.Get();
+
             foreach (KeyValuePair<int, List<string>> entry in allRows)
             {
                 int index = entry.Key;

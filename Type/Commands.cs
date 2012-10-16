@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Type
 {
-    class Commands
+    sealed class Commands
     {
         public const string Token = ":";
         public const string Invalid = "invalid";
