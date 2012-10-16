@@ -132,7 +132,9 @@ namespace Type
         public IList<Task> FilterAll(string input)
         {
             return tasks.FindAll(
-                task => task.RawText.StartsWith(input)
+                task => 
+                    task.Archive == false && 
+                    task.RawText.StartsWith(input)
             ).AsReadOnly();
         }
     }
