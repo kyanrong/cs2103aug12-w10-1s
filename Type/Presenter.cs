@@ -60,12 +60,13 @@ namespace Type
         {
             return tasks.Get(num);
         }
-
+        
         /// <summary>
         /// Parses a raw string and executes its command, if valid.
         /// If no valid command is found, this method does nothing.
         /// </summary>
-        /// <param name="rawText">Text to parse.</param>
+        /// <param name="cmd">Command.</param>
+        /// <param name="content">Text of the Command.</param>
         /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
         private void HandleCommand(string cmd, string content, Task selected = null)
         {

@@ -138,7 +138,7 @@ namespace Type
 
                         Run run = new Run(tuple.Item1);
                         // Style Runs
-                        if (tuple.Item2 == Task.ParsedType.HASHTAG)
+                        if (tuple.Item2 == Task.ParsedType.HashTag)
                         {
                             // blue
                             run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x23, 0x7f));
@@ -268,6 +268,7 @@ namespace Type
                     // execute command
                     if (cmd == Commands.Invalid)
                     {
+                        // show an alert message?
                     }
                     else if (cmd != Commands.Add)
                     {

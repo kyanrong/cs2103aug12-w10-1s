@@ -10,9 +10,10 @@ namespace Type
     {        
         // Parsed Types
         public enum ParsedType {
-            STRING,
-            HASHTAG,
-            DATETIME
+            String,
+            HashTag,
+            DateTime,
+            Priority
         }
         private List<Tuple<string, ParsedType>> tokens;
         private List<string> tags;
@@ -44,7 +45,7 @@ namespace Type
         {
             // default token.
             var result = new List<Tuple<string, ParsedType>>();
-            Tuple<string, ParsedType> t = Tuple.Create(this.RawText, ParsedType.STRING);
+            Tuple<string, ParsedType> t = Tuple.Create(this.RawText, ParsedType.String);
             result.Add(t);
             this.tokens = result;
 
@@ -64,7 +65,7 @@ namespace Type
                 foreach (Tuple<string, ParsedType> t in this.tokens)
                 {
                     // if not a string. token has been parsed.
-                    if (t.Item2 != ParsedType.STRING)
+                    if (t.Item2 != ParsedType.String)
                     {
                         // add to result.
                         // no further processing required.
@@ -75,11 +76,11 @@ namespace Type
                         if (t.Item1.Contains(hashtag))
                         {
                             string[] split = t.Item1.Split(new string[] { hashtag }, StringSplitOptions.None);
-                            result.Add(Tuple.Create(split[0], ParsedType.STRING));
+                            result.Add(Tuple.Create(split[0], ParsedType.String));
                             
-                            result.Add(Tuple.Create(hashtag, ParsedType.HASHTAG));
+                            result.Add(Tuple.Create(hashtag, ParsedType.HashTag));
 
-                            result.Add(Tuple.Create(split[1], ParsedType.STRING));
+                            result.Add(Tuple.Create(split[1], ParsedType.String));
                         }
                         else
                         {
