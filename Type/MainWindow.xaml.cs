@@ -307,12 +307,16 @@ namespace Type
 
                 case Key.Escape:
                     // Hide window
-                    if (inputBox.Text.Trim() != string.Empty)
+                    if (inputBox.Text != string.Empty)
                     {
                         inputBox.Clear();
                     }
                     else
                     {
+                        if (inputBox.Text.Trim() == string.Empty)
+                        {
+                            inputBox.Clear();
+                        }
                         this.Hide();
                     }
                     break;
