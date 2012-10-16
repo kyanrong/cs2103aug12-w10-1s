@@ -187,12 +187,10 @@ namespace Type
             // TODO.
 
             // display filtered tasks
-            var parseResult = Command.Parse(inputBox.Text);
-            string cmd = parseResult.Item1;
-            string content = parseResult.Item2;
-            if (cmd != Command.Add)
+            var result = Command.Parse(inputBox.Text);
+            if (result.CommandText != Command.Add)
             {
-                IList<Task> filtered = GetFilterSuggestions(content);
+                IList<Task> filtered = GetFilterSuggestions(result.Text);
                 renderedTasks = filtered;
                 RenderTasks();
             }
@@ -233,34 +231,33 @@ namespace Type
         // Event Listener, onKeyUp Input Box
         private void InputBoxKeyUp(object sender, KeyEventArgs e)
         {
+            Command result;
             switch (e.Key)
             {
                 case Key.Enter:
                     // parse input
-                    var parseResult = Command.Parse(inputBox.Text);
-                    string cmd = parseResult.Item1;
-                    string content = parseResult.Item2;
+                    result = Command.Parse(inputBox.Text);
 
                     // execute command
-                    if (cmd == Command.Invalid)
+                    if (result.CommandText == Command.Invalid)
                     {
                         // show an alert message?
                     }
-                    else if (cmd == Command.Search)
+                    else if (result.CommandText == Command.Search)
                     {
-                        if (content.Trim() != string.Empty)
+                        if (result.Text.Trim() != string.Empty)
                         {
-                            renderedTasks = GetTasksByHashTag(content.Trim());
+                            renderedTasks = GetTasksByHashTag(result.Text.Trim());
                         }
                     }
-                    else if (cmd != Command.Add)
+                    else if (result.CommandText != Command.Add)
                     {
                         if (renderedTasks.Count != 0)
                         {
                             Task selectedTask = renderedTasks[0];
-                            ExecuteCommand(cmd, content, selectedTask);
+                            ExecuteCommand(result.CommandText, result.Text, selectedTask);
 
-                            if (cmd == Command.Edit)
+                            if (result.CommandText == Command.Edit)
                             {
                                 // populate input box with edit text
                                 inputBox.Text = selectedTask.RawText;
@@ -276,17 +273,17 @@ namespace Type
                     }
                     else
                     {
-                        if (content.Trim() != string.Empty)
+                        if (result.Text.Trim() != string.Empty)
                         {
                             // add command
-                            ExecuteCommand(cmd, content);
+                            ExecuteCommand(result.CommandText, result.Text);
                             // clear input box
                             inputBox.Clear();
                         }
                     }
 
                     // render tasks
-                    if (cmd != Command.Search)
+                    if (result.CommandText != Command.Search)
                     {
                         renderedTasks = GetTasks(8);
                     }
@@ -297,11 +294,9 @@ namespace Type
                     //Autocomplete current input.
                     if (renderedTasks != null && renderedTasks.Count > 0)
                     {
-                        var acParse = Command.Parse(inputBox.Text);
-                        string acCommand = acParse.Item1;
-                        string acText = acParse.Item2;
-                        int completeBegin = LCPIndex(acText, renderedTasks[0].RawText);
-                        if (inputBox.Text.EndsWith(acCommand))
+                        result = Command.Parse(inputBox.Text);
+                        int completeBegin = LCPIndex(result.Text, renderedTasks[0].RawText);
+                        if (inputBox.Text.EndsWith(result.CommandText))
                         {
                             inputBox.Text += " ";
                         }
@@ -312,7 +307,14 @@ namespace Type
 
                 case Key.Escape:
                     // Hide window
-                    this.Hide();
+                    if (inputBox.Text.Trim() != string.Empty)
+                    {
+                        inputBox.Clear();
+                    }
+                    else
+                    {
+                        this.Hide();
+                    }
                     break;
             }
         }
