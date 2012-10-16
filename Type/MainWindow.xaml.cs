@@ -201,7 +201,7 @@ namespace Type
             // TODO.
 
             // display filtered tasks
-            var parseResult = Parse(inputBox.Text);
+            var parseResult = Commands.Parse(inputBox.Text);
             string cmd = parseResult.Item1;
             string content = parseResult.Item2;
             if (cmd != Commands.Add/* && content != string.Empty*/)
@@ -264,7 +264,7 @@ namespace Type
             {
                 case Key.Enter:
                     // parse input
-                    var parseResult = Parse(inputBox.Text);
+                    var parseResult = Commands.Parse(inputBox.Text);
                     string cmd = parseResult.Item1;
                     string content = parseResult.Item2;
 
@@ -324,7 +324,7 @@ namespace Type
                     //Autocomplete current input.
                     if (renderedTasks != null && renderedTasks.Count > 0)
                     {
-                        var acParse = Parse(inputBox.Text);
+                        var acParse = Commands.Parse(inputBox.Text);
                         string acText = acParse.Item2;
                         int completeBegin = LCPIndex(acText, renderedTasks[0].RawText);
 
@@ -357,41 +357,6 @@ namespace Type
             }
 
             return found;
-        }
-
-        /// <summary>
-        /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
-        /// </summary>
-        /// <param name="input">Input to parse. Commands should start with the symbol defined in COMMAND_TOKEN.</param>
-        /// <returns>A Tuple containing the command text and remaining input.</returns>
-        private Tuple<string, string> Parse(string input)
-        {
-            string cmd;
-            if (input.StartsWith(Commands.Token))
-            {
-                int spIndex = input.IndexOf(' ');
-                if (spIndex < 0)
-                {
-                    cmd = Commands.Invalid;
-                    input = "";
-                }
-                else
-                {
-                    cmd = input.Substring(1, spIndex - 1);
-                    input = input.Substring(spIndex + 1);
-                }
-            }
-            else if (input.StartsWith(Commands.SearchToken))
-            {
-                cmd = Commands.Search;
-                input = input.Substring(Commands.SearchToken.Length);
-            }
-            else
-            {
-                cmd = Commands.Add;
-            }
-
-            return new Tuple<string, string>(cmd, input);
         }
 
         private void tasksGrid_SizeChanged(object sender, SizeChangedEventArgs e)
