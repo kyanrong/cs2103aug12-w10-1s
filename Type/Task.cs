@@ -7,7 +7,10 @@ using System.Text;
 namespace Type
 {
     public class Task
-    {        
+    {
+
+        private string rawText;
+
         // Parsed Types
         public enum ParsedType {
             String,
@@ -43,11 +46,8 @@ namespace Type
 
         private void Setup()
         {
-            // default token.
-            var result = new List<Tuple<string, ParsedType>>();
-            Tuple<string, ParsedType> t = Tuple.Create(this.RawText, ParsedType.String);
-            result.Add(t);
-            this.tokens = result;
+            // other misc setup
+            // TODO.
 
             // parse the input
             this.Parse();
@@ -55,43 +55,49 @@ namespace Type
 
         private void Parse()
         {
+            // default token.
+            var result = new List<Tuple<string, ParsedType>>();
+            Tuple<string, ParsedType> t = Tuple.Create(this.RawText, ParsedType.String);
+            result.Add(t);
+            this.tokens = result;
+
             // parse hashtags
             List<string> hashtags = RegExp.HashTags(this.RawText);
 
             foreach (string hashtag in hashtags)
             {
                 // find token contain hashtag.
-                var result = new List<Tuple<string, ParsedType>>();
-                foreach (Tuple<string, ParsedType> t in this.tokens)
+                var res = new List<Tuple<string, ParsedType>>();
+                foreach (Tuple<string, ParsedType> token in this.tokens)
                 {
                     // if not a string. token has been parsed.
-                    if (t.Item2 != ParsedType.String)
+                    if (token.Item2 != ParsedType.String)
                     {
                         // add to result.
                         // no further processing required.
-                        result.Add(t);
+                        res.Add(token);
                     }
                     else
                     {
-                        if (t.Item1.Contains(hashtag))
+                        if (token.Item1.Contains(hashtag))
                         {
-                            string[] split = t.Item1.Split(new string[] { hashtag }, StringSplitOptions.None);
-                            result.Add(Tuple.Create(split[0], ParsedType.String));
+                            string[] split = token.Item1.Split(new string[] { hashtag }, StringSplitOptions.None);
+                            res.Add(Tuple.Create(split[0], ParsedType.String));
                             
-                            result.Add(Tuple.Create(hashtag, ParsedType.HashTag));
+                            res.Add(Tuple.Create(hashtag, ParsedType.HashTag));
 
-                            result.Add(Tuple.Create(split[1], ParsedType.String));
+                            res.Add(Tuple.Create(split[1], ParsedType.String));
                         }
                         else
                         {
                             // hashtag not in token.
                             // add to result.
-                            result.Add(t);
+                            res.Add(token);
                         }
                     }
                 }
                 // replace this.tokens.
-                this.tokens = result;
+                this.tokens = res;
             }
 
             
@@ -117,7 +123,20 @@ namespace Type
         public int Id { get; set; }
         public DateTime Start { get; private set; }
         public DateTime End { get; private set; }
-        public string RawText { get; set; }
+        
+        public string RawText
+        {
+            get
+            {
+                return rawText;
+            }
+            set
+            {
+                rawText = value;
+                this.Parse();
+            }
+        }
+
         public IList<string> Tags
         {
             get { return tags.AsReadOnly(); }
