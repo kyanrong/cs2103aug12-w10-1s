@@ -204,7 +204,7 @@ namespace Type
             var parseResult = Parse(inputBox.Text);
             string cmd = parseResult.Item1;
             string content = parseResult.Item2;
-            if (cmd != Commands.Add && content != string.Empty)
+            if (cmd != Commands.Add/* && content != string.Empty*/)
             {
                 IList<Task> filtered = GetFilterSuggestions(content);
                 renderedTasks = filtered;
@@ -312,8 +312,6 @@ namespace Type
                         }
                     }
 
-
-
                     // render tasks
                     if (cmd != Commands.Search)
                     {
@@ -323,8 +321,15 @@ namespace Type
                     break;
 
                 case Key.Tab:
-                    // TODO
-                    // autocomplete
+                    if (renderedTasks != null && renderedTasks.Count > 0)
+                    {
+                        var acParse = Parse(inputBox.Text);
+                        string acText = acParse.Item2;
+                        int completeBegin = LCPIndex(acText, renderedTasks[0].RawText);
+
+                        inputBox.Text += inputBox.Text.EndsWith(" ") ? "" : " " + renderedTasks[0].RawText.Substring(completeBegin + 1);
+                        MoveCursorToEndOfWord();
+                    }
                     break;
 
                 case Key.Escape:
@@ -332,6 +337,24 @@ namespace Type
                     this.Hide();
                     break;
             }
+        }
+
+        private int LCPIndex(string a, string b)
+        {
+            int found = -1;
+            for (int i = 0; i < Math.Min(a.Length, b.Length); i++)
+            {
+                if (a[i] == b[i])
+                {
+                    found = i;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return found;
         }
 
         /// <summary>
