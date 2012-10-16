@@ -184,16 +184,24 @@ namespace Type
         {
             DisplayInputLabel();
 
-            // TODO.
-
-            // display filtered tasks
-            var result = Command.Parse(inputBox.Text);
-            if (result.CommandText != Command.Add)
+            if (inputBox.Text == string.Empty)
             {
-                IList<Task> filtered = GetFilterSuggestions(result.Text);
-                renderedTasks = filtered;
-                RenderTasks();
+                renderedTasks = GetTasks(8);
             }
+            else
+            {
+                var result = Command.Parse(inputBox.Text);
+                if (result.CommandText == Command.Search)
+                {
+                    renderedTasks = GetTasksByHashTag(result.Text);
+                }
+                else if (result.CommandText != Command.Add)
+                {
+                    renderedTasks = GetFilterSuggestions(result.Text);
+                }
+            }
+
+            RenderTasks();
         }
 
         private Line DrawBlueLine()
