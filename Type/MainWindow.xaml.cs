@@ -37,6 +37,8 @@ namespace Type
     /// <returns>Read-only list of tasks.</returns>
     public delegate IList<Task> GetTasksCallback(int num);
 
+    public delegate IList<Task> GetTasksByHashTagCallback(string content);
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -50,16 +52,18 @@ namespace Type
         private ExecuteCommandCallback ExecuteCommand;
         private FilterSuggestionsCallback GetFilterSuggestions;
         private GetTasksCallback GetTasks;
+        private GetTasksByHashTagCallback GetTasksByHashTag;
 
         private IList<Task> renderedTasks;
 
-        public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
+        public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
             InitializeComponent();
 
             this.GetFilterSuggestions = GetFilterSuggestions;
             this.ExecuteCommand = ExecuteCommand;
             this.GetTasks = GetTasks;
+            this.GetTasksByHashTag = GetTasksByHashTag;
 
             // focus cursor in input box
             inputBox.Focus();
@@ -270,6 +274,13 @@ namespace Type
                     {
                         // show an alert message?
                     }
+                    else if (cmd == Commands.Search)
+                    {
+                        if (content.Trim() != string.Empty)
+                        {
+                            renderedTasks = GetTasksByHashTag(content.Trim());
+                        }
+                    }
                     else if (cmd != Commands.Add)
                     {
                         if (renderedTasks.Count != 0)
@@ -304,7 +315,10 @@ namespace Type
 
 
                     // render tasks
-                    renderedTasks = GetTasks(8);
+                    if (cmd != Commands.Search)
+                    {
+                        renderedTasks = GetTasks(8);
+                    }
                     RenderTasks();
                     break;
 
@@ -341,6 +355,11 @@ namespace Type
                     cmd = input.Substring(1, spIndex - 1);
                     input = input.Substring(spIndex + 1);
                 }
+            }
+            else if (input.StartsWith(Commands.SearchToken))
+            {
+                cmd = Commands.Search;
+                input = input.Substring(Commands.SearchToken.Length);
             }
             else
             {

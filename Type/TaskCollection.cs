@@ -107,6 +107,7 @@ namespace Type
             Task t = this.GetTask(id);
             t.Done = true;
             System.Diagnostics.Debug.Write(t.Done);
+
             // change row in datastore
             List<string> row = t.ToRow();
             dataStore.ChangeRow(t.Id, row);
@@ -136,6 +137,17 @@ namespace Type
                     task.Archive == false && 
                     task.RawText.StartsWith(input)
             ).AsReadOnly();
+        }
+
+        public IList<Task> ByHashTags(IList<string> hashTags)
+        {
+            var resultSet = new HashSet<Task>();
+            foreach (var tag in hashTags)
+            {
+                var queryResults = tasks.FindAll(task => task.Tags.Contains(tag));
+                resultSet.UnionWith(queryResults);
+            }
+            return resultSet.ToList().AsReadOnly();
         }
     }
 }
