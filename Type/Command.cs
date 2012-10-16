@@ -48,7 +48,7 @@ namespace Type
                 cmd = Command.Add;
             }
 
-            return new Command(cmd, input);
+            return new Command(cmd, input.Trim());
         }
 
         //Enumeration of accepted commands.
