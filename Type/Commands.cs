@@ -13,5 +13,8 @@ namespace Type
         public const string Edit = "edit";
         public const string Done = "done";
         public const string Archive = "archive";
+
+        public const string SearchToken = "/";
+        public const string Search = "search";
     }
 }
