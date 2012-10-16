@@ -276,20 +276,36 @@ namespace Type
                         {
                             Task selectedTask = renderedTasks[0];
                             ExecuteCommand(cmd, content, selectedTask);
+
+                            if (cmd == Commands.Edit)
+                            {
+                                // populate input box with edit text
+                                inputBox.Text = selectedTask.RawText;
+                            }
+                            else
+                            {
+                                // clear input box
+                                inputBox.Clear();
+                            }
+
                         }
                     }
                     else
                     {
-                        ExecuteCommand(cmd, content);
+                        if (content.Trim() != "")
+                        {
+                            // add command
+                            ExecuteCommand(cmd, content);
+                            // clear input box
+                            inputBox.Clear();
+                        }
                     }
+
+
 
                     // render tasks
                     renderedTasks = GetTasks(8);
                     RenderTasks();
-
-                    // clear input box
-                    inputBox.Clear();
-
                     break;
 
                 case Key.Tab:
