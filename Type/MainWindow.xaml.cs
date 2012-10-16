@@ -264,6 +264,7 @@ namespace Type
                     var parseResult = Parse(inputBox.Text);
                     string cmd = parseResult.Item1;
                     string content = parseResult.Item2;
+                    Task selectedTask = renderedTasks[0];
 
                     // execute command
                     if (cmd == Commands.Invalid)
@@ -274,7 +275,7 @@ namespace Type
                     {
                         if (renderedTasks.Count != 0)
                         {
-                            Task selectedTask = renderedTasks[0];
+                            //Task selectedTask = renderedTasks[0];
                             ExecuteCommand(cmd, content, selectedTask);
                         }
                     }
@@ -283,13 +284,19 @@ namespace Type
                         ExecuteCommand(cmd, content);
                     }
 
+                    // clear input box
+                    if (cmd == Commands.Edit)
+                    {
+                        inputBox.Text = selectedTask.RawText;
+                    }
+                    else
+                    {
+                        inputBox.Clear();
+                    }
+
                     // render tasks
                     renderedTasks = GetTasks(8);
                     RenderTasks();
-
-                    // clear input box
-                    inputBox.Clear();
-
                     break;
 
                 case Key.Tab:
