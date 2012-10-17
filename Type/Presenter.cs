@@ -23,7 +23,7 @@ namespace Type
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
             tasks = new TaskCollection();
-            ui = new MainWindow(FilterSuggestions, HandleCommand, GetTasks, GetTasksByHashTags);
+            ui = new MainWindow(FilterSuggestions, HandleCommand, GetTasks, GetTasks);
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
 
@@ -66,7 +66,7 @@ namespace Type
         /// </summary>
         /// <param name="content">String containing hash tags separated by ' '.</param>
         /// <returns>Read-only list of tasks.</returns>
-        private IList<Task> GetTasksByHashTags(string content)
+        private IList<Task> GetTasks(string content)
         {
             var tags = content.Split(' ').ToList();
             
