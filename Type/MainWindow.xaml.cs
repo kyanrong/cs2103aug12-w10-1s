@@ -102,19 +102,14 @@ namespace Type
                 TextBlock text = new TextBlock();
                 text.Text = TEXT_NOTASKS;
 
-                text.TextAlignment = TextAlignment.Center;
-                text.FontSize = 20;
-                text.FontFamily = new FontFamily("GillSans");
-                text.Padding = new Thickness(10);
+                StyleNoTasks(text);
 
                 noTasksText.Children.Add(text);
 
                 // Append to tasksgrid.
                 tasksGrid.Children.Add(noTasksText);
 
-                //display horizontal blue line below "no tasks" text
-                Line blueLine = DrawBlueLine();
-                DisplayBorder(noTasksText, blueLine);
+                DisplayBlueBorder(noTasksText);
             }
             else
             {
@@ -146,37 +141,21 @@ namespace Type
                     // style accordingly
                     if (task.Done)
                     {
-                        text.TextDecorations = TextDecorations.Strikethrough;
-                        text.FontStyle = FontStyles.Italic;
-                        text.Foreground = Brushes.SlateGray;
+                        StyleDone(text);
                     }
 
-                    text.FontSize = 20;
-                    text.FontFamily = new FontFamily("GillSans");
-                    text.Padding = new Thickness(10);
-                    text.Margin = new Thickness(15, 0, 0, 0);
+                    StyleTasks(text);
 
                     taskView.Children.Add(text);
 
                     // append task view to grid view
                     tasksGrid.Children.Add(taskView);
 
-                    // display horizontal blue line after each new line
-                    Line blueLine = DrawBlueLine();
-                    DisplayBorder(taskView, blueLine);
+                    DisplayBlueBorder(taskView);
                 }
             }
             
-            // display bottom border
-            Rectangle dashedLine = DrawDashedLine();
-            DisplayBorder(tasksGrid, dashedLine);
-        }
-
-        private void DisplayBorder(StackPanel stackPanel, Shape shape)
-        {
-            StackPanel border = new StackPanel();
-            border.Children.Add(shape);
-            stackPanel.Children.Add(border);
+            DisplayDashedBorder(tasksGrid);
         }
 
         // Event Listener when Input Box text changes.
@@ -202,32 +181,6 @@ namespace Type
             }
 
             RenderTasks();
-        }
-
-        private Line DrawBlueLine()
-        {
-            Line blueLine = new Line();
-
-            blueLine.Stroke = Brushes.SkyBlue;
-            blueLine.StrokeThickness = 0.5;
-            blueLine.X1 = 0;
-            blueLine.Y1 = 0;
-            blueLine.X2 = 484;
-            blueLine.Y2 = 0;
-
-            return blueLine;
-        }
-
-        private Rectangle DrawDashedLine()
-        {
-            Rectangle dashedLine = new Rectangle();
-
-            dashedLine.Stroke = Brushes.SandyBrown;
-            dashedLine.StrokeThickness = 0.5;
-            dashedLine.StrokeDashArray = new DoubleCollection() { 4, 3 };
-            dashedLine.Margin = new Thickness(0, 20, 0, 0);
-
-            return dashedLine;
         }
 
         // Used for auto complete.
