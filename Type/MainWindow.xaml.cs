@@ -166,10 +166,7 @@ namespace Type
             }
             
             // display bottom border
-            StackPanel bottomBorder = new StackPanel();
-            Rectangle dashedLine = DrawDashedLine();
-            bottomBorder.Children.Add(dashedLine);
-            tasksGrid.Children.Add(bottomBorder);
+            DrawDashedBorder(tasksGrid);
         }
 
         // Draw blue borders
@@ -178,6 +175,14 @@ namespace Type
             StackPanel border = new StackPanel();
             Line blueLine = DrawBlueLine();
             border.Children.Add(blueLine);
+            stackPanel.Children.Add(border);
+        }
+
+        private void DrawDashedBorder(StackPanel stackPanel)
+        {
+            StackPanel border = new StackPanel();
+            Rectangle dashedLine = DrawDashedLine();
+            border.Children.Add(dashedLine);
             stackPanel.Children.Add(border);
         }
 
