@@ -113,7 +113,8 @@ namespace Type
                 tasksGrid.Children.Add(noTasksText);
 
                 //display horizontal blue line below "no tasks" text
-                DrawBlueBorder(noTasksText);
+                Line blueLine = DrawBlueLine();
+                DisplayBorder(noTasksText, blueLine);
             }
             else
             {
@@ -161,28 +162,20 @@ namespace Type
                     tasksGrid.Children.Add(taskView);
 
                     // display horizontal blue line after each new line
-                    DrawBlueBorder(taskView);
+                    Line blueLine = DrawBlueLine();
+                    DisplayBorder(taskView, blueLine);
                 }
             }
             
             // display bottom border
-            DrawDashedBorder(tasksGrid);
-        }
-
-        // Draw blue borders
-        private void DrawBlueBorder(StackPanel stackPanel)
-        {
-            StackPanel border = new StackPanel();
-            Line blueLine = DrawBlueLine();
-            border.Children.Add(blueLine);
-            stackPanel.Children.Add(border);
-        }
-
-        private void DrawDashedBorder(StackPanel stackPanel)
-        {
-            StackPanel border = new StackPanel();
             Rectangle dashedLine = DrawDashedLine();
-            border.Children.Add(dashedLine);
+            DisplayBorder(tasksGrid, dashedLine);
+        }
+
+        private void DisplayBorder(StackPanel stackPanel, Shape shape)
+        {
+            StackPanel border = new StackPanel();
+            border.Children.Add(shape);
             stackPanel.Children.Add(border);
         }
 
