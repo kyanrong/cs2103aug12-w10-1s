@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Documents;
 
 namespace Type
 {
@@ -39,6 +40,13 @@ namespace Type
         {
             DefaultStyle(textBlock);
             textBlock.TextAlignment = TextAlignment.Center;
+        }
+
+        // style for hashtags (blue)
+        private void StyleHashTags(Run run)
+        {
+            run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x23, 0x7f));
+            run.FontWeight = FontWeights.DemiBold;
         }
 
         // display blue border

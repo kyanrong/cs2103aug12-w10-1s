@@ -130,9 +130,7 @@ namespace Type
                         // Style Runs
                         if (tuple.Item2 == Task.ParsedType.HashTag)
                         {
-                            // blue
-                            run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x23, 0x7f));
-                            run.FontWeight =  FontWeights.DemiBold;
+                            StyleHashTags(run);
                         }
 
                         text.Inlines.Add(run);
@@ -183,12 +181,6 @@ namespace Type
             RenderTasks();
         }
 
-        // Used for auto complete.
-        private void MoveCursorToEndOfWord()
-        {
-            inputBox.Select(inputBox.Text.Length, 0);
-        }
-
         // Event Listener, onKeyUp Input Box
         private void InputBoxKeyUp(object sender, KeyEventArgs e)
         {
@@ -208,142 +200,13 @@ namespace Type
             }
         }
 
-        private void HandleSendCommand()
-        {
-            //Parse input.
-            var result = Command.Parse(inputBox.Text);
 
-            if (result.CommandText == Command.Invalid)
-            {
-                //Alert the user somehow that the command was invalid.
-                //TODO
-            }
-            else if (result.CommandText == Command.Search)
-            {
-                DoSearch(result);
-            }
-            else if (result.CommandText != Command.Add)
-            {
-                DoOther(result);
-            }
-            else
-            {
-                DoAdd(result);
-            }
 
-            //Retrieve a list of tasks, unless the list has already been retrieved by Search.
-            if (result.CommandText != Command.Search)
-            {
-                renderedTasks = GetTasks(8);
-            }
 
-            RenderTasks();
-        }
 
-        private void DoAdd(Command result)
-        {
-            //The default command is "add".
-            if (result.Text.Trim() != string.Empty)
-            {
-                ExecuteCommand(result.CommandText, result.Text);
-                inputBox.Clear();
-            }
-        }
 
-        private void DoOther(Command result)
-        {
-            if (renderedTasks.Count != 0)
-            {
-                Task selectedTask = renderedTasks[0];
-                ExecuteCommand(result.CommandText, result.Text, selectedTask);
 
-                if (result.CommandText == Command.Edit)
-                {
-                    DoEdit(selectedTask);
-                }
-                else
-                {
-                    inputBox.Clear();
-                }
-            }
-        }
 
-        private void DoEdit(Task selectedTask)
-        {
-            //Populate inputBox with edit text.
-            inputBox.Text = selectedTask.RawText;
-            MoveCursorToEndOfWord();
-        }
 
-        private void DoSearch(Command result)
-        {
-            if (result.Text.Trim() != string.Empty)
-            {
-                renderedTasks = GetTasksByHashTag(result.Text.Trim());
-            }
-        }
-
-        private void HandleAutoComplete()
-        {
-            //AutoComplete is only defined if there are rendered tasks on screen.
-            if (renderedTasks != null && renderedTasks.Count > 0)
-            {
-                var result = Command.Parse(inputBox.Text);
-                if (result.CommandText != Command.Invalid)
-                {
-                    int completeBegin = LCPIndex(result.Text, renderedTasks[0].RawText);
-                    
-                    if (inputBox.Text.EndsWith(result.CommandText))
-                    {
-                        inputBox.Text += " ";
-                    }
-
-                    if (completeBegin >= 0)
-                    {
-                        inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
-                        MoveCursorToEndOfWord();
-                    }
-                }
-            }
-        }
-
-        private void HandleHideWindow()
-        {
-            //If the input box is not empty, we clear the input box, but do not hide the window.
-            //Otherwise, we hide the window.
-            //If the input box contains only whitespace (which will not be caught by the first condition),
-            //we clear it before hiding the window.
-            if (inputBox.Text.Trim() != string.Empty)
-            {
-                inputBox.Clear();
-            }
-            else
-            {
-                if (inputBox.Text.Trim() == string.Empty)
-                {
-                    inputBox.Clear();
-                }
-                this.Hide();
-            }
-        }
-
-        //Finds the longest common prefix of a and b.
-        private int LCPIndex(string a, string b)
-        {
-            int found = -1;
-            for (int i = 0; i < Math.Min(a.Length, b.Length); i++)
-            {
-                if (a[i] == b[i])
-                {
-                    found = i;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            return found;
-        }
     }
 }
