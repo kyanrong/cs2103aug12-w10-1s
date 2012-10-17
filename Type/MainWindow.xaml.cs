@@ -113,10 +113,7 @@ namespace Type
                 tasksGrid.Children.Add(noTasksText);
 
                 //display horizontal blue line below "no tasks" text
-                StackPanel horizontalLine = new StackPanel();
-                Line blueLine = DrawBlueLine();
-                horizontalLine.Children.Add(blueLine);
-                noTasksText.Children.Add(horizontalLine);
+                DrawBlueBorder(noTasksText);
             }
             else
             {
@@ -164,11 +161,7 @@ namespace Type
                     tasksGrid.Children.Add(taskView);
 
                     // display horizontal blue line after each new line
-                    StackPanel horizontalLine = new StackPanel();
-                    Line blueLine = DrawBlueLine();
-                    
-                    horizontalLine.Children.Add(blueLine);
-                    taskView.Children.Add(horizontalLine);
+                    DrawBlueBorder(taskView);
                 }
             }
             
@@ -177,6 +170,15 @@ namespace Type
             Rectangle dashedLine = DrawDashedLine();
             bottomBorder.Children.Add(dashedLine);
             tasksGrid.Children.Add(bottomBorder);
+        }
+
+        // Draw blue borders
+        private void DrawBlueBorder(StackPanel stackPanel)
+        {
+            StackPanel border = new StackPanel();
+            Line blueLine = DrawBlueLine();
+            border.Children.Add(blueLine);
+            stackPanel.Children.Add(border);
         }
 
         // Event Listener when Input Box text changes.
