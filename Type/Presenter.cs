@@ -127,10 +127,19 @@ namespace Type
                     tasks.UpdateArchive(selected.Id, true);
                     break;
 
+                case Command.Sort:
+
+                    break;
+
                 default:
                     //Do nothing.
                     break;
             }
+        }
+
+        private void ParseSort(string sortParams)
+        {
+
         }
 
         private void EditModeSelectedTask(string cmd, string content)
