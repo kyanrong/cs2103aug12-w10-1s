@@ -14,7 +14,8 @@ namespace Type
             String,
             HashTag,
             DateTime,
-            Priority
+            PriorityHigh,
+            PriorityLow
         }
 
         private string rawText;
@@ -178,8 +179,6 @@ namespace Type
                     this.hasEnd = true;
                 }
 
-
-                
                 // find token contain datetime.
                 var res = new List<Tuple<string, ParsedType>>();
                 foreach (Tuple<string, ParsedType> token in this.tokens)
@@ -211,6 +210,50 @@ namespace Type
                 // replace this.tokens.
                 this.tokens = res;
             }
+
+            // parse priority
+            Tuple<string, int> priority = RegExp.Priority(this.rawText);
+            if (priority.Item1 != string.Empty)
+            {
+                this.priority = priority.Item2;
+
+                // find token containing priority
+                var res = new List<Tuple<string, ParsedType>>();
+                foreach (Tuple<string, ParsedType> token in this.tokens)
+                {
+                    // if not a string. token has been parsed.
+                    if (token.Item2 != ParsedType.String)
+                    {
+                        // add to result.
+                        // no further processing required.
+                        res.Add(token);
+                    }
+                    else
+                    {
+                        if (token.Item1.Contains(priority.Item1))
+                        {
+                            string[] split = token.Item1.Split(new string[] { priority.Item1 }, StringSplitOptions.None);
+                            res.Add(Tuple.Create(split[0], ParsedType.String));
+
+                            if (priority.Item2 > 0)
+                            {
+                                res.Add(Tuple.Create(priority.Item1, ParsedType.PriorityHigh));
+                            }
+                            else
+                            {
+                                res.Add(Tuple.Create(priority.Item1, ParsedType.PriorityLow));
+                            }
+                            res.Add(Tuple.Create(split[1], ParsedType.String));
+                        }
+                        else
+                        {
+                            // date not in token.
+                            // add to result.
+                            res.Add(token);
+                        }
+                    }
+                }
+            }
         }
 
         // returns row of strings for storing
@@ -231,6 +274,7 @@ namespace Type
 
         // Other Properties
         public int Id { get; set; }
+        public int priority { get; private set; }
         private bool hasStart;
         public DateTime Start { get; private set; }
         private bool hasEnd;
