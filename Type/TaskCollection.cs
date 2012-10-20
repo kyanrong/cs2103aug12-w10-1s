@@ -23,7 +23,7 @@ namespace Type
         }
 
         // Fetch Tasks from Flatfile
-        public void Fetch()
+        private void Fetch()
         {
             Dictionary<int, List<string>> allRows = dataStore.Get();
 
@@ -61,19 +61,19 @@ namespace Type
         }
 
         // Get Task
-        public Task GetTask(int id)
+        private Task GetTask(int id)
         {
             return tasks.Find(task => task.Id == id);
         }
 
         // Get All Tasks
-        public IList<Task> Get()
+        private IList<Task> Get()
         {
             return tasks;
         }
 
         // Get number of Tasks starting from skip
-        public IList<Task> Get(int number, int skip = 0)
+        public List<Task> Get(int number, int skip = 0)
         {
             // only return pending tasks
             List<Task> pending = tasks.FindAll(
@@ -128,16 +128,16 @@ namespace Type
 
         // Helper Methods
         // Filter All
-        public IList<Task> FilterAll(string input)
+        public List<Task> FilterAll(string input)
         {
             return tasks.FindAll(
-                task => 
-                    task.Archive == false && 
+                task =>
+                    task.Archive == false &&
                     task.RawText.StartsWith(input)
-            ).AsReadOnly();
+            );
         }
 
-        public IList<Task> ByHashTags(IList<string> hashTags)
+        public List<Task> ByHashTags(IList<string> hashTags)
         {
             var resultSet = new HashSet<Task>();
             foreach (var tag in hashTags)
@@ -145,7 +145,7 @@ namespace Type
                 var queryResults = tasks.FindAll(task => task.Tags.Contains(tag));
                 resultSet.UnionWith(queryResults);
             }
-            return resultSet.ToList().AsReadOnly();
+            return resultSet.ToList();
         }
     }
 }

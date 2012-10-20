@@ -8,16 +8,16 @@ namespace Type
 {
     public class Task
     {
-
-        private string rawText;
-
         // Parsed Types
-        public enum ParsedType {
+        public enum ParsedType
+        {
             String,
             HashTag,
             DateTime,
             Priority
         }
+
+        private string rawText;
         private List<Tuple<string, ParsedType>> tokens;
         private List<string> tags;
 
