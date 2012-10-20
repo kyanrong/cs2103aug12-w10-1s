@@ -53,6 +53,9 @@
     <Compile Include="DateTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Type\Type.csproj">
       <Project>{C7D40343-6B61-4304-94AA-CDE2536F829D}</Project>
       <Name>Type</Name>
