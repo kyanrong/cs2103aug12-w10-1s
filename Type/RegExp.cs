@@ -40,6 +40,9 @@ namespace Type
                 {
                     year = GetYearFromToken(tokens[2], year);
                 }
+
+                // TODO.
+                // catch invalid date errors.
                 return Tuple.Create(m.Value, new DateTime(year, month, date));
             }
 
