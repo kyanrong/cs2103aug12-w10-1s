@@ -15,6 +15,9 @@ ModelTests\obj\**
 DataStoreTest\bin\**
 DataStoreTest\obj\**
 
+SortOrderTests\bin\**
+SortOrderTests\obj\**
+
 TestResults\**
 
 *.suo

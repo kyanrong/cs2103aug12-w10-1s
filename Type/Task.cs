@@ -23,18 +23,9 @@ namespace Type
 
         public static int DefaultComparison(Task a, Task b)
         {
-            if (a.Done == b.Done)
-            {
-                return 0;
-            }
-            else
-            {
-                return a.Done ? 1 : -1;
-            }
-
-            //int aHash = a.DefaultOrderHash();
-            //int bHash = b.DefaultOrderHash();
-            //return aHash > bHash ? 1 : aHash == bHash ? 0 : -1;
+            int aHash = a.DefaultOrderHash();
+            int bHash = b.DefaultOrderHash();
+            return aHash > bHash ? 1 : aHash == bHash ? 0 : -1;
         }
 
         public int DefaultOrderHash()
@@ -63,7 +54,7 @@ namespace Type
 
         private bool OverdueToday()
         {
-            if (this.End != null)
+            if (hasEnd)
             {
                 return this.End.Date < DateTime.Now.Date;
             }
@@ -72,7 +63,7 @@ namespace Type
 
         private bool DueToday()
         {
-            if (this.End != null)
+            if (hasStart)
             {
                 return this.End.Date == DateTime.Now.Date;
             }
@@ -98,6 +89,8 @@ namespace Type
             this.RawText = rawText;
             this.Done = false;
             this.Archive = false;
+            this.hasEnd = false;
+            this.hasStart = false;
 
             this.Setup();
         }
@@ -179,7 +172,9 @@ namespace Type
 
         // Other Properties
         public int Id { get; set; }
+        private bool hasStart;
         public DateTime Start { get; private set; }
+        private bool hasEnd;
         public DateTime End { get; private set; }
         
         public string RawText
