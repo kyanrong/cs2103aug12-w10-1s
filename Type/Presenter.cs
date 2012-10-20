@@ -18,10 +18,13 @@ namespace Type
         private TaskCollection tasks;
         private bool editMode;
         private Task selected;
+        private Comparison<Task> comparator;
+        
 
         public Presenter()
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
+            comparator = Task.DefaultComparison;
             tasks = new TaskCollection();
             ui = new MainWindow(FilterSuggestions, HandleCommand, GetTasks, GetTasks);
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
@@ -48,7 +51,9 @@ namespace Type
         /// <returns>Read-only list of suggestions as strings.</returns>
         private IList<Task> FilterSuggestions(string partialText)
         {
-            return tasks.FilterAll(partialText);
+            var resultSet = tasks.FilterAll(partialText);
+            resultSet.Sort(comparator);
+            return resultSet;
         }
 
         /// <summary>
@@ -59,7 +64,7 @@ namespace Type
         private IList<Task> GetTasks(int num)
         {
             var resultSet = tasks.Get(num);
-            resultSet.Sort(Task.DefaultComparison);
+            resultSet.Sort(comparator);
             return resultSet;
         }
 
@@ -80,7 +85,10 @@ namespace Type
                     tags[i] = "#" + tags[i];
                 }
             }
-            return tasks.ByHashTags(tags);
+
+            var resultSet = tasks.ByHashTags(tags);
+            resultSet.Sort(comparator);
+            return resultSet;
         }
         
         /// <summary>

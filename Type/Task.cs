@@ -36,7 +36,7 @@ namespace Type
 
             if (this.Done)
             {
-                isDone = (1 << 31);
+                isDone = (1 << 30);
             }
 
             if (this.DueToday())
@@ -46,7 +46,7 @@ namespace Type
 
             if (this.OverdueToday())
             {
-                isOverdue = ((int)(DateTime.Now.Date - this.End.Date).TotalDays << 30);
+                isOverdue = ((int)(DateTime.Now.Date - this.End.Date).TotalDays << 29) & 0x3FFFFFFC;
             }
 
             return (isDone + isDueToday + isOverdue);
