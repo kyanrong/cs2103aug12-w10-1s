@@ -131,13 +131,27 @@ namespace Type
                         // Style Runs
                         if (tuple.Item2 == Task.ParsedType.HashTag)
                         {
-                            StyleHashTags(run);
+                            if (task.Done)
+                            {
+                                StyleDoneParsedTypes(run);
+                            }
+                            else
+                            {
+                                StyleHashTags(run);
+                            }
                         }
                         
                         // Style Dates
                         if (tuple.Item2 == Task.ParsedType.DateTime)
                         {
-                            StyleDateTime(run);
+                            if (task.Done)
+                            {
+                                StyleDoneParsedTypes(run);
+                            }
+                            else
+                            {
+                                StyleDateTime(run);
+                            }
                         }
 
                         text.Inlines.Add(run);
@@ -206,6 +220,11 @@ namespace Type
                     HandleHideWindow();
                     break;
             }
+        }
+
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
     }
 }

@@ -20,10 +20,10 @@ namespace Type
 
         private void DoOther(Command result)
         {
-            if (renderedTasks.Count != 0)
+            Task selectedTask = null;
+            if (renderedTasks.Count != 0 && result.Text != string.Empty)
             {
-                Task selectedTask = renderedTasks[0];
-                ExecuteCommand(result.CommandText, result.Text, selectedTask);
+                selectedTask = renderedTasks[0];
 
                 if (result.CommandText == Command.Edit)
                 {
@@ -34,6 +34,9 @@ namespace Type
                     inputBox.Clear();
                 }
             }
+
+            ExecuteCommand(result.CommandText, result.Text, selectedTask);
+            inputBox.Clear();
         }
 
         private void DoEdit(Task selectedTask)

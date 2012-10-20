@@ -20,7 +20,6 @@ namespace Type
         private Task selected;
         private Comparison<Task> comparator;
         
-
         public Presenter()
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
@@ -126,15 +125,30 @@ namespace Type
                 case Command.Edit:
                     //The selected task is already stored. We set the editMode flag and return. The next command
                     //should be an 'add' containing the edited raw text of the selected task.
-                    editMode = true;
+                    if (selected != null)
+                    {
+                        editMode = true;
+                    }
                     break;
 
                 case Command.Done:
-                    tasks.UpdateDone(selected.Id, true);
+                    if (selected != null)
+                    {
+                        tasks.UpdateDone(selected.Id, true);
+                    }
                     break;
 
                 case Command.Archive:
-                    tasks.UpdateArchive(selected.Id, true);
+                    if (selected != null)
+                    {
+                        //Archive selected.
+                        tasks.UpdateArchive(selected.Id, true);
+                    }
+                    else
+                    {
+                        //Archive all done.
+                        tasks.ArchiveAll();
+                    }
                     break;
 
                 default:
