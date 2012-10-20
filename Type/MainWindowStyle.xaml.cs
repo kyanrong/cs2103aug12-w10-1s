@@ -42,6 +42,14 @@ namespace Type
             textBlock.TextAlignment = TextAlignment.Center;
         }
 
+        // style for completed parsed types (hash tags, datetime, priority)
+        private void StyleDoneParsedTypes(Run run)
+        {
+            run.TextDecorations = TextDecorations.Strikethrough;
+            run.FontStyle = FontStyles.Italic;
+            run.Foreground = Brushes.SlateGray;
+        }
+
         // style for invalid message
         private void StyleInvalidMessage(TextBlock textBlock)
         {
