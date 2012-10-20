@@ -27,7 +27,6 @@ namespace Type
             tasks = new TaskCollection();
             ui = new MainWindow(GetTasksWithPartialText, HandleCommand, GetTasksNoFilter, GetTasksByHashTags);
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
-            DwmShadowrizer.Shadowrize(ui);
         }
 
         ~Presenter()

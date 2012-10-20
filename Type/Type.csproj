@@ -78,7 +78,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DwmShadowrizer.cs" />
     <Compile Include="MainWindowDoCommand.xaml.cs" />
     <Compile Include="MainWindowKeyUp.xaml.cs" />
     <Compile Include="MainWindowStyle.xaml.cs" />
