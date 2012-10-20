@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -167,13 +167,13 @@ namespace Type
                 // we have a match
                 var datetime = dateTimeMatch.Item1;
 
-                if (dateTimeMatch.Item2 == null)
+                if (dateTimeMatch.Item2 != null)
                 {
                     this.Start = (DateTime) dateTimeMatch.Item2;
                     this.hasStart = true;
                 }
 
-                if (dateTimeMatch.Item3 == null)
+                if (dateTimeMatch.Item3 != null)
                 {
                     this.End = (DateTime) dateTimeMatch.Item3;
                     this.hasEnd = true;
