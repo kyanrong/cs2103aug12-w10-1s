@@ -154,6 +154,19 @@ namespace Type
                             }
                         }
 
+                        // Style Priority
+                        if (tuple.Item2 == Task.ParsedType.PriorityHigh)
+                        {
+                            if (task.Done)
+                            {
+                                StyleDoneParsedTypes(run);
+                            }
+                            else
+                            {
+                                StylePriorityHigh(run);
+                            }
+                        }
+
                         text.Inlines.Add(run);
                     }
 
