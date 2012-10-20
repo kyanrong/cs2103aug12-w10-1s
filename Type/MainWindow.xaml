@@ -16,7 +16,7 @@
         <Label Height="36" HorizontalAlignment="Left" Margin="22,1,0,0" Name="inputBoxLabel" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" Grid.Row="1" Grid.Column="1" />
         <Border BorderBrush="#9BFA8072" BorderThickness="0 0 0.5 0" Grid.ColumnSpan="2" Grid.RowSpan="3" Height="323" HorizontalAlignment="Left" Margin="1,0,0,0" Name="border1" VerticalAlignment="Top" Width="25"></Border>
         <Border BorderBrush="SkyBlue" BorderThickness="0 0.5 0 0" Height="106" Name="blueBorder" Margin="0,35,23,159" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" />
-        <StackPanel Name="tasksGrid" Margin="0,35,23,12" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1">
-        </StackPanel>
+        <StackPanel Name="tasksGrid" Margin="0,35,23,12" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1"/>
+        <Popup Name="popUp" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False"/>
     </Grid>
 </Window>
