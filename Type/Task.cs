@@ -31,6 +31,52 @@ namespace Type
             {
                 return a.Done ? 1 : -1;
             }
+
+            //int aHash = a.DefaultOrderHash();
+            //int bHash = b.DefaultOrderHash();
+            //return aHash > bHash ? 1 : aHash == bHash ? 0 : -1;
+        }
+
+        public int DefaultOrderHash()
+        {
+            int isDone = 0;
+            int isDueToday = 0;
+            int isOverdue = 0;
+
+            if (this.Done)
+            {
+                isDone = (1 << 31);
+            }
+
+            if (this.DueToday())
+            {
+                isDueToday = (1 << 1);
+            }
+
+            if (this.OverdueToday())
+            {
+                isOverdue = ((int)(DateTime.Now.Date - this.End.Date).TotalDays << 30);
+            }
+
+            return (isDone + isDueToday + isOverdue);
+        }
+
+        private bool OverdueToday()
+        {
+            if (this.End != null)
+            {
+                return this.End.Date < DateTime.Now.Date;
+            }
+            return false;
+        }
+
+        private bool DueToday()
+        {
+            if (this.End != null)
+            {
+                return this.End.Date == DateTime.Now.Date;
+            }
+            return false;
         }
 
         // Constructor
