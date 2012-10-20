@@ -25,9 +25,16 @@ namespace Type
         {
             int aHash = a.DefaultOrderHash();
             int bHash = b.DefaultOrderHash();
-            return aHash > bHash ? 1 : aHash == bHash ? 0 : -1;
+            return aHash > bHash ? -1 : aHash == bHash ? 0 : 1;
         }
 
+        // 2's Int32
+        // M                             L
+        // -------------------------------
+        // DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOT
+        // D = Done      - Bit Flag
+        // O = Overdue   - Unsigned Little Endian Integer
+        // T = Due Today - Bit Flag
         public int DefaultOrderHash()
         {
             int isDone = 0;
@@ -36,20 +43,21 @@ namespace Type
 
             if (this.Done)
             {
-                isDone = (1 << 30);
+                isDone = (1 << 31);
             }
 
             if (this.DueToday())
             {
-                isDueToday = (1 << 1);
+                isDueToday = (1 << 0);
             }
 
             if (this.OverdueToday())
             {
-                isOverdue = ((int)(DateTime.Now.Date - this.End.Date).TotalDays << 29) & 0x3FFFFFFC;
+                var daysOverdue = (int)(DateTime.Now.Date - this.End.Date).TotalDays;
+                isOverdue = (daysOverdue << 1) & 0x7FFFFFFE;
             }
 
-            return (isDone + isDueToday + isOverdue);
+            return (isDone | isDueToday | isOverdue);
         }
 
         private bool OverdueToday()
@@ -63,7 +71,7 @@ namespace Type
 
         private bool DueToday()
         {
-            if (hasStart)
+            if (hasEnd)
             {
                 return this.End.Date == DateTime.Now.Date;
             }
@@ -157,7 +165,8 @@ namespace Type
             {
                 // we have a match
                 var datetime = dateTimeMatch.Item1;
-                this.Start = dateTimeMatch.Item2;
+                this.End = dateTimeMatch.Item2;
+                this.hasEnd = true;
                 
                 // find token contain datetime.
                 var res = new List<Tuple<string, ParsedType>>();
