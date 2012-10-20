@@ -7,6 +7,8 @@ namespace Type
 {
     sealed class Command
     {
+        private static HashSet<string> acceptedCommands;
+
         public string CommandText { get; set; }
         public string Text { get; set; }
 
@@ -16,26 +18,41 @@ namespace Type
             this.Text = Text;
         }
 
+        static Command()
+        {
+            acceptedCommands = new HashSet<string>();
+            acceptedCommands.Add(Command.Archive);
+            acceptedCommands.Add(Command.Done);
+            acceptedCommands.Add(Command.Edit);
+        }
+
         /// <summary>
         /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
         /// </summary>
         /// <param name="input">Input to parse. Commands should start with the symbol defined in COMMAND_TOKEN.</param>
-        /// <returns>A Tuple containing the command text and remaining input.</returns>
+        /// <returns>A Command object containing the command text and remaining input.</returns>
         public static Command Parse(string input)
         {
             string cmd;
             if (input.StartsWith(Command.Token))
             {
+                input = input.Substring(Command.Token.Length);
                 int spIndex = input.IndexOf(' ');
-                if (spIndex < 0)
+                if (spIndex > 0)
                 {
-                    cmd = Command.Invalid;
-                    input = "";
+                    cmd = input.Substring(0, spIndex);
+                    input = input.Substring(spIndex + 1);
                 }
                 else
                 {
-                    cmd = input.Substring(1, spIndex - 1);
-                    input = input.Substring(spIndex + 1);
+                    cmd = input.Trim();
+                    input = string.Empty;
+                }
+
+                if (!acceptedCommands.Contains(cmd))
+                {
+                    cmd = Command.Invalid;
+                    input = string.Empty;
                 }
             }
             else if (input.StartsWith(Command.SearchToken))
@@ -51,16 +68,18 @@ namespace Type
             return new Command(cmd, input.Trim());
         }
 
-        //Enumeration of accepted commands.
+        //Tokens.
         public const string Token = ":";
-        public const string Invalid = "invalid";
-        public const string Add = "add";
+        public const string SearchToken = "/";
+
+        //Enumeration of accepted explicit commands.
         public const string Edit = "edit";
         public const string Done = "done";
         public const string Archive = "archive";
-        //public const string Sort = "sort";
 
-        public const string SearchToken = "/";
+        //Enumeration of implicit commands.
+        public const string Add = "add";
+        public const string Invalid = "invalid";
         public const string Search = "search";
     }
 }

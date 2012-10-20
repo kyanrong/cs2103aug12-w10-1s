@@ -26,7 +26,7 @@ namespace Type
             //Sequence is important here. Messing up the sequence may result in race conditions.
             comparator = Task.DefaultComparison;
             tasks = new TaskCollection();
-            ui = new MainWindow(FilterSuggestions, HandleCommand, GetTasks, GetTasks);
+            ui = new MainWindow(GetTasksWithPartialText, HandleCommand, GetTasksNoFilter, GetTasksByHashTags);
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
 
@@ -49,7 +49,7 @@ namespace Type
         /// </summary>
         /// <param name="partialText">Prefix to match.</param>
         /// <returns>Read-only list of suggestions as strings.</returns>
-        private IList<Task> FilterSuggestions(string partialText)
+        private IList<Task> GetTasksWithPartialText(string partialText)
         {
             var resultSet = tasks.FilterAll(partialText);
             resultSet.Sort(comparator);
@@ -61,7 +61,7 @@ namespace Type
         /// </summary>
         /// <param name="num">Number of tasks to retrieve.</param>
         /// <returns>Read-only list of tasks.</returns>
-        private IList<Task> GetTasks(int num)
+        private IList<Task> GetTasksNoFilter(int num)
         {
             var resultSet = tasks.Get(num);
             resultSet.Sort(comparator);
@@ -73,7 +73,7 @@ namespace Type
         /// </summary>
         /// <param name="content">String containing hash tags separated by ' '.</param>
         /// <returns>Read-only list of tasks.</returns>
-        private IList<Task> GetTasks(string content)
+        private IList<Task> GetTasksByHashTags(string content)
         {
             var tags = content.Split(' ').ToList();
             
