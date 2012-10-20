@@ -48,7 +48,7 @@ namespace Type
         /// <returns>Read-only list of suggestions as strings.</returns>
         private IList<Task> FilterSuggestions(string partialText)
         {
-                return tasks.FilterAll(partialText);
+            return tasks.FilterAll(partialText);
         }
 
         /// <summary>
@@ -58,7 +58,9 @@ namespace Type
         /// <returns>Read-only list of tasks.</returns>
         private IList<Task> GetTasks(int num)
         {
-            return tasks.Get(num);
+            var resultSet = tasks.Get(num);
+            resultSet.Sort(Task.DefaultComparison);
+            return resultSet;
         }
 
         /// <summary>
