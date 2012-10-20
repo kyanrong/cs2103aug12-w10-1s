@@ -29,7 +29,7 @@ namespace Type
 
             // DEADLINE TASKS
             string deadline = "((by|due|on)\\s)";
-            string deadlineOptional = deadline + "?";
+            string deadlineOptional = "\\b" + deadline + "?";
 
             // match DD/MM/[YY[YY]]
             Regex ddmm = new Regex(deadlineOptional + "\\d{1,2}\\/\\d{1,2}(\\/\\d{2,4})?", RegexOptions.IgnoreCase);
