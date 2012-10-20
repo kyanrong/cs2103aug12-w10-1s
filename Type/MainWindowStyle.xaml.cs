@@ -57,6 +57,13 @@ namespace Type
             run.FontWeight = FontWeights.DemiBold;
         }
 
+        // style for hashtags (blue)
+        private void StyleDateTime(Run run)
+        {
+            run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0xd7, 0x00, 0x00));
+            run.FontWeight = FontWeights.DemiBold;
+        }
+
         // display blue border
         private void DisplayBlueBorder(StackPanel stackPanel)
         {
