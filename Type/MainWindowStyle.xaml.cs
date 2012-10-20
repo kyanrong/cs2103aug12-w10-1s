@@ -42,6 +42,14 @@ namespace Type
             textBlock.TextAlignment = TextAlignment.Center;
         }
 
+        // style for invalid message
+        private void StyleInvalidMessage(TextBlock textBlock)
+        {
+            textBlock.Background = Brushes.LightYellow;
+            textBlock.Foreground = Brushes.LightSlateGray;
+            textBlock.FontStyle = FontStyles.Italic;
+        }
+
         // style for hashtags (blue)
         private void StyleHashTags(Run run)
         {
