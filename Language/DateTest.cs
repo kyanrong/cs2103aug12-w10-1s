@@ -154,5 +154,17 @@ namespace Language
             Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2012, 3, 12));
         }
 
+        [TestMethod]
+        public void NegativeTests2()
+        {
+            List<string> l = new List<string>();
+            l.Add("Thisby 12 January");
+            l.Add("This overdue 12 January");
+
+            foreach (string x in l)
+            {
+                Assert.AreEqual(RegExp.Date(x).Item1, "12 January");
+            }
+        }
     }
 }

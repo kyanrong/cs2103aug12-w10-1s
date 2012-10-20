@@ -28,7 +28,7 @@ namespace Type
             Match m;
 
             // DEADLINE TASKS
-            string deadline = "((by|due|on)\\s)";
+            string deadline = "(\\b(by|due|on)\\s)";
             string deadlineOptional = deadline + "?";
 
             // match DD/MM/[YY[YY]]
