@@ -13,6 +13,26 @@ namespace Type
         public static string DDMonthYYYY = "\\d{1,2}\\s(:?january|febuary|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(:?\\s\\d{2,4})?";
         public static string DateRE = DDMMYYYY + "|" + DDMonthYYYY;
 
+        public static int Priority(string input)
+        {
+            Match m;
+            Regex plus = new Regex("\\B\\+(\\d+)$");
+            m = plus.Match(input);
+            if (m.Success)
+            {
+                return int.Parse(m.Groups[1].Value);
+            }
+            
+            Regex minus = new Regex("\\B\\-(\\d+)$");
+            m = minus.Match(input);
+            if (m.Success)
+            {
+                return -1 * int.Parse(m.Groups[1].Value);
+            }
+
+            return 0;
+        }
+
         public static List<string> HashTags(string input)
         {
             Regex r = new Regex("#(.+?)\\b");
