@@ -20,7 +20,6 @@ namespace Type
         private Task selected;
         private Comparison<Task> comparator;
         
-
         public Presenter()
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
