@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Type
 {
@@ -17,6 +19,11 @@ namespace Type
             {
                 //Alert the user somehow that the command was invalid.
                 //TODO
+                popUp.IsOpen = true;
+                TextBlock invalidMessage = new TextBlock();
+                invalidMessage.Text = TEXT_INVALIDMESSAGE;
+                StyleInvalidMessage(invalidMessage);      
+                popUp.Child = invalidMessage;
             }
             else if (result.CommandText == Command.Search)
             {

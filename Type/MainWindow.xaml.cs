@@ -48,6 +48,7 @@ namespace Type
     {
         private const string TEXT_WELCOME = "start typing...";
         private const string TEXT_NOTASKS = "no tasks.";
+        private const string TEXT_INVALIDMESSAGE = "Invalid command entered. Valid commands are \":done\", \":edit\", \":clear\".";
 
         private ExecuteCommandCallback ExecuteCommand;
         private FilterSuggestionsCallback GetFilterSuggestions;
@@ -179,6 +180,7 @@ namespace Type
             }
 
             RenderTasks();
+            popUp.IsOpen = false;
         }
 
         // Event Listener, onKeyUp Input Box
