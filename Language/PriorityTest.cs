@@ -15,7 +15,12 @@ namespace Language
         public void Nothing()
         {
             Assert.AreEqual(
-                RegExp.Priority("blah blah blah"),
+                RegExp.Priority("blah blah blah").Item1,
+                string.Empty
+            );
+
+            Assert.AreEqual(
+                RegExp.Priority("blah blah blah").Item2,
                 0
             );
         }
@@ -24,17 +29,27 @@ namespace Language
         public void Positive()
         {
             Assert.AreEqual(
-                RegExp.Priority("blah blah blah +1"),
+                RegExp.Priority("blah blah blah +1").Item1,
+                "+1"
+            );
+
+            Assert.AreEqual(
+                RegExp.Priority("blah blah blah +1").Item2,
                 1
             );
 
             Assert.AreEqual(
-                RegExp.Priority("blah blah blah +10"),
+                RegExp.Priority("blah blah blah +10").Item2,
                 10
             );
 
             Assert.AreEqual(
-                RegExp.Priority("blah blah blah +110"),
+                RegExp.Priority("blah blah blah +10").Item1,
+                "+10"
+            );
+
+            Assert.AreEqual(
+                RegExp.Priority("blah blah blah +110").Item2,
                 110
             );
         }
@@ -43,17 +58,17 @@ namespace Language
         public void Negative()
         {
             Assert.AreEqual(
-                RegExp.Priority("blah blah blah -1"),
+                RegExp.Priority("blah blah blah -1").Item2,
                 -1
             );
 
             Assert.AreEqual(
-                RegExp.Priority("blah blah blah -10"),
+                RegExp.Priority("blah blah blah -10").Item2,
                 -10
             );
             
             Assert.AreEqual(
-                RegExp.Priority("blah blah blah -100"),
+                RegExp.Priority("blah blah blah -100").Item2,
                 -100
             );
         }
