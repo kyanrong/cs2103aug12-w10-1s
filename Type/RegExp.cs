@@ -9,6 +9,10 @@ namespace Type
 {
     public class RegExp
     {
+        public static string DDMMYYYY = "\\d{1,2}\\/\\d{1,2}(:?\\/\\d{2,4})?";
+        public static string DDMonthYYYY = "\\d{1,2}\\s(:?january|febuary|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(:?\\s\\d{2,4})?";
+        public static string DateRE = DDMMYYYY + "|" + DDMonthYYYY;
+
         public static List<string> HashTags(string input)
         {
             Regex r = new Regex("#(.+?)\\b");
@@ -22,71 +26,38 @@ namespace Type
             return result;
         }
 
-        public static Tuple<string, DateTime> Date(string input)
+        public static Tuple<string, DateTime?, DateTime?> Date(string input)
         {
-            DateTime datetime = new DateTime();
+            DateTime? datetime = null;
             Match m;
 
-            // DEADLINE TASKS
-            string deadline = "((by|due|on)\\s)";
-            string deadlineOptional = "\\b" + deadline + "?";
+            // PERIOD TASKS
+            Regex fromto = new Regex("\\bfrom\\s("+ DateRE + ")\\sto\\s(" + DateRE + ")\\b");
 
-            // match DD/MM/[YY[YY]]
-            Regex ddmm = new Regex(deadlineOptional + "\\d{1,2}\\/\\d{1,2}(\\/\\d{2,4})?", RegexOptions.IgnoreCase);
-            m = ddmm.Match(input);
+            m = fromto.Match(input);
             if (m.Success)
             {
-                string[] tokens = SanitizeToken(m.Value, deadline, '/');
-                int date = int.Parse(tokens[0]);
-                int month = int.Parse(tokens[1]);
-                int year = DateTime.Today.Year;
-                if (tokens.Length == 3)
-                {
-                    year = GetYearFromToken(tokens[2], year);
-                }
-
-                try
-                {
-                    return Tuple.Create(m.Value, new DateTime(year, month, date));
-                }
-                catch (Exception e)
-                {
-                    // invalid date. dont parse further.
-                    // do nothing.
-                }
+                var matches = m.Groups;
+                DateTime? start = ParseDate(matches[1].Value);
+                DateTime? end = ParseDate(matches[5].Value);
+                
+                // TODO. check valid dates.
+                return Tuple.Create(m.Value, start, end);
             }
 
-            // match DD <Month> [YY[YY]]
-            Regex ddMonthyyyy = new Regex(deadlineOptional +
-                "\\d{1,2}\\s(january|febuary|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(\\s\\d{2,4})?",
-                RegexOptions.IgnoreCase
-            );
-            m = ddMonthyyyy.Match(input);
+            // DEADLINE TASKS
+            Regex deadline = new Regex("\\b(:?(by|due|on)\\s)?("+ DateRE +")", RegexOptions.IgnoreCase);
+            m = deadline.Match(input);
             if (m.Success)
             {
-                string[] tokens = SanitizeToken(m.Value, deadline, ' ');
-                int date = int.Parse(tokens[0]);
-                int month = MonthFromString(tokens[1]);
-                int year = DateTime.Today.Year;
-                if (tokens.Length == 3)
-                {
-                    year = GetYearFromToken(tokens[2], year);
-                }
-
-                try
-                {
-                    return Tuple.Create(m.Value, new DateTime(year, month, date));
-                }
-                catch (Exception e)
-                {
-                    // invalid date. dont parse further.
-                    // do nothing.
-                }
+                var matches = m.Groups;
+                DateTime? end = ParseDate(matches[3].Value);
+                return Tuple.Create(m.Value, datetime, end);
             }
 
             // if none of the regexp matches
             // return the empty string.
-            return Tuple.Create(String.Empty, datetime);
+            return Tuple.Create(String.Empty, datetime, datetime);
         }
 
         private static string[] SanitizeToken(string value, string match, char split)
@@ -156,6 +127,63 @@ namespace Type
                 }
             }
             return year;
+        }
+
+        private static DateTime? ParseDate(string input)
+        {
+            Match m;
+            DateTime? datetime = null;
+            Regex ddmm = new Regex(DDMMYYYY, RegexOptions.IgnoreCase);
+            m = ddmm.Match(input);
+            if (m.Success)
+            {
+                string[] tokens = input.Split('/');
+                int date = int.Parse(tokens[0]);
+                int month = int.Parse(tokens[1]);
+                int year = DateTime.Today.Year;
+                if (tokens.Length == 3)
+                {
+                    year = GetYearFromToken(tokens[2], year);
+                }
+
+                try
+                {
+                    return new DateTime(year, month, date);
+                }
+                catch (Exception e)
+                {
+                    // invalid date. dont parse further.
+                    // do nothing.
+                }
+            }
+
+            Regex ddMonthyyyy = new Regex(DDMonthYYYY, RegexOptions.IgnoreCase);
+            m = ddMonthyyyy.Match(input);
+            if (m.Success)
+            {
+                string[] tokens = input.Split(' ');
+                int date = int.Parse(tokens[0]);
+                int month = MonthFromString(tokens[1]);
+                int year = DateTime.Today.Year;
+                if (tokens.Length == 3)
+                {
+                    year = GetYearFromToken(tokens[2], year);
+                }
+
+                try
+                {
+                    return new DateTime(year, month, date);
+                }
+                catch (Exception e)
+                {
+                    // invalid date. dont parse further.
+                    // do nothing.
+                }
+            }
+
+            // if none of the regexp matches
+            // return the empty string.
+            return datetime;
         }
     }
 }

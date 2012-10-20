@@ -160,13 +160,25 @@ namespace Type
             }
 
             // parse dates
-            Tuple<string, DateTime> dateTimeMatch = RegExp.Date(this.rawText);
+            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.Date(this.rawText);
             if (dateTimeMatch.Item1 != string.Empty)
             {
                 // we have a match
                 var datetime = dateTimeMatch.Item1;
-                this.End = dateTimeMatch.Item2;
-                this.hasEnd = true;
+
+                if (dateTimeMatch.Item2 == null)
+                {
+                    this.Start = (DateTime) dateTimeMatch.Item2;
+                    this.hasStart = true;
+                }
+
+                if (dateTimeMatch.Item3 == null)
+                {
+                    this.End = (DateTime) dateTimeMatch.Item3;
+                    this.hasEnd = true;
+                }
+
+
                 
                 // find token contain datetime.
                 var res = new List<Tuple<string, ParsedType>>();
