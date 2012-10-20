@@ -65,10 +65,17 @@ namespace Type
             run.FontWeight = FontWeights.DemiBold;
         }
 
-        // style for hashtags (blue)
+        // style for datetime (red)
         private void StyleDateTime(Run run)
         {
             run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0xd7, 0x00, 0x00));
+            run.FontWeight = FontWeights.DemiBold;
+        }
+
+        // style for priorityhigh (orange)
+        private void StylePriorityHigh(Run run)
+        {
+            run.Foreground = Brushes.Honeydew;
             run.FontWeight = FontWeights.DemiBold;
         }
 
