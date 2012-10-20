@@ -32,7 +32,7 @@ namespace Language
             string x = "This should 12/1 match";
             Assert.AreEqual(RegExp.Date(x).Item1, "12/1");
             int year = DateTime.Today.Year;
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(year, 1, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(year, 1, 12));
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace Language
             string x = "This should 12/11 match";
             Assert.AreEqual(RegExp.Date(x).Item1, "12/11");
             int year = DateTime.Today.Year;
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(year, 11, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(year, 11, 12));
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace Language
         {
             string x = "This should 12/11/11 match";
             Assert.AreEqual(RegExp.Date(x).Item1, "12/11/11");
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2011, 11, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(2011, 11, 12));
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace Language
         {
             string x = "This should 12/11/2011 match";
             Assert.AreEqual(RegExp.Date(x).Item1, "12/11/2011");
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2011, 11, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(2011, 11, 12));
         }
 
         [TestMethod]
@@ -72,7 +72,7 @@ namespace Language
                 string x = "This should 11 " + month + " match";
                 Assert.AreEqual(RegExp.Date(x).Item1, "11 " + month);
                 int year = DateTime.Today.Year;
-                Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(year, i + 1, 11));
+                Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(year, i + 1, 11));
             }
             string[] months2 = {
                 "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
@@ -83,7 +83,7 @@ namespace Language
                 string x = "This should 11 " + month + " match";
                 Assert.AreEqual(RegExp.Date(x).Item1, "11 " + month);
                 int year = DateTime.Today.Year;
-                Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(year, i + 1, 11));
+                Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(year, i + 1, 11));
             }
         }
 
@@ -92,7 +92,7 @@ namespace Language
         {
             string x = "This should 12 march 2012 match";
             Assert.AreEqual(RegExp.Date(x).Item1, "12 march 2012");
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2012, 3, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(2012, 3, 12));
         }
 
         [TestMethod]
@@ -100,7 +100,7 @@ namespace Language
         {
             string x = "This should 12 march 12 match";
             Assert.AreEqual(RegExp.Date(x).Item1, "12 march 12");
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2012, 3, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(2012, 3, 12));
         }
 
         [TestMethod]
@@ -108,7 +108,7 @@ namespace Language
         {
             string x = "This should by 12/11/11 match";
             Assert.AreEqual(RegExp.Date(x).Item1, "by 12/11/11");
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2011, 11, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(2011, 11, 12));
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@ namespace Language
         {
             string x = "This should On 12/11/2011 match";
             Assert.AreEqual(RegExp.Date(x).Item1, "On 12/11/2011");
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2011, 11, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(2011, 11, 12));
         }
 
         [TestMethod]
@@ -131,7 +131,7 @@ namespace Language
                 string x = "This should by 11 " + month + " match";
                 Assert.AreEqual(RegExp.Date(x).Item1, "by 11 " + month);
                 int year = DateTime.Today.Year;
-                Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(year, i + 1, 11));
+                Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(year, i + 1, 11));
             }
             string[] months2 = {
                 "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
@@ -142,7 +142,7 @@ namespace Language
                 string x = "This should due 11 " + month + " match";
                 Assert.AreEqual(RegExp.Date(x).Item1, "due 11 " + month);
                 int year = DateTime.Today.Year;
-                Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(year, i + 1, 11));
+                Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(year, i + 1, 11));
             }
         }
 
@@ -151,7 +151,7 @@ namespace Language
         {
             string x = "This should on 12 march 2012 match";
             Assert.AreEqual(RegExp.Date(x).Item1, "on 12 march 2012");
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2012, 3, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(2012, 3, 12));
         }
 
         [TestMethod]
@@ -176,6 +176,15 @@ namespace Language
             {
                 // Assert.AreEqual(RegExp.Date(x).Item1, string.Empty);
             }
+        }
+
+        [TestMethod]
+        public void from_to()
+        {
+            string x = "This should from 12/11/2011 to 12/11 match";
+            Assert.AreEqual(RegExp.Date(x).Item1, "from 12/11/2011 to 12/11");
+            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2011, 11, 12));
+            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(2012, 11, 12));
         }
     }
 }
