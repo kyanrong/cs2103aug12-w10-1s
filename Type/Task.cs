@@ -21,6 +21,18 @@ namespace Type
         private List<Tuple<string, ParsedType>> tokens;
         private List<string> tags;
 
+        public static int DefaultComparison(Task a, Task b)
+        {
+            if (a.Done == b.Done)
+            {
+                return 0;
+            }
+            else
+            {
+                return a.Done ? 1 : -1;
+            }
+        }
+
         // Constructor
         // from row.
         public Task(List<string> row)
