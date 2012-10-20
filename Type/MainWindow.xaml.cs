@@ -133,6 +133,12 @@ namespace Type
                         {
                             StyleHashTags(run);
                         }
+                        
+                        // Style Dates
+                        if (tuple.Item2 == Task.ParsedType.DateTime)
+                        {
+                            StyleDateTime(run);
+                        }
 
                         text.Inlines.Add(run);
                     }
@@ -201,14 +207,5 @@ namespace Type
                     break;
             }
         }
-
-
-
-
-
-
-
-
-
     }
 }

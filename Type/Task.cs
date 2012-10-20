@@ -151,7 +151,45 @@ namespace Type
                 this.tokens = res;
             }
 
-            
+            // parse dates
+            Tuple<string, DateTime> dateTimeMatch = RegExp.Date(this.rawText);
+            if (dateTimeMatch.Item1 != string.Empty)
+            {
+                // we have a match
+                var datetime = dateTimeMatch.Item1;
+                this.Start = dateTimeMatch.Item2;
+                
+                // find token contain datetime.
+                var res = new List<Tuple<string, ParsedType>>();
+                foreach (Tuple<string, ParsedType> token in this.tokens)
+                {
+                    // if not a string. token has been parsed.
+                    if (token.Item2 != ParsedType.String)
+                    {
+                        // add to result.
+                        // no further processing required.
+                        res.Add(token);
+                    }
+                    else
+                    {
+                        if (token.Item1.Contains(datetime))
+                        {
+                            string[] split = token.Item1.Split(new string[] { datetime }, StringSplitOptions.None);
+                            res.Add(Tuple.Create(split[0], ParsedType.String));
+                            res.Add(Tuple.Create(datetime, ParsedType.DateTime));
+                            res.Add(Tuple.Create(split[1], ParsedType.String));
+                        }
+                        else
+                        {
+                            // date not in token.
+                            // add to result.
+                            res.Add(token);
+                        }
+                    }
+                }
+                // replace this.tokens.
+                this.tokens = res;
+            }
         }
 
         // returns row of strings for storing
