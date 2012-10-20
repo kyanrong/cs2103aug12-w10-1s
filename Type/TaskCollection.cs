@@ -126,6 +126,18 @@ namespace Type
             return t;
         }
 
+        // Marks all done tasks as archived
+        public void ArchiveAll()
+        {
+            foreach (var t in tasks)
+            {
+                if (t.Done)
+                {
+                    t.Archive = true;
+                }
+            }
+        }
+
         // Helper Methods
         // Filter All
         public List<Task> FilterAll(string input)

@@ -15,27 +15,33 @@ namespace Type
             //Parse input.
             var result = Command.Parse(inputBox.Text);
 
-            if (result.CommandText == Command.Invalid)
+            switch (result.CommandText)
             {
-                //Alert the user somehow that the command was invalid.
-                //TODO
-                popUp.IsOpen = true;
-                TextBlock invalidMessage = new TextBlock();
-                invalidMessage.Text = TEXT_INVALIDMESSAGE;
-                StyleInvalidMessage(invalidMessage);      
-                popUp.Child = invalidMessage;
-            }
-            else if (result.CommandText == Command.Search)
-            {
-                DoSearch(result);
-            }
-            else if (result.CommandText != Command.Add)
-            {
-                DoOther(result);
-            }
-            else
-            {
-                DoAdd(result);
+                case Command.Invalid:
+                    //Alert the user somehow that the command was invalid.
+                    popUp.IsOpen = true;
+                    TextBlock invalidMessage = new TextBlock();
+                    invalidMessage.Text = TEXT_INVALIDMESSAGE;
+                    StyleInvalidMessage(invalidMessage);
+                    popUp.Child = invalidMessage;
+                    break;
+
+                case Command.Search:
+                    DoSearch(result);
+                    break;
+
+                case Command.Add:
+                    DoAdd(result);
+                    break;
+
+                case Command.Archive:
+                case Command.Done:
+                case Command.Edit:
+                    DoOther(result);
+                    break;
+                    
+                default:
+                    break;
             }
 
             //Retrieve a list of tasks, unless the list has already been retrieved by Search.
