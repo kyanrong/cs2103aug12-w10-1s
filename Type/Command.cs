@@ -24,6 +24,7 @@ namespace Type
             acceptedCommands.Add(Command.Archive);
             acceptedCommands.Add(Command.Done);
             acceptedCommands.Add(Command.Edit);
+            acceptedCommands.Add(Command.Help);
         }
 
         /// <summary>
@@ -60,6 +61,11 @@ namespace Type
                 cmd = Command.Search;
                 input = input.Substring(Command.SearchToken.Length);
             }
+            else if (input.StartsWith(Command.Help))
+            {
+                cmd = Command.Help;
+                input = "";
+            }
             else
             {
                 cmd = Command.Add;
@@ -76,6 +82,7 @@ namespace Type
         public const string Edit = "edit";
         public const string Done = "done";
         public const string Archive = "archive";
+        public const string Help = "?";
 
         //Enumeration of implicit commands.
         public const string Add = "add";

@@ -48,7 +48,9 @@ namespace Type
     {
         private const string TEXT_WELCOME = "start typing...";
         private const string TEXT_NOTASKS = "no tasks.";
-        private const string TEXT_INVALIDMESSAGE = "Invalid command entered. Valid commands are \":done\", \":edit\", \":clear\".";
+
+        private List<String> helpDescription = new List<String>();
+        private List<String> helpCommands = new List<String>();
 
         private ExecuteCommandCallback ExecuteCommand;
         private FilterSuggestionsCallback GetFilterSuggestions;
@@ -71,6 +73,9 @@ namespace Type
 
             // display input label
             DisplayInputLabel();
+
+            // populate help lists
+            PopulateHelpLists();
 
             // bootstrap tasks
             // TODO. abstract this number.
@@ -206,7 +211,9 @@ namespace Type
             }
 
             RenderTasks();
-            popUp.IsOpen = false;
+            invalidCmdPopup.IsOpen = false;
+            helpDescriptionPopup.IsOpen = false;
+            helpCommandsPopup.IsOpen = false;
         }
 
         // Event Listener, onKeyUp Input Box
@@ -231,6 +238,35 @@ namespace Type
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
+        }
+
+        private void PopulateHelpLists()
+        {
+            // Populate helpDescription List
+            helpDescription.Add("Create new task");
+            helpDescription.Add("Complete a task");
+            helpDescription.Add("Complete all tasks with a tag");
+            helpDescription.Add("Archive all completed tasks");
+            helpDescription.Add("Archive a single task");
+            helpDescription.Add("Archive all tasks with a tag");
+            helpDescription.Add("Edit a task");
+            helpDescription.Add("Undo last action");
+            helpDescription.Add("Filter by hash tags");
+            helpDescription.Add("Show archived tasks");
+            helpDescription.Add("Sort the display");
+
+            // Populate helpCommands List
+            helpCommands.Add("<task>");
+            helpCommands.Add(":done <task>");
+            helpCommands.Add(":done #<tag name>");
+            helpCommands.Add(":archive");
+            helpCommands.Add(":archive <task>");
+            helpCommands.Add(":archive #<tag name>");
+            helpCommands.Add(":edit <task>");
+            helpCommands.Add(":undo");
+            helpCommands.Add("/<tag name> [<tag name>] ...");
+            helpCommands.Add("/archive <tag name> [<tag name>] ...");
+            helpCommands.Add(":sort <field>");
         }
     }
 }

@@ -50,14 +50,6 @@ namespace Type
             run.Foreground = Brushes.SlateGray;
         }
 
-        // style for invalid message
-        private void StyleInvalidMessage(TextBlock textBlock)
-        {
-            textBlock.Background = Brushes.LightYellow;
-            textBlock.Foreground = Brushes.LightSlateGray;
-            textBlock.FontStyle = FontStyles.Italic;
-        }
-
         // style for hashtags (blue)
         private void StyleHashTags(Run run)
         {
@@ -82,7 +74,7 @@ namespace Type
         // style for prioritylow (green)
         private void StylePriorityLow(Run run)
         {
-            run.Foreground = Brushes.Olive;
+            run.Foreground = Brushes.OliveDrab;
             run.FontWeight = FontWeights.DemiBold;
         }
 
