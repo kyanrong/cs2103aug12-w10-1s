@@ -32,7 +32,7 @@ namespace Type
         // 2's Int32
         // M                             L
         // -------------------------------
-        // DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOT
+        // DOOOOOOOOOOOOOOOOOOOOTPPPPPPPPP
         // D = Done      - Bit Flag
         // O = Overdue   - Unsigned Little Endian Integer
         // T = Due Today - Bit Flag
@@ -49,16 +49,18 @@ namespace Type
 
             if (this.DueToday())
             {
-                isDueToday = (1 << 0);
+                isDueToday = (1 << 9);
             }
 
             if (this.OverdueToday())
             {
                 var daysOverdue = (int)(DateTime.Now.Date - this.End.Date).TotalDays;
-                isOverdue = (daysOverdue << 1) & 0x7FFFFFFE;
+                isOverdue = (daysOverdue << 1) & 0x7FFFFE00;
             }
 
-            return (isDone | isDueToday | isOverdue);
+            int priority256 = (this.priority + 256) & 0x000001FF;
+
+            return (isDone | isDueToday | isOverdue | priority256);
         }
 
         private bool OverdueToday()
