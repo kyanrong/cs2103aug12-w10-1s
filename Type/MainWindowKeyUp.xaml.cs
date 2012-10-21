@@ -18,12 +18,7 @@ namespace Type
             switch (result.CommandText)
             {
                 case Command.Invalid:
-                    //Alert the user somehow that the command was invalid.
-                    popUp.IsOpen = true;
-                    TextBlock invalidMessage = new TextBlock();
-                    invalidMessage.Text = TEXT_INVALIDMESSAGE;
-                    StyleInvalidMessage(invalidMessage);
-                    popUp.Child = invalidMessage;
+                    invalidCmdPopup.IsOpen = true;
                     break;
 
                 case Command.Search:
@@ -32,6 +27,10 @@ namespace Type
 
                 case Command.Add:
                     DoAdd(result);
+                    break;
+
+                case Command.Help:
+                    DoHelp();
                     break;
 
                 case Command.Archive:
