@@ -253,6 +253,8 @@ namespace Type
                         }
                     }
                 }
+                // replace this.tokens.
+                this.tokens = res;
             }
         }
 

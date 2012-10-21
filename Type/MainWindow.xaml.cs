@@ -129,41 +129,34 @@ namespace Type
 
                         Run run = new Run(tuple.Item1);
                         // Style Runs
-                        if (tuple.Item2 == Task.ParsedType.HashTag)
+                        if (task.Done)
                         {
-                            if (task.Done)
-                            {
-                                StyleDoneParsedTypes(run);
-                            }
-                            else
-                            {
-                                StyleHashTags(run);
-                            }
+                            StyleDoneParsedTypes(run);
                         }
-                        
-                        // Style Dates
-                        if (tuple.Item2 == Task.ParsedType.DateTime)
+
+                        else
                         {
-                            if (task.Done)
+                            if (tuple.Item2 == Task.ParsedType.HashTag)
                             {
-                                StyleDoneParsedTypes(run);
+                                 StyleHashTags(run);
                             }
-                            else
+
+                            // Style Dates
+                            if (tuple.Item2 == Task.ParsedType.DateTime)
                             {
                                 StyleDateTime(run);
                             }
-                        }
 
-                        // Style Priority
-                        if (tuple.Item2 == Task.ParsedType.PriorityHigh)
-                        {
-                            if (task.Done)
-                            {
-                                StyleDoneParsedTypes(run);
-                            }
-                            else
+                            // Style PriorityHigh
+                            if (tuple.Item2 == Task.ParsedType.PriorityHigh)
                             {
                                 StylePriorityHigh(run);
+                            }
+
+                            // Style PriorityLow
+                            if (tuple.Item2 == Task.ParsedType.PriorityLow)
+                            {
+                                StylePriorityLow(run);
                             }
                         }
 
