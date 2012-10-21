@@ -75,7 +75,14 @@ namespace Type
         // style for priorityhigh (orange)
         private void StylePriorityHigh(Run run)
         {
-            run.Foreground = Brushes.Honeydew;
+            run.Foreground = Brushes.Gold;
+            run.FontWeight = FontWeights.DemiBold;
+        }
+
+        // style for prioritylow (green)
+        private void StylePriorityLow(Run run)
+        {
+            run.Foreground = Brushes.Olive;
             run.FontWeight = FontWeights.DemiBold;
         }
 
