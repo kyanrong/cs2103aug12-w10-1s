@@ -19,14 +19,17 @@ namespace DataStoreTest
 
             myList.Add("how");
             myList.Add("try");
-            myData.InsertRow(myList);
+            int actual = myData.InsertRow(myList);
+
+            //check if the unique ID is correct
+            Assert.AreEqual(1, actual);
 
             //read data from the file to check
             FileStream fs = new FileStream("testInsert", FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
-            
-            Assert.AreEqual( "1,how,try", sr.ReadLine());
 
+            Assert.AreEqual("1,how,try", sr.ReadLine());
+            
             sr.Close();
             fs.Close();
         }
@@ -58,15 +61,72 @@ namespace DataStoreTest
             myData.ChangeRow(2, myList);
 
             //read data from the file to check
+
             FileStream fs = new FileStream("testChange", FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
-            
+
             Assert.AreEqual("1,first,try", sr.ReadLine());
             Assert.AreEqual("2,change try,1-3", sr.ReadLine());
             Assert.AreEqual("3,third,try", sr.ReadLine());
 
             sr.Close();
             fs.Close();
+
+            //test exception
+            DataStore myDataEx = new DataStore("testException");
+
+            List<string> myListEx = new List<string>();
+
+            myListEx.Add("first");
+            myListEx.Add("try");
+            myDataEx.InsertRow(myListEx);
+            myDataEx.InsertRow(myListEx);
+
+            //change the file data
+            FileStream fsEx = new FileStream("testException", FileMode.Truncate, FileAccess.Write);
+            StreamWriter swEx = new StreamWriter(fsEx);
+
+            swEx.WriteLine("first,try");
+            swEx.WriteLine("2,try,try");
+
+            swEx.Close();
+            fsEx.Close();
+
+            try
+            {
+                myDataEx.ChangeRow(2,myListEx);
+                Assert.Fail("no exception throw");
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(ex is MissingFieldException);
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(MissingFieldException))]
+        public void TestGetWithIndexException()
+        {
+            DataStore myData = new DataStore("testGetWithIndexException");
+
+            List<string> myList = new List<string>();
+
+            myList.Add("first");
+            myList.Add("try");
+            myData.InsertRow(myList);
+            myData.InsertRow(myList);
+
+            //change the file data
+            FileStream fs = new FileStream("testGetWithIndexException", FileMode.Truncate, FileAccess.Write);
+            StreamWriter sw = new StreamWriter(fs);
+
+            sw.WriteLine("first,try");
+            sw.WriteLine("2,try,try");
+
+            sw.Close();
+            fs.Close();
+
+            myData.Get(2);
         }
 
         [TestMethod]

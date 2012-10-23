@@ -129,7 +129,7 @@ namespace Type
             sr.Close();
             fs.Close();
 
-            return row.Item2;
+            return row.Item2;//Item2 is the value
         }
 
         // Get all rows in the data store
