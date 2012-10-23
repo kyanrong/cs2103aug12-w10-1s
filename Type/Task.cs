@@ -55,7 +55,7 @@ namespace Type
             if (this.OverdueToday())
             {
                 var daysOverdue = (int)(DateTime.Now.Date - this.End.Date).TotalDays;
-                isOverdue = (daysOverdue << 1) & 0x7FFFFE00;
+                isOverdue = (daysOverdue << 10) & 0x7FFFFE00;
             }
 
             int priority256 = (this.priority + 256) & 0x000001FF;
