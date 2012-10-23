@@ -21,10 +21,10 @@
             <TextBlock Text="Invalid command entered. Valid commands are :done, :edit, :clear" Foreground="LightSlateGray" Background="LemonChiffon" FontStyle="Italic" FontFamily="GillSans" FontSize="14"/>
         </Popup>
         <Popup Name="helpDescriptionPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Width="170">
-            <ListBox Name="helpDescriptionListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="BlanchedAlmond"/>
+            <ItemsControl Name="helpDescriptionListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="BlanchedAlmond"/>
         </Popup>
         <Popup Name="helpCommandsPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" HorizontalOffset="170" Width="250">
-            <ListBox Name="helpCommandsListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="Snow"/>
+            <ItemsControl Name="helpCommandsListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="Snow"/>
         </Popup>
     </Grid>
 </Window>
