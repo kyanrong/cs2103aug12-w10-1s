@@ -36,6 +36,7 @@ namespace Type
         // D = Done      - Bit Flag
         // O = Overdue   - Unsigned Little Endian Integer
         // T = Due Today - Bit Flag
+        // P = Priority  - Unsigned Little Endian Integer (Excess-256)
         public int DefaultOrderHash()
         {
             int isDone = 0;
