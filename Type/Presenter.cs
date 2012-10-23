@@ -13,26 +13,19 @@ namespace Type
         private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
         private const uint COMBINATION_TRIGGER = 0x20;
 
-        //Command strings.
-        private const string CMD_TOKEN = ":";
-        private const string CMD_INVALID = "invalid";
-        private const string CMD_ADD = "add";
-        private const string CMD_EDIT = "edit";
-        private const string CMD_DONE = "done";
-        private const string CMD_ARCHIVE = "archive";
-
-
         private GlobalKeyCombinationHook globalHook;
         private MainWindow ui;
         private TaskCollection tasks;
         private bool editMode;
         private Task selected;
-
+        private Comparison<Task> comparator;
+        
         public Presenter()
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
+            comparator = Task.DefaultComparison;
             tasks = new TaskCollection();
-            ui = new MainWindow(FilterSuggestions, HandleCommand, GetTasks);
+            ui = new MainWindow(GetTasksWithPartialText, HandleCommand, GetTasksNoFilter, GetTasksByHashTags);
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
 
@@ -55,20 +48,11 @@ namespace Type
         /// </summary>
         /// <param name="partialText">Prefix to match.</param>
         /// <returns>Read-only list of suggestions as strings.</returns>
-        private IList<Task> FilterSuggestions(string partialText)
+        private IList<Task> GetTasksWithPartialText(string partialText)
         {
-            var parseResult = Parse(partialText);
-            string cmd = parseResult.Item1;
-            string content = parseResult.Item2;
-
-            if (cmd == CMD_ADD)
-            {
-                return null;
-            }
-            else
-            {
-                return tasks.FilterAll(content);
-            }
+            var resultSet = tasks.FilterAll(partialText);
+            resultSet.Sort(comparator);
+            return resultSet;
         }
 
         /// <summary>
@@ -76,23 +60,45 @@ namespace Type
         /// </summary>
         /// <param name="num">Number of tasks to retrieve.</param>
         /// <returns>Read-only list of tasks.</returns>
-        private IList<Task> GetTasks(int num)
+        private IList<Task> GetTasksNoFilter(int num)
         {
-            return tasks.Get(num);
+            var resultSet = tasks.Get(num);
+            resultSet.Sort(comparator);
+            return resultSet;
         }
 
+        /// <summary>
+        /// Retrieves a list of tasks tagged with at least one hash tag.
+        /// </summary>
+        /// <param name="content">String containing hash tags separated by ' '.</param>
+        /// <returns>Read-only list of tasks.</returns>
+        private IList<Task> GetTasksByHashTags(string content)
+        {
+            var tags = content.Split(' ').ToList();
+            
+            //Prepend a hash to the tag name if it doesn't already have one.
+            for (int i = 0; i < tags.Count; i++)
+            {
+                if (!tags[i].StartsWith("#"))
+                {
+                    tags[i] = "#" + tags[i];
+                }
+            }
+
+            var resultSet = tasks.ByHashTags(tags);
+            resultSet.Sort(comparator);
+            return resultSet;
+        }
+        
         /// <summary>
         /// Parses a raw string and executes its command, if valid.
         /// If no valid command is found, this method does nothing.
         /// </summary>
-        /// <param name="rawText">Text to parse.</param>
+        /// <param name="cmd">Command.</param>
+        /// <param name="content">Text of the Command.</param>
         /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
-        private void HandleCommand(string rawText, Task selected = null)
+        private void HandleCommand(string cmd, string content, Task selected = null)
         {
-            var parseResult = Parse(rawText);
-            string cmd = parseResult.Item1;
-            string content = parseResult.Item2;
-
             //In edit mode, the only valid command is 'add'.
             //Otherwise, accept all commands.
             if (editMode)
@@ -112,22 +118,37 @@ namespace Type
 
             switch (cmd)
             {
-                case CMD_ADD:
+                case Command.Add:
                     tasks.Create(content);
                     break;
 
-                case CMD_EDIT:
+                case Command.Edit:
                     //The selected task is already stored. We set the editMode flag and return. The next command
                     //should be an 'add' containing the edited raw text of the selected task.
-                    editMode = true;
+                    if (selected != null)
+                    {
+                        editMode = true;
+                    }
                     break;
 
-                case CMD_DONE:
-                    tasks.UpdateDone(selected.Id, true);
+                case Command.Done:
+                    if (selected != null)
+                    {
+                        tasks.UpdateDone(selected.Id, true);
+                    }
                     break;
 
-                case CMD_ARCHIVE:
-                    tasks.UpdateArchive(selected.Id, true);
+                case Command.Archive:
+                    if (selected != null)
+                    {
+                        //Archive selected.
+                        tasks.UpdateArchive(selected.Id, true);
+                    }
+                    else
+                    {
+                        //Archive all done.
+                        tasks.ArchiveAll();
+                    }
                     break;
 
                 default:
@@ -138,49 +159,16 @@ namespace Type
 
         private void EditModeSelectedTask(string cmd, string content)
         {
-            if (cmd == CMD_ADD)
+            if (cmd == Command.Add)
             {
                 //The selected task should have been previously stored on the preceeding command.
                 tasks.UpdateRawText(selected.Id, content);
             }
-            else
-            {
-                //This should not happen. Handle it somehow.
-                //TODO
-            }
+
+            //If the command was not "Add", we assume the user wants to exit edit mode.
 
             //Escape from edit mode after this function call.
             editMode = false;
-        }
-
-        /// <summary>
-        /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
-        /// </summary>
-        /// <param name="input">Input to parse. Commands should start with the symbol defined in COMMAND_TOKEN.</param>
-        /// <returns>A Tuple containing the command text and remaining input.</returns>
-        private Tuple<string, string> Parse(string input)
-        {
-            string cmd;
-            if (input.StartsWith(CMD_TOKEN))
-            {
-                int spIndex = input.IndexOf(' ');
-                if (spIndex < 0)
-                {
-                    cmd = CMD_INVALID;
-                    input = "";
-                }
-                else
-                {
-                    cmd = input.Substring(1, spIndex - 1);
-                    input = input.Substring(spIndex + 1);
-                }
-            }
-            else
-            {
-                cmd = CMD_ADD;
-            }
-
-            return new Tuple<string, string>(cmd, input);
         }
     }
 }

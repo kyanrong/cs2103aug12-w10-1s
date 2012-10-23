@@ -10,8 +10,6 @@ namespace Type
         private List<Task> tasks;
         private DataStore dataStore;
 
-        private int nextIndex;
-
         // Constructor
         public TaskCollection()
         {
@@ -20,23 +18,26 @@ namespace Type
             // create data store
             dataStore = new DataStore("taskcollection.csv");
 
-            // HACK
-            nextIndex = 0;
-
             // load flat file into memory.
             this.Fetch();
         }
 
         // Fetch Tasks from Flatfile
-        public void Fetch()
+        private void Fetch()
         {
             Dictionary<int, List<string>> allRows = dataStore.Get();
+
             foreach (KeyValuePair<int, List<string>> entry in allRows)
             {
                 int index = entry.Key;
                 List<string> row = entry.Value;
 
-                // TODO.
+                var t = new Task(row);
+                
+                // set Id of task
+                t.Id = index;
+
+                tasks.Add(t);
             }
         }
 
@@ -44,28 +45,35 @@ namespace Type
         public Task Create(string input)
         {
             Task t = new Task(input);
-            
-            // HACK
-            t.Id = nextIndex++;
-            
             tasks.Add(t);
+            
+            // returns list of strings for storage 
+            var row = t.ToRow();
+
+            // save to datastore
+            int taskId = dataStore.InsertRow(row);
+
+            // assign id to task
+            t.Id = taskId;
+
+            // return task
             return t;
         }
 
         // Get Task
-        public Task GetTask(int id)
+        private Task GetTask(int id)
         {
             return tasks.Find(task => task.Id == id);
         }
 
         // Get All Tasks
-        public IList<Task> Get()
+        private IList<Task> Get()
         {
             return tasks;
         }
 
         // Get number of Tasks starting from skip
-        public IList<Task> Get(int number, int skip = 0)
+        public List<Task> Get(int number, int skip = 0)
         {
             // only return pending tasks
             List<Task> pending = tasks.FindAll(
@@ -81,15 +89,27 @@ namespace Type
         // Update rawText
         public Task UpdateRawText(int id, string str)
         {
-            // TODO
-            return this.GetTask(id);
+            Task t = this.GetTask(id);
+            t.RawText = str;
+
+            // change row in datastore
+            List<string> row = t.ToRow();
+            dataStore.ChangeRow(t.Id, row);
+
+            return t;
         }
 
         // Update done
         public Task UpdateDone(int id, bool done)
         {
             Task t = this.GetTask(id);
-            t.Done = done;
+            t.Done = true;
+            System.Diagnostics.Debug.Write(t.Done);
+
+            // change row in datastore
+            List<string> row = t.ToRow();
+            dataStore.ChangeRow(t.Id, row);
+
             return t;
         }
 
@@ -98,16 +118,46 @@ namespace Type
         {
             Task t = this.GetTask(id);
             t.Archive = archive;
+
+            // change row in datastore
+            List<string> row = t.ToRow();
+            dataStore.ChangeRow(t.Id, row);
+
             return t;
+        }
+
+        // Marks all done tasks as archived
+        public void ArchiveAll()
+        {
+            foreach (var t in tasks)
+            {
+                if (t.Done)
+                {
+                    t.Archive = true;
+                }
+            }
         }
 
         // Helper Methods
         // Filter All
-        public IList<Task> FilterAll(string input)
+        public List<Task> FilterAll(string input)
         {
             return tasks.FindAll(
-                task => task.RawText.StartsWith(input)
-            ).AsReadOnly();
+                task =>
+                    task.Archive == false &&
+                    task.RawText.StartsWith(input)
+            );
+        }
+
+        public List<Task> ByHashTags(IList<string> hashTags)
+        {
+            var resultSet = new HashSet<Task>();
+            foreach (var tag in hashTags)
+            {
+                var queryResults = tasks.FindAll(task => task.Tags.Contains(tag));
+                resultSet.UnionWith(queryResults);
+            }
+            return resultSet.ToList();
         }
     }
 }

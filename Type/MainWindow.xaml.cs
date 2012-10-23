@@ -25,9 +25,10 @@ namespace Type
     /// Parses a raw string and executes its command, if valid.
     /// If no valid command is found, this method does nothing.
     /// </summary>
-    /// <param name="rawText">Text to parse.</param>
+    /// <param name="cmd">Command.</param>
+    /// <param name="content">Text of the Command.</param>
     /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
-    public delegate void ExecuteCommandCallback(string rawText, Task selectedTask = null);
+    public delegate void ExecuteCommandCallback(string cmd, string content, Task selectedTask = null);
 
     /// <summary>
     /// Retrieves a list of tasks to be displayed.
@@ -37,34 +38,44 @@ namespace Type
     public delegate IList<Task> GetTasksCallback(int num);
 
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Retrieves a list of tasks tagged with at least one hash tag.
     /// </summary>
+    /// <param name="content">String containing hash tags separated by ' '.</param>
+    /// <returns>Read-only list of tasks.</returns>
+    public delegate IList<Task> GetTasksByHashTagCallback(string content);
+
     public partial class MainWindow : Window
     {
-        private const string COMMAND_PREFIX = ":";
+        private const string TEXT_WELCOME = "start typing...";
+        private const string TEXT_NOTASKS = "no tasks.";
 
-        private const string INPUT_WELCOME_TEXT = "start typing...";
-        private const string INPUT_NOTASKS_TEXT = "no tasks.";
+        private List<String> helpDescription = new List<String>();
+        private List<String> helpCommands = new List<String>();
 
         private ExecuteCommandCallback ExecuteCommand;
         private FilterSuggestionsCallback GetFilterSuggestions;
         private GetTasksCallback GetTasks;
+        private GetTasksByHashTagCallback GetTasksByHashTag;
 
         private IList<Task> renderedTasks;
 
-        public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks)
+        public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
             InitializeComponent();
 
             this.GetFilterSuggestions = GetFilterSuggestions;
             this.ExecuteCommand = ExecuteCommand;
             this.GetTasks = GetTasks;
+            this.GetTasksByHashTag = GetTasksByHashTag;
 
             // focus cursor in input box
             inputBox.Focus();
 
             // display input label
             DisplayInputLabel();
+
+            // populate help lists
+            PopulateHelpLists();
 
             // bootstrap tasks
             // TODO. abstract this number.
@@ -77,7 +88,7 @@ namespace Type
         {
             if (inputBox.Text.Trim() == "")
             {
-                inputBoxLabel.Content = INPUT_WELCOME_TEXT;
+                inputBoxLabel.Content = TEXT_WELCOME;
             }
             else
             {
@@ -95,30 +106,16 @@ namespace Type
                 StackPanel noTasksText = new StackPanel();
 
                 TextBlock text = new TextBlock();
-                text.Text = INPUT_NOTASKS_TEXT;
+                text.Text = TEXT_NOTASKS;
 
-                text.TextAlignment = TextAlignment.Center;
-                text.FontSize = 20;
-                text.FontFamily = new FontFamily("GillSans");
-                text.Padding = new Thickness(10);
+                StyleNoTasks(text);
 
                 noTasksText.Children.Add(text);
 
                 // Append to tasksgrid.
                 tasksGrid.Children.Add(noTasksText);
 
-                //display horizontal blue line below "no tasks" text
-                StackPanel horizontalLine = new StackPanel();
-                Line blueLine = DrawBlueLine();
-                horizontalLine.Children.Add(blueLine);
-                noTasksText.Children.Add(horizontalLine);
-
-                // display horizontal blue line below input box
-                StackPanel topHorizontalLine = new StackPanel();
-                Line topBlueLine = DrawBlueLine();
-                topHorizontalLine.Margin = new Thickness(12, 47, 0, 0);
-                topHorizontalLine.Children.Add(topBlueLine);
-                mainGrid.Children.Add(topHorizontalLine);
+                DisplayBlueBorder(noTasksText);
             }
             else
             {
@@ -137,11 +134,35 @@ namespace Type
 
                         Run run = new Run(tuple.Item1);
                         // Style Runs
-                        if (tuple.Item2 == Task.ParsedType.HASHTAG)
+                        if (task.Done)
                         {
-                            // blue
-                            run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x23, 0x7f));
-                            run.FontWeight =  FontWeights.DemiBold;
+                            StyleDoneParsedTypes(run);
+                        }
+
+                        else
+                        {
+                            if (tuple.Item2 == Task.ParsedType.HashTag)
+                            {
+                                 StyleHashTags(run);
+                            }
+
+                            // Style Dates
+                            if (tuple.Item2 == Task.ParsedType.DateTime)
+                            {
+                                StyleDateTime(run);
+                            }
+
+                            // Style PriorityHigh
+                            if (tuple.Item2 == Task.ParsedType.PriorityHigh)
+                            {
+                                StylePriorityHigh(run);
+                            }
+
+                            // Style PriorityLow
+                            if (tuple.Item2 == Task.ParsedType.PriorityLow)
+                            {
+                                StylePriorityLow(run);
+                            }
                         }
 
                         text.Inlines.Add(run);
@@ -150,42 +171,21 @@ namespace Type
                     // style accordingly
                     if (task.Done)
                     {
-                        text.TextDecorations = TextDecorations.Strikethrough;
-                        text.FontStyle = FontStyles.Italic;
-                        text.Foreground = Brushes.SlateGray;
+                        StyleDone(text);
                     }
 
-                    text.FontSize = 20;
-                    text.FontFamily = new FontFamily("GillSans");
-                    text.Padding = new Thickness(10);
-                    text.Margin = new Thickness(15, 0, 0, 0);
+                    StyleTasks(text);
 
                     taskView.Children.Add(text);
 
                     // append task view to grid view
                     tasksGrid.Children.Add(taskView);
 
-                    // display horizontal blue line after each new line
-                    StackPanel horizontalLine = new StackPanel();
-                    Line blueLine = DrawBlueLine();
-                    horizontalLine.Children.Add(blueLine);
-                    taskView.Children.Add(horizontalLine);
+                    DisplayBlueBorder(taskView);
                 }
             }
-
-            // display bottom border
-            StackPanel bottomBorder = new StackPanel();
-            Rectangle dashedLine = DrawDashedLine();
-            bottomBorder.Children.Add(dashedLine);
-            tasksGrid.Children.Add(bottomBorder);
-
-            // display vertical redline
-            StackPanel verticalLine = new StackPanel();
-            verticalLine.Orientation = Orientation.Vertical;
-            verticalLine.Margin = new Thickness(25, 12, 0, 0);
-            Line redLine = DrawRedLine();
-            verticalLine.Children.Add(redLine);
-            mainGrid.Children.Add(verticalLine);
+            
+            DisplayDashedBorder(tasksGrid);
         }
 
         // Event Listener when Input Box text changes.
@@ -193,110 +193,28 @@ namespace Type
         {
             DisplayInputLabel();
 
-            // TODO.
-
-            // display filtered tasks
-            IList<Task> filtered = GetFilterSuggestions(inputBox.Text);
-            if (filtered != null)
+            if (inputBox.Text == string.Empty)
             {
-                renderedTasks = filtered;
-                RenderTasks();
+                renderedTasks = GetTasks(8);
             }
+            else
+            {
+                var result = Command.Parse(inputBox.Text);
+                if (result.CommandText == Command.Search)
+                {
+                    renderedTasks = GetTasksByHashTag(result.Text);
+                }
+                else if (result.CommandText != Command.Add)
+                {
+                    renderedTasks = GetFilterSuggestions(result.Text);
+                }
+            }
+
+            RenderTasks();
+            invalidCmdPopup.IsOpen = false;
+            helpDescriptionPopup.IsOpen = false;
+            helpCommandsPopup.IsOpen = false;
         }
-
-        private Line DrawBlueLine()
-        {
-            Line blueLine = new Line();
-
-            blueLine.Stroke = Brushes.SkyBlue;
-            blueLine.StrokeThickness = 0.5;
-            blueLine.X1 = 0;
-            blueLine.Y1 = 0;
-            blueLine.X2 = 479;
-            blueLine.Y2 = 0;
-
-            return blueLine;
-        }
-
-        private Line DrawRedLine()
-        {
-            Line redLine = new Line();
-
-            redLine.Stroke = Brushes.Salmon;
-            redLine.StrokeThickness = 0.5;
-            redLine.X1 = 0;
-            redLine.Y1 = 0;
-            redLine.X2 = 0;
-            redLine.Y2 = 244;
-
-            return redLine;
-        }
-
-        private Rectangle DrawDashedLine()
-        {
-            Rectangle dashedLine = new Rectangle();
-
-            dashedLine.Stroke = Brushes.SandyBrown;
-            dashedLine.StrokeThickness = 1;
-            dashedLine.StrokeDashArray = new DoubleCollection() { 4, 3 };
-            dashedLine.Margin = new Thickness(0, 20, 0, 0);
-
-            return dashedLine;
-        }
-
-        // Used for auto complete.
-        private void MoveCursorToEndOfWord()
-        {
-            inputBox.Select(inputBox.Text.Length, 0);
-        }
-
-
-        // Checks if a command is typed. 
-        //private bool isCommand(string input)
-        //{
-        //    if (input.StartsWith(COMMAND_PREFIX))
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
-
-        // Gets the index of the first whitespace. 
-        //private int getSpIndex(string input)
-        //{
-        //    return input.IndexOf(" ");
-        //}
-
-        //private string getMessage(int spIndex, string input)
-        //{
-        //    return input.Substring(spIndex + 1);
-        //}
-
-        //private void DecideWhatToDo(UIRedrawMsgCode msgCode, string msg)
-        //{
-        //    if (msgCode == UIRedrawMsgCode.EDITED_TEXT)
-        //    {
-        //        textBox1.Text = msg;
-        //        MoveCursorToEndOfWord();
-        //    }
-        //    else if(msgCode == UIRedrawMsgCode.WARNING)
-        //    {
-        //        popUp.IsOpen = true;
-        //        textBlock1.Text = msg;
-        //    }
-        //    else if (msgCode == UIRedrawMsgCode.ERROR)
-        //    {
-        //        popUp.IsOpen = true;
-        //        textBlock1.Text = msg;
-        //    }
-        //    else
-        //    {
-        //        textBox1.Clear();
-        //    }
-        //}
 
         // Event Listener, onKeyUp Input Box
         private void InputBoxKeyUp(object sender, KeyEventArgs e)
@@ -304,59 +222,51 @@ namespace Type
             switch (e.Key)
             {
                 case Key.Enter:
-                    // get input text
-                    string inputText = inputBox.Text;
-
-                    if (inputText.StartsWith(COMMAND_PREFIX))
-                    {
-                        if (renderedTasks.Count != 0)
-                        {
-                            Task selectedTask = renderedTasks[0];
-                            ExecuteCommand(inputBox.Text, selectedTask);
-                        }
-                    }
-                    else
-                    {
-                        // add command
-                        ExecuteCommand(inputBox.Text, null);
-                    }
-                    // render tasks
-                    renderedTasks = GetTasks(8);
-                    RenderTasks();
-
-                    // clear input box
-                    inputBox.Clear();
-
+                    HandleSendCommand();
                     break;
 
                 case Key.Tab:
-                    // TODO
-                    // autocomplete
+                    HandleAutoComplete();
                     break;
 
                 case Key.Escape:
-                    // Hide window
-                    this.Hide();
+                    HandleHideWindow();
                     break;
             }
         }
 
-        //private Tuple<string, string> TokenizeInput(string userInput)
-        //{
-        //    string command;
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
+        }
 
-        //    if (!userInput.StartsWith(COMMAND_PREFIX))
-        //    {
-        //        command = "add";
-        //    }
-        //    else
-        //    {
-        //        var spIndex = userInput.IndexOf(' ');
-        //        command = userInput.Substring(1, spIndex - 1);
-        //        userInput = userInput.Substring(spIndex + 1);
-        //    }
+        private void PopulateHelpLists()
+        {
+            // Populate helpDescription List
+            helpDescription.Add("Create new task");
+            helpDescription.Add("Complete a task");
+            helpDescription.Add("Complete all tasks with a tag");
+            helpDescription.Add("Archive all completed tasks");
+            helpDescription.Add("Archive a single task");
+            helpDescription.Add("Archive all tasks with a tag");
+            helpDescription.Add("Edit a task");
+            helpDescription.Add("Undo last action");
+            helpDescription.Add("Filter by hash tags");
+            helpDescription.Add("Show archived tasks");
+            helpDescription.Add("Sort the display");
 
-        //    return new Tuple<string, string>(command, userInput);
-        //}
+            // Populate helpCommands List
+            helpCommands.Add("<task>");
+            helpCommands.Add(":done <task>");
+            helpCommands.Add(":done #<tag name>");
+            helpCommands.Add(":archive");
+            helpCommands.Add(":archive <task>");
+            helpCommands.Add(":archive #<tag name>");
+            helpCommands.Add(":edit <task>");
+            helpCommands.Add(":undo");
+            helpCommands.Add("/<tag name> [<tag name>] ...");
+            helpCommands.Add("/archive <tag name> [<tag name>] ...");
+            helpCommands.Add(":sort <field>");
+        }
     }
 }
