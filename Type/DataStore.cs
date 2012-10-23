@@ -17,8 +17,10 @@ namespace Type
             // initialize Data Store with fileName
             this.path = fileName;
 
-            // if file exists. read file and load contents
+            // initialize nextIndex
             nextIndex = 1;
+
+            // if file exists update nextIndex, else create file
             if (File.Exists(path))
             {
                 Dictionary<int, List<string>> allRows = this.Get();
@@ -30,34 +32,30 @@ namespace Type
             }
             else
             {
-                // Create file since it does not exist.
                 FileStream fs = File.Create(path);
                 fs.Close();
             }
-
         }
 
-        // Insert New Row to file
+        // append a new row to the file and return a unique ID that identify that row value
         public int InsertRow(List<string> row)
         {
-            // keep value of current index
-            var currentIndex = nextIndex;
+            // keep value of current index to be return
+            int currentIndex = nextIndex;
 
-            // append to row file
             string str = ProcessListToString(currentIndex, row);
+            
             AppendStringToFile(str);
 
-            // update the next index
             nextIndex++;
 
-            // return current index
             return currentIndex;
         }
 
-        // Change the value of a row
+        // The value of the row with the index will be changed to the new value
+        // throw MissingFieldException if any index in the file is missing
         public void ChangeRow(int index, List<string> row)
         {
-            // read file contents
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
 
@@ -66,7 +64,19 @@ namespace Type
             while (!sr.EndOfStream)
             {
                 string rawString = sr.ReadLine();
-                Tuple<int, List<string>> processedRow = ProcessRow(rawString);
+
+                Tuple<int, List<string>> processedRow;
+                try
+                {
+                    processedRow = ProcessRow(rawString);
+                }
+                catch (MissingFieldException exception)
+                {
+                    sr.Close();
+                    fs.Close();
+
+                    throw exception;
+                };
 
                 if (processedRow.Item1 != index)
                 {
@@ -78,7 +88,6 @@ namespace Type
                 }
             }
 
-            // close file/writer
             sr.Close();
             fs.Close();
 
@@ -87,6 +96,7 @@ namespace Type
         }
 
         // returns row given index
+        // throw MissingFieldException if any index in the file is missing
         public List<string> Get(int index)
         {
             // read file contents
@@ -95,24 +105,35 @@ namespace Type
 
             // returns null if index cannot be found.
             Tuple<int, List<string>> row = null;
+            
             while (!sr.EndOfStream)
             {
-                row = ProcessRow(sr.ReadLine());
+                try
+                {
+                    row = ProcessRow(sr.ReadLine());
+                }
+                catch (MissingFieldException exception)
+                {
+                    sr.Close();
+                    fs.Close();
+
+                    throw exception;
+                }
+
                 if (row.Item1 == index)
                 {
                     break;
                 }
             }
 
-            // close file/reader
             sr.Close();
             fs.Close();
 
-            // return row contents
             return row.Item2;
         }
 
         // Get all rows in the data store
+        // throw MissingFieldException if any index in the file is missing
         public Dictionary<int, List<string>> Get()
         {
             // read file contents
@@ -124,15 +145,25 @@ namespace Type
 
             while (!sr.EndOfStream)
             {
-                Tuple<int, List<string>> processedString = ProcessRow(sr.ReadLine());
+                Tuple<int, List<string>> processedString;
+                try
+                {
+                    processedString = ProcessRow(sr.ReadLine());
+                }
+                catch (MissingFieldException exception)
+                {
+                    sr.Close();
+                    fs.Close();
+
+                    throw exception;
+                }
+
                 hashTable.Add(processedString.Item1, processedString.Item2);
             }
 
-            // close file/reader
             sr.Close();
             fs.Close();
 
-            // return all rows
             return hashTable;
         }
 
@@ -141,54 +172,56 @@ namespace Type
         private string ProcessListToString(int index, List<string> list)
         {
             string result = index.ToString();
+           
             foreach (string str in list)
             {
                 result += "," + str;
             }
+           
             return result;
         }
 
         // Append String as a new line at the end of the file
         private void AppendStringToFile(string str)
         {
-            // open file
             FileStream fs = new FileStream(path, FileMode.Append, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
 
-            // append to file
             sw.WriteLine(str);
 
-            // close file/writer
             sw.Close();
             fs.Close();
         }
 
-        // Clears File and replace contents with rows
+        // Clear the file and replace the contents with a list of string
         private void WriteToFile(List<string> rows)
         {
             // open and truncate file.
             FileStream fs = new FileStream(path, FileMode.Truncate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
 
-            // write every one into the file.
             foreach (string str in rows)
             {
                 sw.WriteLine(str);
             }
 
-            // close file/write
             sw.Close();
             fs.Close();
         }
 
         // returns a Tuple of the row's index and it's contents
+        // throw MissingFieldException if any index in the file is missing
         private Tuple<int, List<string>> ProcessRow(string rawString)
         {
             // split comma separated line into tokens
             string[] tokens = rawString.Split(',');
 
             // coerce first value to index.
-            int index = int.Parse(tokens[0]);
+            int index;
+            if (!int.TryParse(tokens[0], out index))
+            {
+                throw new System.MissingFieldException("missing index");
+            }
 
             // build row contents
             List<string> contents = new List<string>();
