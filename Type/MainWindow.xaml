@@ -20,11 +20,14 @@
         <Popup Name="invalidCmdPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Width="360">
             <TextBlock Text="Invalid command entered. Valid commands are :done, :edit, :clear" Foreground="LightSlateGray" Background="LemonChiffon" FontStyle="Italic" FontFamily="GillSans" FontSize="14"/>
         </Popup>
-        <Popup Name="helpDescriptionPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Width="170">
-            <ItemsControl Name="helpDescriptionListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="BlanchedAlmond"/>
-        </Popup>
-        <Popup Name="helpCommandsPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" HorizontalOffset="170" Width="250">
-            <ItemsControl Name="helpCommandsListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="Snow"/>
+        <Popup Name="helpDescriptionPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Width="430">
+            <ItemsControl Name="helpDescriptionListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="SeaShell" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </Popup>
     </Grid>
 </Window>
