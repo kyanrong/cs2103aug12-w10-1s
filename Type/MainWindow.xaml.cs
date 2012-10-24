@@ -79,7 +79,7 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
-            renderedTasks = GetTasks(30);
+            renderedTasks = GetTasks(50);
             InitializeListBounderIndex();
             highlightIndex = 0;
             isFiltering = false;
@@ -106,6 +106,7 @@ namespace Type
             {
                 listEndIndex = renderedTasks.Count;
             }
+
             tasksGrid.Children.Clear();
             if (renderedTasks.Count == 0)
             {
@@ -186,6 +187,7 @@ namespace Type
                     if (isFiltering)
                     {
                         InitializeListBounderIndex();
+                        isFiltering = false;
                     }
 
                     //highlight target textbox
@@ -194,7 +196,7 @@ namespace Type
                         text.Background = Brushes.Beige;
                     }
                     //task that will be show in the stack panel
-                    if (j <= listEndIndex && j >= listStartIndex)
+                    if (j < listEndIndex && j >= listStartIndex)
                     {
                         taskView.Children.Add(text);
                     }
@@ -229,8 +231,7 @@ namespace Type
 
             if (inputBox.Text == string.Empty)
             {
-                renderedTasks = GetTasks(8);
-                isFiltering = false;
+                renderedTasks = GetTasks(100);
             }
             else
             {
@@ -258,6 +259,8 @@ namespace Type
             {
                 case Key.Enter:
                     HandleSendCommand();
+                    renderedTasks = GetTasks(50);
+                    InitializeListBounderIndex();
                     break;
 
                 case Key.Tab:
@@ -290,7 +293,6 @@ namespace Type
 
                 case Key.Down:
                     highlightIndex++;
-
                     if (highlightIndex > 5 && listEndIndex != renderedTasks.Count)
                     {
                         listStartIndex += 4;
@@ -298,10 +300,10 @@ namespace Type
                         highlightIndex = 2;
                         if (listEndIndex >= renderedTasks.Count)
                         {
-                            highlightIndex = 6 - (listEndIndex - renderedTasks.Count);
+                            highlightIndex = 2 + (listEndIndex - renderedTasks.Count);
                             listEndIndex = renderedTasks.Count;
-                            listStartIndex = listEndIndex - 6;
                         }
+                        listStartIndex = listEndIndex - 6;
                     }
                     if (highlightIndex > 5)
                     {
@@ -309,7 +311,6 @@ namespace Type
                     }
                     RenderTasks();
                     break;
-
             }
         }
 
