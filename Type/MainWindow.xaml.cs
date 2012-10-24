@@ -58,6 +58,8 @@ namespace Type
 
         private IList<Task> renderedTasks;
 
+        private int highlightIndex, currentPositionIndex, listStartIndex, listEndIndex;
+
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
             InitializeComponent();
@@ -78,7 +80,19 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
-            renderedTasks = GetTasks(8);
+            renderedTasks = GetTasks(100);
+            if (renderedTasks.Count > 6)
+            {
+                listEndIndex = 6;
+            }
+            else
+            {
+                listEndIndex = renderedTasks.Count;
+            }
+            listStartIndex = 0;
+            highlightIndex = 0;
+            currentPositionIndex = 0;
+
             RenderTasks();
         }
 
@@ -96,8 +110,9 @@ namespace Type
         }
 
         // Render List of Tasks
-        private void RenderTasks()
+        private void RenderTasks(Boolean filter = false)
         {
+            
             tasksGrid.Children.Clear();
             if (renderedTasks.Count == 0)
             {
@@ -120,55 +135,43 @@ namespace Type
             {
                 // loop over each task and create task view
                 // append each to tasks grid
-                foreach (Task task in renderedTasks)
+                for (int j = listStartIndex ; j<listEndIndex ; j++)
                 {
                     // create single stacked panel w/ info
                     StackPanel taskView = new StackPanel();
                     TextBlock text = new TextBlock();
-
+                   
                     // style tokens within the textblock
-                    for (int i = 0; i< task.Tokens.Count; i++)
+                    for (int i = 0; i< renderedTasks[j].Tokens.Count; i++)
                     {
-                        Tuple<string, Task.ParsedType> tuple = task.Tokens[i];
+                        Tuple<string, Task.ParsedType> tuple = renderedTasks[j].Tokens[i];
 
                         Run run = new Run(tuple.Item1);
                         // Style Runs
-                        if (task.Done)
+                        if (renderedTasks[j].Done)
                         {
                             StyleDoneParsedTypes(run);
                         }
-
                         else
                         {
-                            if (tuple.Item2 == Task.ParsedType.HashTag)
-                            {
-                                 StyleHashTags(run);
-                            }
+                            TextChange(tuple, run);
+                        }
 
-                            // Style Dates
-                            if (tuple.Item2 == Task.ParsedType.DateTime)
-                            {
-                                StyleDateTime(run);
-                            }
+                        // if rendering filters
 
-                            // Style PriorityHigh
-                            if (tuple.Item2 == Task.ParsedType.PriorityHigh)
-                            {
-                                StylePriorityHigh(run);
-                            }
+                        if (j == listStartIndex + highlightIndex)
+                        {
+                            // TODO.
+                            // put styles here for highlighted first task
+                            text.Background = Brushes.Beige;
 
-                            // Style PriorityLow
-                            if (tuple.Item2 == Task.ParsedType.PriorityLow)
-                            {
-                                StylePriorityLow(run);
-                            }
                         }
 
                         text.Inlines.Add(run);
                     }
 
                     // style accordingly
-                    if (task.Done)
+                    if (renderedTasks[j].Done)
                     {
                         StyleDone(text);
                     }
@@ -187,11 +190,37 @@ namespace Type
             DisplayDashedBorder(tasksGrid);
         }
 
+        private void TextChange(Tuple<string, Task.ParsedType> tuple, Run run)
+        {
+            if (tuple.Item2 == Task.ParsedType.HashTag)
+            {
+                StyleHashTags(run);
+            }
+
+            // Style Dates
+            if (tuple.Item2 == Task.ParsedType.DateTime)
+            {
+                StyleDateTime(run);
+            }
+
+            // Style PriorityHigh
+            if (tuple.Item2 == Task.ParsedType.PriorityHigh)
+            {
+                StylePriorityHigh(run);
+            }
+
+            // Style PriorityLow
+            if (tuple.Item2 == Task.ParsedType.PriorityLow)
+            {
+                StylePriorityLow(run);
+            }
+        }
+
         // Event Listener when Input Box text changes.
         private void InputBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             DisplayInputLabel();
-
+            bool filter = false;
             if (inputBox.Text == string.Empty)
             {
                 renderedTasks = GetTasks(8);
@@ -202,14 +231,16 @@ namespace Type
                 if (result.CommandText == Command.Search)
                 {
                     renderedTasks = GetTasksByHashTag(result.Text);
+                    filter = true;
                 }
                 else if (result.CommandText != Command.Add)
                 {
                     renderedTasks = GetFilterSuggestions(result.Text);
+                    filter = true;
                 }
             }
 
-            RenderTasks();
+            RenderTasks(filter);
             invalidCmdPopup.IsOpen = false;
             helpDescriptionPopup.IsOpen = false;
         }
@@ -230,6 +261,51 @@ namespace Type
                 case Key.Escape:
                     HandleHideWindow();
                     break;
+
+                case Key.Up:
+                    highlightIndex--;
+                    if (highlightIndex < 0 && listStartIndex > 0)
+                    {
+                        highlightIndex = 3;
+                        listStartIndex -= 4;
+                        if (listStartIndex < 0)
+                        {
+                            highlightIndex = 3 + listStartIndex;
+                            listStartIndex = 0;
+                        }
+                        listEndIndex = listStartIndex + 6;
+                    }
+                    if (highlightIndex < 0)
+                    {
+                        highlightIndex = 0;
+                    }
+                    
+                    RenderTasks();
+                    break;
+                    
+                case Key.Down:
+                    highlightIndex++;
+
+                    if (highlightIndex > 5 && listEndIndex != renderedTasks.Count)
+                    {
+                        listStartIndex += 4;
+                        listEndIndex = listStartIndex + 6;
+                        highlightIndex = 2;
+                        if (listEndIndex >= renderedTasks.Count)
+                        {
+                            highlightIndex = 6- (listEndIndex - renderedTasks.Count);
+                            listEndIndex = renderedTasks.Count;
+                            listStartIndex = listEndIndex - 6;
+                        }
+                    }
+                    if (highlightIndex > 5)
+                    {
+                        highlightIndex = 5;
+                    }
+                    
+                    RenderTasks();
+                    break;
+
             }
         }
 
@@ -274,5 +350,7 @@ namespace Type
             helpDescription.Add("Sort the display");
             helpDescription.Add(":sort <field>");
         }
+
+        
     }
 }
