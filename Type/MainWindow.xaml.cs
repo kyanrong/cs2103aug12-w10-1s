@@ -59,7 +59,7 @@ namespace Type
 
         private IList<Task> renderedTasks;
 
-        private int highlightIndex;
+        private int highlightIndex, currentPositionIndex, listStartIndex, listEndIndex;
 
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
@@ -81,10 +81,20 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
-            renderedTasks = GetTasks(6);
-            RenderTasks();
-
+            renderedTasks = GetTasks(100);
+            if (renderedTasks.Count > 6)
+            {
+                listEndIndex = 6;
+            }
+            else
+            {
+                listEndIndex = renderedTasks.Count;
+            }
+            listStartIndex = 0;
             highlightIndex = 0;
+            currentPositionIndex = 0;
+
+            RenderTasks();
         }
 
         // Input Label
@@ -103,6 +113,7 @@ namespace Type
         // Render List of Tasks
         private void RenderTasks(Boolean filter = false)
         {
+            
             tasksGrid.Children.Clear();
             if (renderedTasks.Count == 0)
             {
@@ -125,7 +136,7 @@ namespace Type
             {
                 // loop over each task and create task view
                 // append each to tasks grid
-                for (int j = 0 ; j<renderedTasks.Count ; j++)
+                for (int j = listStartIndex ; j<listEndIndex ; j++)
                 {
                     // create single stacked panel w/ info
                     StackPanel taskView = new StackPanel();
@@ -149,7 +160,7 @@ namespace Type
 
                         // if rendering filters
 
-                        if (j == highlightIndex)
+                        if (j == listStartIndex + highlightIndex)
                         {
                             // TODO.
                             // put styles here for highlighted first task
@@ -255,11 +266,45 @@ namespace Type
 
                 case Key.Up:
                     highlightIndex--;
+                    if (highlightIndex < 0 && listStartIndex > 0)
+                    {
+                        highlightIndex = 3;
+                        listStartIndex -= 4;
+                        if (listStartIndex < 0)
+                        {
+                            highlightIndex = 3 + listStartIndex;
+                            listStartIndex = 0;
+                        }
+                        listEndIndex = listStartIndex + 6;
+                    }
+                    if (highlightIndex < 0)
+                    {
+                        highlightIndex = 0;
+                    }
+                    
                     RenderTasks();
                     break;
                     
                 case Key.Down:
                     highlightIndex++;
+
+                    if (highlightIndex > 5 && listEndIndex != renderedTasks.Count)
+                    {
+                        listStartIndex += 4;
+                        listEndIndex = listStartIndex + 6;
+                        highlightIndex = 2;
+                        if (listEndIndex >= renderedTasks.Count)
+                        {
+                            highlightIndex = 6- (listEndIndex - renderedTasks.Count);
+                            listEndIndex = renderedTasks.Count;
+                            listStartIndex = listEndIndex - 6;
+                        }
+                    }
+                    if (highlightIndex > 5)
+                    {
+                        highlightIndex = 5;
+                    }
+                    
                     RenderTasks();
                     break;
 
