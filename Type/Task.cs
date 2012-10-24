@@ -22,6 +22,7 @@ namespace Type
         private List<Tuple<string, ParsedType>> tokens;
         private List<string> tags;
 
+        //Sort descending. Smallest value at the bottom.
         public static int DefaultComparison(Task a, Task b)
         {
             int aHash = a.DefaultOrderHash();
