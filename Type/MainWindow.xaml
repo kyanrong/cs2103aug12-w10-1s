@@ -17,8 +17,8 @@
         <Border BorderBrush="#9BFA8072" BorderThickness="0 0 0.5 0" Grid.ColumnSpan="2" Grid.RowSpan="3" Height="323" HorizontalAlignment="Left" Margin="1,0,0,0" Name="border1" VerticalAlignment="Top" Width="25"></Border>
         <Border BorderBrush="SkyBlue" BorderThickness="0 0.5 0 0" Height="106" Name="blueBorder" Margin="0,35,23,159" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" />
         <StackPanel Name="tasksGrid" Margin="0,35,23,12" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1"/>
-        <Popup Name="invalidCmdPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Width="360">
-            <TextBlock Text="Invalid command entered. Valid commands are :done, :edit, :clear" Foreground="LightSlateGray" Background="LemonChiffon" FontStyle="Italic" FontFamily="GillSans" FontSize="14"/>
+        <Popup Name="invalidCmdPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Width="369" Height="25">
+            <TextBlock Text="Invalid command entered. Valid commands are :done, :edit, :clear" Foreground="DarkSlateGray" Background="LemonChiffon" FontStyle="Italic" FontFamily="GillSans" FontSize="14" Padding="5" />
         </Popup>
         <Popup Name="helpDescriptionPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Width="430">
             <ItemsControl Name="helpDescriptionListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="SeaShell" >
