@@ -112,7 +112,6 @@ namespace Type
         // Render List of Tasks
         private void RenderTasks(Boolean filter = false)
         {
-            
             tasksGrid.Children.Clear();
             if (renderedTasks.Count == 0)
             {
@@ -133,6 +132,10 @@ namespace Type
             }
             else
             {
+                if (listEndIndex - listStartIndex < 6)
+                {
+                    listEndIndex = renderedTasks.Count;
+                }
                 // loop over each task and create task view
                 // append each to tasks grid
                 for (int j = listStartIndex ; j<listEndIndex ; j++)
