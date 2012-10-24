@@ -80,7 +80,7 @@ namespace Type
             // bootstrap tasks
             // TODO. abstract this number.
             renderedTasks = GetTasks(30);
-            
+            InitializeListBounderIndex();
             highlightIndex = 0;
             isFiltering = false;
             RenderTasks();
@@ -208,6 +208,7 @@ namespace Type
             
             DisplayDashedBorder(tasksGrid);
         }
+
         private void InitializeListBounderIndex()
         {
             if (renderedTasks.Count > 6)
