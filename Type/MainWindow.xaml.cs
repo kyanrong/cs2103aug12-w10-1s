@@ -58,6 +58,7 @@ namespace Type
 
         private IList<Task> renderedTasks;
         private int highlightIndex, listStartIndex, listEndIndex;
+        private Boolean isFiltering;
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
             InitializeComponent();
@@ -79,16 +80,9 @@ namespace Type
             // bootstrap tasks
             // TODO. abstract this number.
             renderedTasks = GetTasks(30);
-            if (renderedTasks.Count > 6)
-            {
-                listEndIndex = 6;
-            }
-            else
-            {
-                listEndIndex = renderedTasks.Count;
-            }
-            listStartIndex = 0;
+            
             highlightIndex = 0;
+            isFiltering = false;
             RenderTasks();
         }
 
@@ -127,7 +121,7 @@ namespace Type
 
                 // Append to tasksgrid.
                 tasksGrid.Children.Add(noTasksText);
-
+                InitializeListBounderIndex();
                 DisplayBlueBorder(noTasksText);
             }
             else
@@ -189,6 +183,11 @@ namespace Type
 
                     StyleTasks(text);
 
+                    if (isFiltering)
+                    {
+                        InitializeListBounderIndex();
+                    }
+
                     //highlight target textbox
                     if (j == highlightIndex + listStartIndex)
                     {
@@ -209,6 +208,18 @@ namespace Type
             
             DisplayDashedBorder(tasksGrid);
         }
+        private void InitializeListBounderIndex()
+        {
+            if (renderedTasks.Count > 6)
+            {
+                listEndIndex = 6;
+            }
+            else
+            {
+                listEndIndex = renderedTasks.Count;
+            }
+            listStartIndex = 0;
+        }
 
         // Event Listener when Input Box text changes.
         private void InputBoxTextChanged(object sender, TextChangedEventArgs e)
@@ -218,6 +229,7 @@ namespace Type
             if (inputBox.Text == string.Empty)
             {
                 renderedTasks = GetTasks(8);
+                isFiltering = false;
             }
             else
             {
@@ -225,13 +237,14 @@ namespace Type
                 if (result.CommandText == Command.Search)
                 {
                     renderedTasks = GetTasksByHashTag(result.Text);
+                    isFiltering = true;
                 }
                 else if (result.CommandText != Command.Add)
                 {
                     renderedTasks = GetFilterSuggestions(result.Text);
+                    isFiltering = true;
                 }
             }
-
             RenderTasks();
             invalidCmdPopup.IsOpen = false;
             helpDescriptionPopup.IsOpen = false;
@@ -253,7 +266,8 @@ namespace Type
                 case Key.Escape:
                     HandleHideWindow();
                     break;
-                    case Key.Up:
+
+                case Key.Up:
                     highlightIndex--;
                     if (highlightIndex < 0 && listStartIndex > 0)
                     {
@@ -270,10 +284,9 @@ namespace Type
                     {
                         highlightIndex = 0;
                     }
-                    
                     RenderTasks();
                     break;
-                    
+
                 case Key.Down:
                     highlightIndex++;
 
@@ -284,7 +297,7 @@ namespace Type
                         highlightIndex = 2;
                         if (listEndIndex >= renderedTasks.Count)
                         {
-                            highlightIndex = 6- (listEndIndex - renderedTasks.Count);
+                            highlightIndex = 6 - (listEndIndex - renderedTasks.Count);
                             listEndIndex = renderedTasks.Count;
                             listStartIndex = listEndIndex - 6;
                         }
@@ -293,10 +306,9 @@ namespace Type
                     {
                         highlightIndex = 5;
                     }
-                    
                     RenderTasks();
                     break;
-            
+
             }
         }
 
