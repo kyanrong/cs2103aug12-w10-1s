@@ -134,6 +134,10 @@ namespace Type
                 if (t.Done)
                 {
                     t.Archive = true;
+
+                    // change row in datastore
+                    List<string> row = t.ToRow();
+                    dataStore.ChangeRow(t.Id, row);
                 }
             }
         }
