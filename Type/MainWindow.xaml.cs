@@ -57,7 +57,7 @@ namespace Type
         private GetTasksByHashTagCallback GetTasksByHashTag;
 
         private IList<Task> renderedTasks;
-        private int highlightIndex, currentPositionIndex, listStartIndex, listEndIndex;
+        private int highlightIndex, listStartIndex, listEndIndex;
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
             InitializeComponent();
@@ -89,7 +89,6 @@ namespace Type
             }
             listStartIndex = 0;
             highlightIndex = 0;
-            currentPositionIndex = 0;
             RenderTasks();
         }
 
@@ -109,6 +108,10 @@ namespace Type
         // Render List of Tasks
         private void RenderTasks()
         {
+            if (listEndIndex - listStartIndex < 6)
+            {
+                listEndIndex = renderedTasks.Count;
+            }
             tasksGrid.Children.Clear();
             if (renderedTasks.Count == 0)
             {
@@ -186,10 +189,12 @@ namespace Type
 
                     StyleTasks(text);
 
+                    //highlight target textbox
                     if (j == highlightIndex + listStartIndex)
                     {
                         text.Background = Brushes.Beige;
                     }
+                    //task that will be show in the stack panel
                     if (j <= listEndIndex && j >= listStartIndex)
                     {
                         taskView.Children.Add(text);
