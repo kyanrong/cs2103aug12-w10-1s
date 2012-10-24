@@ -88,7 +88,6 @@
     </Compile>
     <Compile Include="TaskCollection.cs" />
     <Compile Include="Presenter.cs" />
-    <Compile Include="IAutoComplete.cs" />
     <Compile Include="LocalInstaller.cs" />
     <Compile Include="GlobalKeyCombinationHook.cs" />
     <Compile Include="Task.cs" />
