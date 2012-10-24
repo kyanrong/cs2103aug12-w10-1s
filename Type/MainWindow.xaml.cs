@@ -50,7 +50,6 @@ namespace Type
         private const string TEXT_NOTASKS = "no tasks.";
 
         private List<String> helpDescription = new List<String>();
-        private List<String> helpCommands = new List<String>();
 
         private ExecuteCommandCallback ExecuteCommand;
         private FilterSuggestionsCallback GetFilterSuggestions;
@@ -77,7 +76,7 @@ namespace Type
             DisplayInputLabel();
 
             // populate help lists
-            PopulateHelpLists();
+            PopulateHelpList();
 
             // bootstrap tasks
             // TODO. abstract this number.
@@ -244,7 +243,6 @@ namespace Type
             RenderTasks(filter);
             invalidCmdPopup.IsOpen = false;
             helpDescriptionPopup.IsOpen = false;
-            helpCommandsPopup.IsOpen = false;
         }
 
         // Event Listener, onKeyUp Input Box
@@ -316,33 +314,41 @@ namespace Type
             DragMove();
         }
 
-        private void PopulateHelpLists()
+        private void PopulateHelpList()
         {
             // Populate helpDescription List
             helpDescription.Add("Create new task");
-            helpDescription.Add("Complete a task");
-            helpDescription.Add("Complete all tasks with a tag");
-            helpDescription.Add("Archive all completed tasks");
-            helpDescription.Add("Archive a single task");
-            helpDescription.Add("Archive all tasks with a tag");
-            helpDescription.Add("Edit a task");
-            helpDescription.Add("Undo last action");
-            helpDescription.Add("Filter by hash tags");
-            helpDescription.Add("Show archived tasks");
-            helpDescription.Add("Sort the display");
+            helpDescription.Add("<task>");
 
-            // Populate helpCommands List
-            helpCommands.Add("<task>");
-            helpCommands.Add(":done <task>");
-            helpCommands.Add(":done #<tag name>");
-            helpCommands.Add(":archive");
-            helpCommands.Add(":archive <task>");
-            helpCommands.Add(":archive #<tag name>");
-            helpCommands.Add(":edit <task>");
-            helpCommands.Add(":undo");
-            helpCommands.Add("/<tag name> [<tag name>] ...");
-            helpCommands.Add("/archive <tag name> [<tag name>] ...");
-            helpCommands.Add(":sort <field>");
+            helpDescription.Add("Complete a task");
+            helpDescription.Add(":done <task>");
+
+            helpDescription.Add("Complete all tasks with a tag");
+            helpDescription.Add(":done #<tag name>");
+
+            helpDescription.Add("Archive all completed tasks");
+            helpDescription.Add(":archive");
+
+            helpDescription.Add("Archive a single task");
+            helpDescription.Add(":archive <task>");
+
+            helpDescription.Add("Archive all tasks with a tag");
+            helpDescription.Add(":archive #<tag name>");
+
+            helpDescription.Add("Edit a task");
+            helpDescription.Add(":edit <task>");
+
+            helpDescription.Add("Undo last action");
+            helpDescription.Add(":undo");
+
+            helpDescription.Add("Filter by hash tags");
+            helpDescription.Add("/<tag name> [<tag name>] ...");
+
+            helpDescription.Add("Show archived tasks");
+            helpDescription.Add("/archive <tag name> [<tag name>] ...");
+
+            helpDescription.Add("Sort the display");
+            helpDescription.Add(":sort <field>");
         }
 
         

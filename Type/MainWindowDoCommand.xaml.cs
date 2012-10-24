@@ -57,10 +57,8 @@ namespace Type
         private void DoHelp()
         {
             helpDescriptionListBox.DataContext = helpDescription;
-            helpCommandsListBox.DataContext = helpCommands;
 
             helpDescriptionPopup.IsOpen = true;
-            helpCommandsPopup.IsOpen = true;
         }
     }
 }
