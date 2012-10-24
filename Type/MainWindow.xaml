@@ -20,7 +20,7 @@
         <Popup Name="invalidCmdPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Width="369" Height="25">
             <TextBlock Text="Invalid command entered. Valid commands are :done, :edit, :clear" Foreground="DarkSlateGray" Background="LemonChiffon" FontStyle="Italic" FontFamily="GillSans" FontSize="14" Padding="5" />
         </Popup>
-        <Popup Name="helpDescriptionPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Width="430">
+        <Popup Name="helpDescriptionPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Placement="Bottom" Grid.Row="1" Grid.Column="1">
             <ItemsControl Name="helpDescriptionListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="SeaShell" >
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
