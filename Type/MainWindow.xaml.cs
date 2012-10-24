@@ -57,7 +57,7 @@ namespace Type
         private GetTasksByHashTagCallback GetTasksByHashTag;
 
         private IList<Task> renderedTasks;
-
+        private int highlightIndex, currentPositionIndex, listStartIndex, listEndIndex;
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
             InitializeComponent();
@@ -78,7 +78,18 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
-            renderedTasks = GetTasks(8);
+            renderedTasks = GetTasks(30);
+            if (renderedTasks.Count > 6)
+            {
+                listEndIndex = 6;
+            }
+            else
+            {
+                listEndIndex = renderedTasks.Count;
+            }
+            listStartIndex = 0;
+            highlightIndex = 0;
+            currentPositionIndex = 0;
             RenderTasks();
         }
 
@@ -120,20 +131,20 @@ namespace Type
             {
                 // loop over each task and create task view
                 // append each to tasks grid
-                foreach (Task task in renderedTasks)
+                for (int j=0 ; j<renderedTasks.Count ; j++)
                 {
                     // create single stacked panel w/ info
                     StackPanel taskView = new StackPanel();
                     TextBlock text = new TextBlock();
 
                     // style tokens within the textblock
-                    for (int i = 0; i< task.Tokens.Count; i++)
+                    for (int i = 0; i< renderedTasks[j].Tokens.Count; i++)
                     {
-                        Tuple<string, Task.ParsedType> tuple = task.Tokens[i];
+                        Tuple<string, Task.ParsedType> tuple = renderedTasks[j].Tokens[i];
 
                         Run run = new Run(tuple.Item1);
                         // Style Runs
-                        if (task.Done)
+                        if (renderedTasks[j].Done)
                         {
                             StyleDoneParsedTypes(run);
                         }
@@ -168,15 +179,22 @@ namespace Type
                     }
 
                     // style accordingly
-                    if (task.Done)
+                    if (renderedTasks[j].Done)
                     {
                         StyleDone(text);
                     }
 
                     StyleTasks(text);
 
-                    taskView.Children.Add(text);
-
+                    if (j == highlightIndex + listStartIndex)
+                    {
+                        text.Background = Brushes.Beige;
+                    }
+                    if (j <= listEndIndex && j >= listStartIndex)
+                    {
+                        taskView.Children.Add(text);
+                    }
+                    
                     // append task view to grid view
                     tasksGrid.Children.Add(taskView);
 
@@ -230,6 +248,50 @@ namespace Type
                 case Key.Escape:
                     HandleHideWindow();
                     break;
+                    case Key.Up:
+                    highlightIndex--;
+                    if (highlightIndex < 0 && listStartIndex > 0)
+                    {
+                        highlightIndex = 3;
+                        listStartIndex -= 4;
+                        if (listStartIndex < 0)
+                        {
+                            highlightIndex = 3 + listStartIndex;
+                            listStartIndex = 0;
+                        }
+                        listEndIndex = listStartIndex + 6;
+                    }
+                    if (highlightIndex < 0)
+                    {
+                        highlightIndex = 0;
+                    }
+                    
+                    RenderTasks();
+                    break;
+                    
+                case Key.Down:
+                    highlightIndex++;
+
+                    if (highlightIndex > 5 && listEndIndex != renderedTasks.Count)
+                    {
+                        listStartIndex += 4;
+                        listEndIndex = listStartIndex + 6;
+                        highlightIndex = 2;
+                        if (listEndIndex >= renderedTasks.Count)
+                        {
+                            highlightIndex = 6- (listEndIndex - renderedTasks.Count);
+                            listEndIndex = renderedTasks.Count;
+                            listStartIndex = listEndIndex - 6;
+                        }
+                    }
+                    if (highlightIndex > 5)
+                    {
+                        highlightIndex = 5;
+                    }
+                    
+                    RenderTasks();
+                    break;
+            
             }
         }
 
