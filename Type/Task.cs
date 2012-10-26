@@ -25,44 +25,49 @@ namespace Type
         //Sort descending. Smallest value at the bottom.
         public static int DefaultComparison(Task a, Task b)
         {
-            int aHash = a.DefaultOrderHash();
-            int bHash = b.DefaultOrderHash();
+            long aHash = a.DefaultOrderHash();
+            long bHash = b.DefaultOrderHash();
             return aHash > bHash ? -1 : aHash == bHash ? 0 : 1;
         }
 
-        // 2's Int32
-        // M                             L
-        // -------------------------------
-        // DOOOOOOOOOOOOOOOOOOOOTPPPPPPPPP
-        // D = Done      - Bit Flag
+        // We create a natural ordering on a Task based on its properties.
+        // 2's Int64
+        // M                                                                              L
+        // ---- ---- ---- ---- ---- ---- ---- ----  ---- ---- ---- ---- ---- ---- ---- ----
+        // DOOO OOOO OOOO OOOO OOOO OTPP PPPP PPPP  IIII IIII IIII IIII IIII IIII IIII IIIX
+        // D = Done      - Bit Flag (0-false)
         // O = Overdue   - Unsigned Little Endian Integer
-        // T = Due Today - Bit Flag
+        // T = Due Today - Bit Flag (0-false)
         // P = Priority  - Unsigned Little Endian Integer (Excess-256)
-        public int DefaultOrderHash()
+        // I = Identity  - Unique Task ID
+        // X = Unused
+        public long DefaultOrderHash()
         {
-            int isDone = 0;
-            int isDueToday = 0;
-            int isOverdue = 0;
+            long isDone = 0;
+            long isDueToday = 0;
+            long isOverdue = 0;
 
             if (this.Done)
             {
-                isDone = (1 << 31);
+                isDone = (1 << 63);
             }
 
             if (this.DueToday())
             {
-                isDueToday = (1 << 9);
+                isDueToday = (1 << 42);
             }
 
             if (this.OverdueToday())
             {
-                var daysOverdue = (int)(DateTime.Now.Date - this.End.Date).TotalDays;
-                isOverdue = (daysOverdue << 10) & 0x7FFFFE00;
+                var daysOverdue = (long)(DateTime.Now.Date - this.End.Date).TotalDays;
+                isOverdue = (daysOverdue << 43) & (long)0x7FFFF80000000000;
             }
 
-            int priority256 = (this.priority + 256) & 0x000001FF;
+            long priority256 = ((long)(this.priority + 256) << 32) & (long)0x000003FF00000000;
 
-            return (isDone | isDueToday | isOverdue | priority256);
+            long taskId = (long)(this.Id & 0x7FFFFFFF) << 1;
+
+            return (isDone | isDueToday | isOverdue | priority256 | taskId);
         }
 
         private bool OverdueToday()
