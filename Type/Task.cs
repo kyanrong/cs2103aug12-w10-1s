@@ -267,6 +267,11 @@ namespace Type
             }
         }
 
+        public Task Clone()
+        {
+            return new Task(this.ToRow());
+        }
+
         // returns row of strings for storing
         public List<string> ToRow()
         {
