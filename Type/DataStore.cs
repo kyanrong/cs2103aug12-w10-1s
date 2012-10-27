@@ -95,6 +95,45 @@ namespace Type
             WriteToFile(list);
         }
 
+        // The value of the row with the index will be deleted
+        // throw MissingFieldException if any index in the file is missing
+        public void DeleteRow(int index)
+        {
+            FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+            StreamReader sr = new StreamReader(fs);
+
+            List<string> list = new List<string>();
+
+            while (!sr.EndOfStream)
+            {
+                string rawString = sr.ReadLine();
+
+                Tuple<int, List<string>> processedRow;
+                try
+                {
+                    processedRow = ProcessRow(rawString);
+                }
+                catch (MissingFieldException exception)
+                {
+                    sr.Close();
+                    fs.Close();
+
+                    throw exception;
+                };
+
+                if (processedRow.Item1 != index)
+                {
+                    list.Add(rawString);
+                }
+            }
+
+            sr.Close();
+            fs.Close();
+
+            // replace the contents of the file with new contents.
+            WriteToFile(list);
+        }
+
         // returns row given index
         // throw MissingFieldException if any index in the file is missing
         public List<string> Get(int index)
