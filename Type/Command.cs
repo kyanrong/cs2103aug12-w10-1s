@@ -28,6 +28,12 @@ namespace Type
             acceptedCommands.Add(Command.Help);
         }
 
+        public static string Complete(string partial)
+        {
+            var result = acceptedCommands.FirstOrDefault(cmdText => cmdText.StartsWith(partial));
+            return result.Substring(partial.Length);
+        }
+
         /// <summary>
         /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
         /// </summary>

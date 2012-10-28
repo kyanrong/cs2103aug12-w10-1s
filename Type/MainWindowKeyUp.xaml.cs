@@ -74,6 +74,11 @@ namespace Type
                         MoveCursorToEndOfWord();
                     }
                 }
+                else
+                {
+                    inputBox.Text += Command.Complete(inputBox.Text.Substring(1));
+                    MoveCursorToEndOfWord();
+                }
             }
         }
 
