@@ -24,6 +24,7 @@ namespace Type
             acceptedCommands.Add(Command.Archive);
             acceptedCommands.Add(Command.Done);
             acceptedCommands.Add(Command.Edit);
+            acceptedCommands.Add(Command.Undo);
             acceptedCommands.Add(Command.Help);
         }
 
@@ -81,6 +82,7 @@ namespace Type
         //Enumeration of accepted explicit commands.
         public const string Edit = "edit";
         public const string Done = "done";
+        public const string Undo = "undo";
         public const string Archive = "archive";
         public const string Help = "?";
 
