@@ -19,16 +19,11 @@ namespace Type
         }
 
         private void DoOther(Command result)
-        {
-            Task selectedTask = null;
-            if (renderedTasks.Count != 0 && result.Text != string.Empty)
-            {
-                selectedTask = renderedTasks[0];
+        {           
 
-                if (result.CommandText == Command.Edit)
-                {
-                    DoEdit(selectedTask);
-                }
+            if (renderedTasks.Count != 0 && result.CommandText == Command.Edit)
+            {
+                DoEdit();
             }
 
             ExecuteCommand(result.CommandText, result.Text, selectedTask);
@@ -39,7 +34,7 @@ namespace Type
             }
         }
 
-        private void DoEdit(Task selectedTask)
+        private void DoEdit()
         {
             //Populate inputBox with edit text.
             inputBox.Text = selectedTask.RawText;

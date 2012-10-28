@@ -150,10 +150,7 @@ namespace Type
                         tasks.ArchiveAll();
                     }
                     break;
-                case Command.Undo:
-                    // call undo method of TaskCollection Obj.
-                    tasks.Undo();
-                    break;
+
                 default:
                     //Do nothing.
                     break;
@@ -165,7 +162,6 @@ namespace Type
             if (cmd == Command.Add)
             {
                 //The selected task should have been previously stored on the preceeding command.
-                tasks.UpdateRawText(selected.Id, content);
             }
 
             //If the command was not "Add", we assume the user wants to exit edit mode.
