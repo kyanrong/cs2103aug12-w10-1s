@@ -48,6 +48,8 @@ namespace Type
     {
         private const string TEXT_WELCOME = "start typing...";
         private const string TEXT_NOTASKS = "no tasks.";
+        private const int NUMBER_OF_TASKS_LOADED = 50;
+        private const int NUMBER_OF_TASKS_DISPLAYED = 6;
 
         private List<String> helpDescription = new List<String>();
 
@@ -57,8 +59,10 @@ namespace Type
         private GetTasksByHashTagCallback GetTasksByHashTag;
 
         private IList<Task> renderedTasks;
+        private List<TextBlock> taskTextBlockList;
         private int highlightIndex, listStartIndex, listEndIndex;
-        private Boolean isFiltering;
+        private StackPanel taskView = new StackPanel();
+
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
             InitializeComponent();
@@ -79,10 +83,10 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
-            renderedTasks = GetTasks(50);
+            renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+            taskTextBlockList = new List<TextBlock>();
             InitializeListBounderIndex();
             highlightIndex = 0;
-            isFiltering = false;
             RenderTasks();
         }
 
@@ -100,119 +104,105 @@ namespace Type
         }
 
         // Render List of Tasks
-        private void RenderTasks()
+        private void RefreshViewList()
         {
-            if (listEndIndex - listStartIndex < 6)
-            {
-                listEndIndex = renderedTasks.Count;
-            }
-
+            taskView.Children.Clear();
             tasksGrid.Children.Clear();
+            TextBlock text = new TextBlock();
+
             if (renderedTasks.Count == 0)
             {
-                // display no tasks text.
-                StackPanel noTasksText = new StackPanel();
-
-                TextBlock text = new TextBlock();
                 text.Text = TEXT_NOTASKS;
 
                 StyleNoTasks(text);
 
-                noTasksText.Children.Add(text);
-
-                // Append to tasksgrid.
-                tasksGrid.Children.Add(noTasksText);
-                InitializeListBounderIndex();
-                DisplayBlueBorder(noTasksText);
+                taskView.Children.Add(text);
+                DisplayBlueBorder(taskView);
             }
             else
             {
+                DisplayBlueBorder(taskView);
                 // loop over each task and create task view
                 // append each to tasks grid
-                for (int j=0 ; j<renderedTasks.Count ; j++)
-                {
-                    // create single stacked panel w/ info
-                    StackPanel taskView = new StackPanel();
-                    TextBlock text = new TextBlock();
+                for (int i = listStartIndex; i < listEndIndex; i++)
+                {  
+                    text = taskTextBlockList[i];
+                    //highlight target textbox                    
 
-                    // style tokens within the textblock
-                    for (int i = 0; i< renderedTasks[j].Tokens.Count; i++)
-                    {
-                        Tuple<string, Task.ParsedType> tuple = renderedTasks[j].Tokens[i];
-
-                        Run run = new Run(tuple.Item1);
-                        // Style Runs
-                        if (renderedTasks[j].Done)
-                        {
-                            StyleDoneParsedTypes(run);
-                        }
-
-                        else
-                        {
-                            if (tuple.Item2 == Task.ParsedType.HashTag)
-                            {
-                                 StyleHashTags(run);
-                            }
-
-                            // Style Dates
-                            if (tuple.Item2 == Task.ParsedType.DateTime)
-                            {
-                                StyleDateTime(run);
-                            }
-
-                            // Style PriorityHigh
-                            if (tuple.Item2 == Task.ParsedType.PriorityHigh)
-                            {
-                                StylePriorityHigh(run);
-                            }
-
-                            // Style PriorityLow
-                            if (tuple.Item2 == Task.ParsedType.PriorityLow)
-                            {
-                                StylePriorityLow(run);
-                            }
-                        }
-
-                        text.Inlines.Add(run);
-                    }
-
-                    // style accordingly
-                    if (renderedTasks[j].Done)
-                    {
-                        StyleDone(text);
-                    }
-
-                    StyleTasks(text);
-
-                    if (isFiltering)
-                    {
-                        InitializeListBounderIndex();
-                        isFiltering = false;
-                    }
-
-                    //highlight target textbox
-                    if (j == highlightIndex + listStartIndex)
+                    if (i == highlightIndex + listStartIndex)
                     {
                         text.Background = Brushes.Beige;
                     }
-                    //task that will be show in the stack panel
-                    if (j < listEndIndex && j >= listStartIndex)
+                    else
                     {
-                        taskView.Children.Add(text);
+                        text.Background = Brushes.White;
                     }
-                    
-                    // append task view to grid view
-                    tasksGrid.Children.Add(taskView);
-
+                    taskView.Children.Add(text);
                     DisplayBlueBorder(taskView);
                 }
             }
-            
+
+            // append task view to grid view
+            tasksGrid.Children.Add(taskView);
             DisplayDashedBorder(tasksGrid);
+        }
+
+        //generate list of text block
+        private void RenderTasks()
+        {
+            taskTextBlockList.Clear();
+            InitializeListBounderIndex();
+
+            for (int i = 0; i < renderedTasks.Count; i++)
+            {
+                TextBlock text = new TextBlock();
+                // style tokens within the textblock
+                foreach (Tuple<string, Task.ParsedType> tuple in renderedTasks[i].Tokens)
+                {
+                    Run run = new Run(tuple.Item1);
+                    // Style Runs
+                    if (renderedTasks[i].Done)
+                    {
+                        StyleDoneParsedTypes(run);
+                    }
+                    else
+                    {
+                        if (tuple.Item2 == Task.ParsedType.HashTag)
+                        {
+                            StyleHashTags(run);
+                        }
+
+                        // Style Dates
+                        if (tuple.Item2 == Task.ParsedType.DateTime)
+                        {
+                            StyleDateTime(run);
+                        }
+
+                        // Style PriorityHigh
+                        if (tuple.Item2 == Task.ParsedType.PriorityHigh)
+                        {
+                            StylePriorityHigh(run);
+                        }
+
+                        // Style PriorityLow
+                        if (tuple.Item2 == Task.ParsedType.PriorityLow)
+                        {
+                            StylePriorityLow(run);
+                        }
+                    }
+                    text.Inlines.Add(run);
+                }
+                StyleTasks(text);
+                taskTextBlockList.Add(text);
+            }
+            RefreshViewList();
         }
 
         private void InitializeListBounderIndex()
         {
+            highlightIndex = 0;
+            listStartIndex = 0;
+
             if (renderedTasks.Count > 6)
             {
                 listEndIndex = 6;
@@ -220,8 +210,7 @@ namespace Type
             else
             {
                 listEndIndex = renderedTasks.Count;
-            }
-            listStartIndex = 0;
+            }            
         }
 
         // Event Listener when Input Box text changes.
@@ -231,7 +220,7 @@ namespace Type
 
             if (inputBox.Text == string.Empty)
             {
-                renderedTasks = GetTasks(100);
+                renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             }
             else
             {
@@ -239,12 +228,12 @@ namespace Type
                 if (result.CommandText == Command.Search)
                 {
                     renderedTasks = GetTasksByHashTag(result.Text);
-                    isFiltering = true;
+                    InitializeListBounderIndex();
                 }
                 else if (result.CommandText != Command.Add)
                 {
                     renderedTasks = GetFilterSuggestions(result.Text);
-                    isFiltering = true;
+                    InitializeListBounderIndex();
                 }
             }
             RenderTasks();
@@ -259,8 +248,8 @@ namespace Type
             {
                 case Key.Enter:
                     HandleSendCommand();
-                    renderedTasks = GetTasks(50);
-                    InitializeListBounderIndex();
+                    renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+                    RenderTasks();
                     break;
 
                 case Key.Tab:
@@ -272,44 +261,19 @@ namespace Type
                     break;
 
                 case Key.Up:
-                    highlightIndex--;
-                    if (highlightIndex < 0 && listStartIndex > 0)
-                    {
-                        highlightIndex = 3;
-                        listStartIndex -= 4;
-                        if (listStartIndex < 0)
-                        {
-                            highlightIndex = 3 + listStartIndex;
-                            listStartIndex = 0;
-                        }
-                        listEndIndex = listStartIndex + 6;
-                    }
-                    if (highlightIndex < 0)
-                    {
-                        highlightIndex = 0;
-                    }
-                    RenderTasks();
+                    HandleUpArrow();
                     break;
 
                 case Key.Down:
-                    highlightIndex++;
-                    if (highlightIndex > 5 && listEndIndex != renderedTasks.Count)
-                    {
-                        listStartIndex += 4;
-                        listEndIndex = listStartIndex + 6;
-                        highlightIndex = 2;
-                        if (listEndIndex >= renderedTasks.Count)
-                        {
-                            highlightIndex = 2 + (listEndIndex - renderedTasks.Count);
-                            listEndIndex = renderedTasks.Count;
-                        }
-                        listStartIndex = listEndIndex - 6;
-                    }
-                    if (highlightIndex > 5)
-                    {
-                        highlightIndex = 5;
-                    }
-                    RenderTasks();
+                    HandleDownArrow();
+                    break;
+
+                case Key.Left:
+                    HandleLeftArrow();
+                    break;
+
+                case Key.Right:
+                    HandleRightArrow();
                     break;
             }
         }

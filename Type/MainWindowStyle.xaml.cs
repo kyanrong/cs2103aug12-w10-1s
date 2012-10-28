@@ -27,13 +27,6 @@ namespace Type
             textBlock.Margin = new Thickness(15, 0, 0, 0);
         }
 
-        // style for completed tasks.
-        private void StyleDone(TextBlock textBlock)
-        {
-            textBlock.TextDecorations = TextDecorations.Strikethrough;
-            textBlock.FontStyle = FontStyles.Italic;
-            textBlock.Foreground = Brushes.SlateGray;
-        }
 
         // style for "no tasks" text
         private void StyleNoTasks(TextBlock textBlock)
@@ -84,6 +77,8 @@ namespace Type
             Line line = DrawBlueLine();
             AddBorder(stackPanel, line);
         }
+
+        
 
         // display dashed border
         private void DisplayDashedBorder(StackPanel stackPanel)
