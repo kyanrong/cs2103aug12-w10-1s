@@ -102,6 +102,7 @@ namespace Type
             }
         }
 
+        //update highlight index and may navigate to previous page
         private void HandleUpArrow()
         {
             highlightIndex--;
@@ -122,6 +123,8 @@ namespace Type
             }
             RefreshViewList();
         }
+
+        //update highlight index and may navigate to next page
         private void HandleDownArrow()
         {
             highlightIndex++;
@@ -143,6 +146,7 @@ namespace Type
             }
             RefreshViewList();
         }
+
         //go to previous page
         private void HandleLeftArrow()
         {
@@ -157,6 +161,7 @@ namespace Type
             RefreshViewList();
         }
         //go to next page
+
         private void HandleRightArrow()
         {
             //already at the last page, no need changes
@@ -173,6 +178,7 @@ namespace Type
             }
             RefreshViewList();
         }
+
         //if the list index is out of bound then set to the correct bound
         private bool CheckListIndexBound()
         {

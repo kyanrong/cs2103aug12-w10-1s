@@ -20,15 +20,9 @@ namespace Type
 
         private void DoOther(Command result)
         {
-            Task selectedTask = null;
-            if (renderedTasks.Count != 0 && result.Text != string.Empty)
+            if (renderedTasks.Count != 0 && result.CommandText == Command.Edit)
             {
-                selectedTask = renderedTasks[0];
-
-                if (result.CommandText == Command.Edit)
-                {
-                    DoEdit(selectedTask);
-                }
+                DoEdit(selectedTask);
             }
 
             ExecuteCommand(result.CommandText, result.Text, selectedTask);
