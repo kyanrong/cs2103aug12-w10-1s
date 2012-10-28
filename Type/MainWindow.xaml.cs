@@ -61,6 +61,7 @@ namespace Type
         private IList<Task> renderedTasks;
         private List<TextBlock> taskTextBlockList;
         private int highlightIndex, listStartIndex, listEndIndex;
+        private Task selectedTask;
         private StackPanel taskView = new StackPanel();
 
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
@@ -86,7 +87,7 @@ namespace Type
             renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             taskTextBlockList = new List<TextBlock>();
             InitializeListBounderIndex();
-            highlightIndex = 0;
+
             RenderTasks();
         }
 
@@ -103,9 +104,10 @@ namespace Type
             }
         }
 
-        // Render List of Tasks
+        // this method does not change any rendered task content
         private void RefreshViewList()
         {
+            //initialization
             taskView.Children.Clear();
             tasksGrid.Children.Clear();
             TextBlock text = new TextBlock();
@@ -122,21 +124,24 @@ namespace Type
             else
             {
                 DisplayBlueBorder(taskView);
+
                 // loop over each task and create task view
                 // append each to tasks grid
                 for (int i = listStartIndex; i < listEndIndex; i++)
                 {  
                     text = taskTextBlockList[i];
-                    //highlight target textbox                    
 
+                    //highlight target textbox                    
                     if (i == highlightIndex + listStartIndex)
                     {
+                        selectedTask = renderedTasks[i];
                         text.Background = Brushes.Beige;
                     }
                     else
                     {
                         text.Background = Brushes.White;
                     }
+
                     taskView.Children.Add(text);
                     DisplayBlueBorder(taskView);
                 }
@@ -147,10 +152,11 @@ namespace Type
             DisplayDashedBorder(tasksGrid);
         }
 
-        //generate list of text block
+        //render all tasks to generate list of text block
         private void RenderTasks()
         {
             taskTextBlockList.Clear();
+            
             InitializeListBounderIndex();
 
             for (int i = 0; i < renderedTasks.Count; i++)
@@ -167,6 +173,7 @@ namespace Type
                     }
                     else
                     {
+                        // Style HashTags
                         if (tuple.Item2 == Task.ParsedType.HashTag)
                         {
                             StyleHashTags(run);
@@ -193,14 +200,17 @@ namespace Type
                     text.Inlines.Add(run);
                 }
                 StyleTasks(text);
+
                 taskTextBlockList.Add(text);
             }
             RefreshViewList();
         }
 
+        //initialize highlightIndex, listStartIndex and listEndIndex
         private void InitializeListBounderIndex()
         {
             highlightIndex = 0;
+
             listStartIndex = 0;
 
             if (renderedTasks.Count > 6)

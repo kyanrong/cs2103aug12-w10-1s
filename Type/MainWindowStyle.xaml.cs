@@ -98,7 +98,7 @@ namespace Type
         {
             Line blueLine = new Line();
 
-            blueLine.Stroke = Brushes.SkyBlue;
+            blueLine.Stroke = Brushes.Blue;
             blueLine.StrokeThickness = 0.5;
             blueLine.X1 = 0;
             blueLine.Y1 = 0;
