@@ -271,5 +271,10 @@ namespace Type
 
             return Tuple.Create(index, contents);
         }
+
+        public void ClearFile(String fileName)
+        {
+            File.Delete(fileName);
+        }
     }
 }
