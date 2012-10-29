@@ -26,6 +26,7 @@ namespace Type
             acceptedCommands.Add(Command.Edit);
             acceptedCommands.Add(Command.Undo);
             acceptedCommands.Add(Command.Help);
+            acceptedCommands.Add(Command.Clear);
         }
 
         public static string TryComplete(string partial)
@@ -71,7 +72,12 @@ namespace Type
             else if (input.StartsWith(Command.Help))
             {
                 cmd = Command.Help;
-                input = "";
+                input = string.Empty;
+            }
+            else if (input.StartsWith(Command.Clear))
+            {
+                cmd = Command.Clear;
+                input = string.Empty;
             }
             else
             {
@@ -91,6 +97,7 @@ namespace Type
         public const string Undo = "undo";
         public const string Archive = "archive";
         public const string Help = "?";
+        public const string Clear = "clear";
 
         //Enumeration of implicit commands.
         public const string Add = "add";

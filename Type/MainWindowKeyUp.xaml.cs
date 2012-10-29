@@ -37,6 +37,7 @@ namespace Type
                 case Command.Done:
                 case Command.Undo:
                 case Command.Edit:
+                case Command.Clear:
                     DoOther(result);
                     break;
                     

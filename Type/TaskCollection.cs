@@ -349,5 +349,11 @@ namespace Type
             }
             return resultSet.ToList();
         }
+
+        public void Clear()
+        {
+            dataStore.ClearFile("taskcollection.csv");
+            undoDataStore.ClearFile("undostack.csv");
+        }
     }
 }

@@ -150,10 +150,17 @@ namespace Type
                         tasks.ArchiveAll();
                     }
                     break;
+
                 case Command.Undo:
                     // Call undo method of TaskCollection Obj.
                     tasks.Undo();
                     break;
+
+                case Command.Clear:
+                    tasks.Clear();
+                    tasks = new TaskCollection();
+                    break;
+    
                 default:
                     //Do nothing.
                     break;
