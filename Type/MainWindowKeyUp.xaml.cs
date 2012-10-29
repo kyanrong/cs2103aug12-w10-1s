@@ -107,44 +107,56 @@ namespace Type
         private void HandleUpArrow()
         {
             highlightIndex--;
+
             if (highlightIndex < 0 && listStartIndex > 0)
             {
                 highlightIndex = NUMBER_OF_TASKS_DISPLAYED-1;
                 listStartIndex -= NUMBER_OF_TASKS_DISPLAYED ;
+
                 if (listStartIndex < 0)
                 {
                     listStartIndex = 0;
                     highlightIndex = listStartIndex;                 
                 }
+
                 listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
             }
+
             if (highlightIndex < 0)
             {
                 highlightIndex = 0;
             }
+
             RefreshViewList();
         }
+
         private void HandleDownArrow()
         {
             highlightIndex++;
+
             if ((highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1) && (listEndIndex != renderedTasks.Count))
             {
                 listStartIndex += NUMBER_OF_TASKS_DISPLAYED;
                 listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
                 highlightIndex = 0;
+
                 if (listEndIndex >= renderedTasks.Count)
                 {
                     highlightIndex += (listEndIndex - renderedTasks.Count);
                     listEndIndex = renderedTasks.Count;
                 }
+
                 listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
             }
+
             if (highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1)
             {
                 highlightIndex = NUMBER_OF_TASKS_DISPLAYED-1;
             }
+
             RefreshViewList();
         }
+
         //go to previous page
         private void HandleLeftArrow()
         {
@@ -153,11 +165,14 @@ namespace Type
             {
                 return;
             }
+
             listStartIndex -= NUMBER_OF_TASKS_DISPLAYED;            
             listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
+
             CheckListIndexBound();
             RefreshViewList();
         }
+
         //go to next page
         private void HandleRightArrow()
         {
@@ -166,6 +181,7 @@ namespace Type
             {
                 return;
             }
+
             listEndIndex += NUMBER_OF_TASKS_DISPLAYED;
             listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
 
@@ -173,22 +189,27 @@ namespace Type
             {
                 highlightIndex = listEndIndex % NUMBER_OF_TASKS_DISPLAYED - 1;
             }
+
             RefreshViewList();
         }
+
         //if the list index is out of bound then set to the correct bound
         private bool CheckListIndexBound()
         {
             bool isChanged = false;
+
             if (listStartIndex < 0)
             {
                 listStartIndex = 0;
                 isChanged = true;
             }
+
             if (listEndIndex > renderedTasks.Count)
             {
                 listEndIndex = renderedTasks.Count;
                 isChanged = true;
             }
+
             return isChanged;
         }
         

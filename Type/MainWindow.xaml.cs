@@ -132,7 +132,7 @@ namespace Type
 
                     if (i == highlightIndex + listStartIndex)
                     {
-                        text.Background = Brushes.Beige;
+                        text.Background = Brushes.AliceBlue;
                         selectedTask = renderedTasks[i];
                     }
                     else
@@ -209,6 +209,7 @@ namespace Type
             {
                 listEndIndex = 6;
             }
+
             else
             {
                 listEndIndex = renderedTasks.Count;
@@ -224,20 +225,24 @@ namespace Type
             {
                 renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             }
+
             else
             {
                 var result = Command.Parse(inputBox.Text);
+
                 if (result.CommandText == Command.Search)
                 {
                     renderedTasks = GetTasksByHashTag(result.Text);
                     InitializeListBounderIndex();
                 }
+
                 else if (result.CommandText != Command.Add)
                 {
                     renderedTasks = GetFilterSuggestions(result.Text);
                     InitializeListBounderIndex();
                 }
             }
+
             RenderTasks();
             invalidCmdPopup.IsOpen = false;
             helpDescriptionPopup.IsOpen = false;

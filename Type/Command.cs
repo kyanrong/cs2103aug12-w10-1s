@@ -33,7 +33,16 @@ namespace Type
         public static string TryComplete(string partial)
         {
             var result = acceptedCommands.FirstOrDefault(cmdText => cmdText.StartsWith(partial));
-            return result.Substring(partial.Length);
+
+            if (result == null)
+            {
+                return string.Empty;
+            }
+
+            else
+            {
+                return result.Substring(partial.Length);
+            }
         }
 
         /// <summary>
