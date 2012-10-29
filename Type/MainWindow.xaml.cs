@@ -61,7 +61,6 @@ namespace Type
         private IList<Task> renderedTasks;
         private List<TextBlock> taskTextBlockList;
         private int highlightIndex, listStartIndex, listEndIndex;
-        private Task selectedTask;
         private StackPanel taskView = new StackPanel();
 
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
@@ -133,7 +132,6 @@ namespace Type
                     if (i == highlightIndex + listStartIndex)
                     {
                         text.Background = Brushes.Beige;
-                        selectedTask = renderedTasks[i];
                     }
                     else
                     {
