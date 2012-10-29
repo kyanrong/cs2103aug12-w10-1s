@@ -28,7 +28,7 @@ namespace Type
             acceptedCommands.Add(Command.Help);
         }
 
-        public static string Complete(string partial)
+        public static string TryComplete(string partial)
         {
             var result = acceptedCommands.FirstOrDefault(cmdText => cmdText.StartsWith(partial));
             return result.Substring(partial.Length);

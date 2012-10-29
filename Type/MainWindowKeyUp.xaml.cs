@@ -76,7 +76,7 @@ namespace Type
                 }
                 else
                 {
-                    inputBox.Text += Command.Complete(inputBox.Text.Substring(1));
+                    inputBox.Text += Command.TryComplete(inputBox.Text.Substring(1));
                     MoveCursorToEndOfWord();
                 }
             }
