@@ -26,6 +26,7 @@ namespace Type
             acceptedCommands.Add(Command.Edit);
             acceptedCommands.Add(Command.Undo);
             acceptedCommands.Add(Command.Help);
+            acceptedCommands.Add(Command.HelpSpelled);
             acceptedCommands.Add(Command.Clear);
         }
 
@@ -69,9 +70,10 @@ namespace Type
                 cmd = Command.Search;
                 input = input.Substring(Command.SearchToken.Length);
             }
-            else if (input.StartsWith(Command.Help))
+            else if (input.StartsWith(Command.Help) || input.StartsWith(Command.HelpSpelled))
             {
                 cmd = Command.Help;
+                cmd = Command.HelpSpelled;
                 input = string.Empty;
             }
             else if (input.StartsWith(Command.Clear))
@@ -97,6 +99,7 @@ namespace Type
         public const string Undo = "undo";
         public const string Archive = "archive";
         public const string Help = "?";
+        public const string HelpSpelled = "help";
         public const string Clear = "clear";
 
         //Enumeration of implicit commands.

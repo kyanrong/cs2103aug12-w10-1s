@@ -30,6 +30,7 @@ namespace Type
                     break;
 
                 case Command.Help:
+                case Command.HelpSpelled:
                     DoHelp();
                     break;
 
