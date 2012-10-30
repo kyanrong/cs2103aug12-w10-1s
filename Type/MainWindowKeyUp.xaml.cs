@@ -104,60 +104,41 @@ namespace Type
             }
         }
 
+        //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
         {
             highlightIndex--;
 
+            //when highlighIndex out of bound and current page is not the first page
             if (highlightIndex < 0 && listStartIndex > 0)
             {
-                highlightIndex = NUMBER_OF_TASKS_DISPLAYED-1;
-                listStartIndex -= NUMBER_OF_TASKS_DISPLAYED ;
-
-                if (listStartIndex < 0)
-                {
-                    listStartIndex = 0;
-                    highlightIndex = listStartIndex;                 
-                }
-
-                listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
+                HandleLeftArrow();//move to previous page
+                highlightIndex = listEndIndex % NUMBER_OF_TASKS_DISPLAYED;
             }
 
-            if (highlightIndex < 0)
-            {
-                highlightIndex = 0;
-            }
+            CheckHighlightIndexBound();
 
             RefreshViewList();
         }
 
+        //modify the highlightIndex and may go to next page
         private void HandleDownArrow()
         {
             highlightIndex++;
 
             if ((highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1) && (listEndIndex != renderedTasks.Count))
             {
-                listStartIndex += NUMBER_OF_TASKS_DISPLAYED;
-                listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
+                HandleRightArrow();//move to next page
                 highlightIndex = 0;
-
-                if (listEndIndex >= renderedTasks.Count)
-                {
-                    highlightIndex += (listEndIndex - renderedTasks.Count);
-                    listEndIndex = renderedTasks.Count;
-                }
-
-                listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
             }
 
-            if (highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1)
-            {
-                highlightIndex = NUMBER_OF_TASKS_DISPLAYED-1;
-            }
+            CheckHighlightIndexBound();
 
             RefreshViewList();
         }
 
-        //go to previous page
+        //go to previous page, will modify listStartIndex and listEndIndex
+        //may modify highlightIndex
         private void HandleLeftArrow()
         {
             //already at the first page, no need changes
@@ -170,10 +151,12 @@ namespace Type
             listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
 
             CheckListIndexBound();
+            CheckHighlightIndexBound();
             RefreshViewList();
         }
 
-        //go to next page
+        //go to next page, will modify listStartIndex and listEndIndex
+        //may modify highlightIndex
         private void HandleRightArrow()
         {
             //already at the last page, no need changes
@@ -185,32 +168,36 @@ namespace Type
             listEndIndex += NUMBER_OF_TASKS_DISPLAYED;
             listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
 
-            if (CheckListIndexBound() && (highlightIndex > listEndIndex % NUMBER_OF_TASKS_DISPLAYED - 1))
-            {
-                highlightIndex = listEndIndex % NUMBER_OF_TASKS_DISPLAYED - 1;
-            }
-
+            CheckHighlightIndexBound();
+            CheckListIndexBound();
             RefreshViewList();
         }
 
-        //if the list index is out of bound then set to the correct bound
-        private bool CheckListIndexBound()
+        //if the list index is out of bound then set it back to the correct bound
+        private void CheckListIndexBound()
         {
-            bool isChanged = false;
-
             if (listStartIndex < 0)
             {
                 listStartIndex = 0;
-                isChanged = true;
             }
 
             if (listEndIndex > renderedTasks.Count)
             {
                 listEndIndex = renderedTasks.Count;
-                isChanged = true;
             }
+        }
 
-            return isChanged;
+        //if the highLightIndex out of bound the set it back to the correct bound
+        private void CheckHighlightIndexBound()
+        {
+            if (highlightIndex < 0)
+            {
+                highlightIndex = 0;
+            }
+            if (highlightIndex > listEndIndex % NUMBER_OF_TASKS_DISPLAYED)
+            {
+                highlightIndex = listEndIndex % NUMBER_OF_TASKS_DISPLAYED;
+            }
         }
         
         // Used for auto complete.
