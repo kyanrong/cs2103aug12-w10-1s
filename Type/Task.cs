@@ -34,9 +34,10 @@ namespace Type
         // 2's Int64
         // M                                                                              L
         // ---- ---- ---- ---- ---- ---- ---- ----  ---- ---- ---- ---- ---- ---- ---- ----
-        // DOOO OOOO OOOO OOOO OOOO OOOO OOOO OTPP  PPPP PPPP IIII IIII IIII IIII IIII IIII
+        // DOMM MMMM MMMM MMMM MMMM MMMM MMMM MTPP  PPPP PPPP IIII IIII IIII IIII IIII IIII
         // D = Done      - Bit Flag (0-false)
-        // O = Overdue   - Unsigned Little Endian Integer
+        // O = Overdue   - Bit Flag (0-false)
+        // M = Magnitude - Unsigned Little Endian Integer representing number of days
         // T = Due Today - Bit Flag (0-false)
         // P = Priority  - Unsigned Little Endian Integer (Excess-256)
         // I = Identity  - Unique Task ID
@@ -46,6 +47,7 @@ namespace Type
             long isDone = 0;
             long isDueToday = 0;
             long isOverdue = 0;
+            long magnitude = 0;
 
             if (this.Done)
             {
@@ -57,17 +59,20 @@ namespace Type
                 isDueToday = (1 << 34);
             }
 
-            if (this.OverdueToday())
+            bool overdue;
+            if (overdue = this.OverdueToday())
             {
-                var daysOverdue = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
-                isOverdue = (daysOverdue << 35) & (long)0x7FFFFFF800000000;
+                isOverdue = (1 << 62);
             }
+
+            long days = overdue ? (long)(DateTime.Now.Date - this.End.Date).TotalMinutes : (long)(this.End.Date - DateTime.Now.Date).TotalMinutes;
+            magnitude = (days << 35) & (long)0x3FFFFFF800000000;
 
             long priority256 = ((long)(this.priority + 256) << 24) & (long)0x00000003FF000000;
 
             long taskId = (long)(this.Id & 0x00FFFFFF);
 
-            return (isDone | isDueToday | isOverdue | priority256 | taskId);
+            return (isDone | isDueToday | isOverdue | priority256 | taskId | magnitude);
         }
 
         private bool OverdueToday()
