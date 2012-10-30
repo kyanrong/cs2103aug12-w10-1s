@@ -36,12 +36,11 @@ namespace Type
         // ---- ---- ---- ---- ---- ---- ---- ----  ---- ---- ---- ---- ---- ---- ---- ----
         // DOMM MMMM MMMM MMMM MMMM MMMM MMMM MTPP  PPPP PPPP IIII IIII IIII IIII IIII IIII
         // D = Done      - Bit Flag (0-false)
-        // O = Overdue   - Bit Flag (1-false)
+        // O = Overdue   - Bit Flag (0-false)
         // M = Magnitude - Unsigned Little Endian Integer representing number of days
         // T = Due Today - Bit Flag (0-false)
         // P = Priority  - Unsigned Little Endian Integer (Excess-256)
         // I = Identity  - Unique Task ID
-        // X = Unused
         public long DefaultOrderHash()
         {
             long isDone = 0;
