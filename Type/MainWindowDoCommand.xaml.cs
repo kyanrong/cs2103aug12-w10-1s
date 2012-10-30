@@ -22,7 +22,7 @@ namespace Type
         {
             Task target = null;
 
-            if (renderedTasks.Count != 0 )
+            if (renderedTasks.Count != 0 && result.Text != string.Empty)
             {
                 target = selectedTask;
 

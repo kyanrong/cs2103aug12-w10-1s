@@ -27,6 +27,7 @@ namespace Type
             textBlock.Margin = new Thickness(15, 0, 0, 0);
         }
 
+
         // style for "no tasks" text
         private void StyleNoTasks(TextBlock textBlock)
         {
@@ -77,6 +78,8 @@ namespace Type
             AddBorder(stackPanel, line);
         }
 
+        
+
         // display dashed border
         private void DisplayDashedBorder(StackPanel stackPanel)
         {
@@ -96,7 +99,7 @@ namespace Type
             Line blueLine = new Line();
 
             blueLine.Stroke = Brushes.SkyBlue;
-            blueLine.StrokeThickness = 1;
+            blueLine.StrokeThickness = 0.5;
             blueLine.X1 = 0;
             blueLine.Y1 = 0;
             blueLine.X2 = 484;
