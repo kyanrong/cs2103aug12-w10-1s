@@ -65,7 +65,7 @@ namespace Type
                 isOverdue = (1 << 62);
             }
 
-            long days = overdue ? (long)(DateTime.Now.Date - this.End.Date).TotalMinutes : (long)(this.End.Date - DateTime.Now.Date).TotalMinutes;
+            long days = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
             magnitude = (days << 35) & (long)0x3FFFFFF800000000;
 
             long priority256 = ((long)(this.priority + 256) << 24) & (long)0x00000003FF000000;
