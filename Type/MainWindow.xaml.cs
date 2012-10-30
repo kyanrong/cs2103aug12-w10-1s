@@ -104,7 +104,7 @@ namespace Type
             }
         }
 
-        // Render List of Tasks
+        // Render List of Tasks.
         private void RefreshViewList()
         {
             taskView.Children.Clear();
@@ -132,7 +132,7 @@ namespace Type
 
                     if (i == highlightIndex + listStartIndex)
                     {
-                        text.Background = Brushes.SkyBlue;
+                        text.Background = Brushes.AliceBlue;
                         selectedTask = renderedTasks[i];
                     }
                     else
@@ -233,11 +233,13 @@ namespace Type
                 if (result.CommandText == Command.Search)
                 {
                     renderedTasks = GetTasksByHashTag(result.Text);
+                    InitializeListBounderIndex();
                 }
 
                 else if (result.CommandText != Command.Add)
                 {
                     renderedTasks = GetFilterSuggestions(result.Text);
+                    InitializeListBounderIndex();
                 }
             }
 
