@@ -139,7 +139,7 @@ namespace Type
                     break;
 
                 case Command.Archive:
-                    if (selected != null)
+                    if (selected != null && !content.Equals(""))
                     {
                         //Archive selected.
                         tasks.UpdateArchive(selected.Id, true);
