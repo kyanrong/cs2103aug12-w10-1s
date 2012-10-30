@@ -104,7 +104,7 @@ namespace Type
             }
         }
 
-        // Render List of Tasks
+        // Render List of Tasks.
         private void RefreshViewList()
         {
             taskView.Children.Clear();
