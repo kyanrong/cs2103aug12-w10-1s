@@ -57,7 +57,7 @@ namespace Type
                 isDueToday = (1 << 34);
             }
 
-            if (true)
+            if (this.OverdueToday())
             {
                 var daysOverdue = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
                 isOverdue = (daysOverdue << 35) & (long)0x7FFFFFF800000000;
