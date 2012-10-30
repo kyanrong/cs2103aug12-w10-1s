@@ -233,13 +233,11 @@ namespace Type
                 if (result.CommandText == Command.Search)
                 {
                     renderedTasks = GetTasksByHashTag(result.Text);
-                    InitializeListBounderIndex();
                 }
 
                 else if (result.CommandText != Command.Add)
                 {
                     renderedTasks = GetFilterSuggestions(result.Text);
-                    InitializeListBounderIndex();
                 }
             }
 
