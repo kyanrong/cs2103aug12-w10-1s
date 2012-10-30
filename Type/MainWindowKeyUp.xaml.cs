@@ -113,7 +113,7 @@ namespace Type
             if (highlightIndex < 0 && listStartIndex > 0)
             {
                 HandleLeftArrow();//move to previous page
-                highlightIndex = listEndIndex % NUMBER_OF_TASKS_DISPLAYED;
+                highlightIndex = (listEndIndex-1) % NUMBER_OF_TASKS_DISPLAYED;
             }
 
             CheckHighlightIndexBound();
@@ -168,8 +168,8 @@ namespace Type
             listEndIndex += NUMBER_OF_TASKS_DISPLAYED;
             listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
 
-            CheckHighlightIndexBound();
             CheckListIndexBound();
+            CheckHighlightIndexBound();
             RefreshViewList();
         }
 
@@ -194,9 +194,9 @@ namespace Type
             {
                 highlightIndex = 0;
             }
-            if (highlightIndex > listEndIndex % NUMBER_OF_TASKS_DISPLAYED)
+            if (highlightIndex > (listEndIndex-1) % NUMBER_OF_TASKS_DISPLAYED)
             {
-                highlightIndex = listEndIndex % NUMBER_OF_TASKS_DISPLAYED;
+                highlightIndex = (listEndIndex-1) % NUMBER_OF_TASKS_DISPLAYED;
             }
         }
         
