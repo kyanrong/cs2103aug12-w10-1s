@@ -29,12 +29,11 @@ namespace Type
             acceptedCommands.Add(Command.Done);
             acceptedCommands.Add(Command.Edit);
             acceptedCommands.Add(Command.Undo);
-            acceptedCommands.Add(Command.HelpToken);
             acceptedCommands.Add(Command.Help);
             acceptedCommands.Add(Command.Clear);
 
-            // Ensure the hash table contains exactly 7 commands.
-            Debug.Assert(acceptedCommands.Count == 7);
+            // Ensure the hash table contains exactly 6 commands.
+            Debug.Assert(acceptedCommands.Count == 6);
         }
 
         /// <summary>
