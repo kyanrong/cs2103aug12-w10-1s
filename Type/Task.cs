@@ -63,7 +63,7 @@ namespace Type
                 isOverdue = ((long)1 << 62);
             }
 
-            var minutes = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
+            long minutes = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
             magnitude = (minutes << 35) & (long)0x3FFFFFF800000000;
 
             long priority256 = ((long)(this.priority + 256) << 24) & (long)0x00000003FF000000;
