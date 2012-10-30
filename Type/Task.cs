@@ -36,7 +36,7 @@ namespace Type
         // ---- ---- ---- ---- ---- ---- ---- ----  ---- ---- ---- ---- ---- ---- ---- ----
         // DOMM MMMM MMMM MMMM MMMM MMMM MMMM MTPP  PPPP PPPP IIII IIII IIII IIII IIII IIII
         // D = Done      - Bit Flag (0-false)
-        // O = Overdue   - Bit Flag (0-false)
+        // O = Overdue   - Bit Flag (1-false)
         // M = Magnitude - Unsigned Little Endian Integer representing number of days
         // T = Due Today - Bit Flag (0-false)
         // P = Priority  - Unsigned Little Endian Integer (Excess-256)
@@ -51,26 +51,25 @@ namespace Type
 
             if (this.Done)
             {
-                isDone = (1 << 63);
+                isDone = ((long)1 << 63);
             }
 
             if (this.DueToday())
             {
-                isDueToday = (1 << 34);
+                isDueToday = ((long)1 << 34);
             }
 
-            bool overdue;
-            if (overdue = this.OverdueToday())
+            if (this.OverdueToday())
             {
-                isOverdue = (1 << 62);
+                isOverdue = ((long)1 << 62);
             }
 
-            long days = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
-            magnitude = (days << 35) & (long)0x3FFFFFF800000000;
+            var minutes = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
+            magnitude = (minutes << 35) & (long)0x3FFFFFF800000000;
 
             long priority256 = ((long)(this.priority + 256) << 24) & (long)0x00000003FF000000;
 
-            long taskId = (long)(this.Id & 0x00FFFFFF);
+            long taskId = ((long)this.Id & (long)0x0000000000FFFFFF);
 
             return (isDone | isDueToday | isOverdue | priority256 | taskId | magnitude);
         }
