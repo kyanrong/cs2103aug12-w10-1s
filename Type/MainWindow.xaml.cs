@@ -132,7 +132,7 @@ namespace Type
 
                     if (i == highlightIndex + listStartIndex)
                     {
-                        text.Background = Brushes.AliceBlue;
+                        text.Background = Brushes.SkyBlue;
                         selectedTask = renderedTasks[i];
                     }
                     else
