@@ -206,6 +206,12 @@ namespace Type
             return hashTable;
         }
 
+        // Delete file
+        public void ClearFile(String fileName)
+        {
+            File.Delete(fileName);
+        }
+
         // Converts List<string> into a string of comma separated values
         // appends index in front.
         private string ProcessListToString(int index, List<string> list)
@@ -270,11 +276,6 @@ namespace Type
             }
 
             return Tuple.Create(index, contents);
-        }
-
-        public void ClearFile(String fileName)
-        {
-            File.Delete(fileName);
         }
     }
 }
