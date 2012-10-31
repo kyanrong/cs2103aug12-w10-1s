@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Type
 {
@@ -66,9 +67,11 @@ namespace Type
             long minutes = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
             magnitude = (minutes << 35) & (long)0x3FFFFFF800000000;
 
+            Debug.Assert(this.priority >= -256 && this.priority <= 511);
             long priority256 = ((long)(this.priority + 256) << 24) & (long)0x00000003FF000000;
 
             long taskId = ((long)this.Id & (long)0x0000000000FFFFFF);
+            Debug.Assert(this.Id == taskId);
 
             return (isDone | isDueToday | isOverdue | priority256 | taskId | magnitude);
         }
