@@ -74,7 +74,7 @@ namespace Type
 
                 // Split given command into a pair of <Command, Input>
                 cmd = SplitCommand(ref input);
-
+              
                 // First check if invalid.
                 if (!acceptedCommands.Contains(cmd))
                 {
