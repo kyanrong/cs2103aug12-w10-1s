@@ -89,8 +89,14 @@ namespace Type
 
                 // Split given command into a pair of <Command, Input>
                 cmd = SplitCommand(ref input);
-              
-                // First check if invalid.
+
+                // If the command is initially invalid, try to complete it.
+                if (!acceptedCommands.Contains(cmd))
+                {
+                    cmd += Command.TryComplete(cmd);
+                }
+
+                // Check if still invalid.
                 if (!acceptedCommands.Contains(cmd))
                 {
                     cmd = Command.Invalid;
