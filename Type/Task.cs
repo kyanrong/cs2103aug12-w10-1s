@@ -180,7 +180,7 @@ namespace Type
             }
 
             // parse dates
-            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.Date(this.rawText);
+            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.DateTime(this.rawText);
             if (dateTimeMatch.Item1 != string.Empty)
             {
                 // we have a match
