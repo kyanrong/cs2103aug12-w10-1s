@@ -64,7 +64,7 @@ namespace Type
 
                 // If the command is Invalid, we try to autocomplete the command.
                 // Otherwise, we complete the task.
-                if (result.CommandText != Command.Invalid)
+                if (result.CommandText != Command.Invalid && !result.IsAlias)
                 {
                     // If the input text is just the command, we append a space so that 
                     // the user can continue typing.
