@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Diagnostics;
 
 namespace Type
 {
@@ -18,11 +19,11 @@ namespace Type
             }
         }
 
-        private void DoOther(Command result)
+        private void DoGenericCommand(Command result)
         {
             Task target = null;
 
-            if (renderedTasks.Count > 0 && result.Text != string.Empty)
+            if (renderedTasks.Count > 0)
             {
                 target = selectedTask;
 
@@ -40,8 +41,11 @@ namespace Type
             }
         }
 
+        // @author A0092104
         private void DoEdit(Task selectedTask)
         {
+            Debug.Assert(selectedTask != null);
+
             //Populate inputBox with edit text.
             inputBox.Text = selectedTask.RawText;
             MoveCursorToEndOfWord();

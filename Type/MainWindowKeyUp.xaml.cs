@@ -38,7 +38,7 @@ namespace Type
                 case Command.Undo:
                 case Command.Edit:
                 case Command.Clear:
-                    DoOther(result);
+                    DoGenericCommand(result);
                     break;
                     
                 default:
@@ -83,13 +83,21 @@ namespace Type
             }
         }
 
-        private void HandleHideWindow()
+        // @author A0092104U
+        private void HandleEscapeKey()
         {
-            //If the input box is not empty, we clear the input box, but do not hide the window.
-            //Otherwise, we hide the window.
-            //If the input box contains only whitespace (which will not be caught by the first condition),
-            //we clear it before hiding the window.
-            if (inputBox.Text.Trim() != string.Empty)
+            // If we are highlighting something, we stop highlighting, but do not hide the window;
+            // We also refresh the view so that the highlight no longer shows.
+            // If the input box is not empty, we clear the input box, but do not hide the window.
+            // Otherwise, we hide the window.
+            // If the input box contains only whitespace (which will not be caught by the first condition),
+            // we clear it before hiding the window.
+            if (isHighlighting)
+            {
+                StopHighlighting();
+                RefreshViewList();
+            }
+            else if (inputBox.Text.Trim() != string.Empty)
             {
                 inputBox.Clear();
             }
@@ -106,7 +114,14 @@ namespace Type
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
         {
-            highlightIndex--;
+            if (!isHighlighting)
+            {
+                StartHighlighting();
+            }
+            else
+            {
+                highlightIndex--;
+            }
 
             //when highlighIndex out of bound and current page is not the first page
             if (highlightIndex < 0 && listStartIndex > 0)
@@ -118,12 +133,44 @@ namespace Type
             CheckHighlightIndexBound();
 
             RefreshViewList();
+            //inputBox.Text = selectedTaskText;
+        }
+
+        // @author A0092104
+        private void StartHighlighting()
+        {
+            isHighlighting = true;
+            ResetSelection();
+        }
+
+        // @author A0092104
+        private void StopHighlighting()
+        {
+            isHighlighting = false;
+            ResetSelection();
+        }
+
+        // @author A0092104
+        private void ResetSelection()
+        {
+            highlightIndex = 0;
+
+            // We have a non-ambiguous match iff there is exactly one task rendered.
+            // Otherwise, set the selectedTask to null to represent no task selected.
+            selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
         }
 
         //modify the highlightIndex and may go to next page
         private void HandleDownArrow()
         {
-            highlightIndex++;
+            if (!isHighlighting)
+            {
+                StartHighlighting();
+            }
+            else
+            {
+                highlightIndex++;
+            }
 
             if ((highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1) && (listEndIndex != renderedTasks.Count))
             {
@@ -134,6 +181,7 @@ namespace Type
             CheckHighlightIndexBound();
 
             RefreshViewList();
+            //inputBox.Text = selectedTaskText;
         }
 
         //go to previous page, will modify listStartIndex and listEndIndex
