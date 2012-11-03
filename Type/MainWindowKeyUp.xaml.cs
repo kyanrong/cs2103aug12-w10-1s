@@ -205,6 +205,9 @@ namespace Type
 
             CheckListIndexBound();
             CheckHighlightIndexBound();
+
+            ResetSelection();
+
             RefreshViewList();
         }
 
@@ -223,6 +226,9 @@ namespace Type
 
             CheckListIndexBound();
             CheckHighlightIndexBound();
+
+            ResetSelection();
+
             RefreshViewList();
         }
 
