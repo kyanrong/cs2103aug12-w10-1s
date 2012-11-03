@@ -9,9 +9,31 @@ namespace Type
 {
     public class RegExp
     {
-        public static string DDMMYYYY = "\\d{1,2}\\/\\d{1,2}(:?\\/\\d{2,4})?";
-        public static string DDMonthYYYY = "\\d{1,2}\\s(:?january|febuary|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(:?\\s\\d{2,4})?";
-        public static string DateRE = DDMMYYYY + "|" + DDMonthYYYY;
+        // date re
+        // 1. DDMM[YY[YY]]
+        public static string DATE1 = "\\d{1,2}\\/\\d{1,2}(?:\\/\\d{2,4})?";
+        // 2 DD string_rep_of_month [YY[YY]]
+        public static string DATE2 = "\\d{1,2}\\s(?:january|febuary|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:\\s\\d{2,4})?";
+        
+        // time re
+        // 1. 2pm, 2am, 12am/pm
+        public static string TIME1 = "\\b\\d{1,2}(?:am|pm)\\b";
+        // 2. 12:00, 13:00am/pm, 9:00
+        public static string TIME2 = "\b\\d{1,2}:\\d{2}(?:am|pm)?\\b";
+
+        // Combine cases.
+        public static string DateRE = DATE1 + "|" + DATE2;
+        public static string TimeRE = TIME1 + "|" + TIME2;
+
+        // datetime re
+        // 1. date [time]
+        public static string DateTime1 = DateRE + "(?:\\s" + TimeRE + ")?";
+        // 2. time [date]
+        public static string DateTime2 = TimeRE + "(?:\\s" + DateRE + ")?";
+
+        // Combine cases
+        public static string DateTimeRE = DateTime1 + "|" + DateTime2;
+
 
         public static Tuple<string, int> Priority(string input)
         {
@@ -52,26 +74,31 @@ namespace Type
             Match m;
 
             // PERIOD TASKS
-            Regex fromto = new Regex("\\bfrom\\s("+ DateRE + ")\\sto\\s(" + DateRE + ")\\b");
+            Regex fromto = new Regex("\\bfrom\\s("+ DateTimeRE + ")\\sto\\s(" + DateTimeRE + ")\\b");
 
             m = fromto.Match(input);
             if (m.Success)
             {
                 var matches = m.Groups;
                 DateTime? start = ParseDate(matches[1].Value);
-                DateTime? end = ParseDate(matches[5].Value);
-                
-                // TODO. check valid dates.
+                DateTime? end = ParseDate(matches[2].Value);
                 return Tuple.Create(m.Value, start, end);
             }
 
             // DEADLINE TASKS
-            Regex deadline = new Regex("\\b(:?(by|due|on)\\s)?("+ DateRE +")", RegexOptions.IgnoreCase);
+            Regex deadline = new Regex("\\b(?:(?:by|due|on)\\s)?("+ DateTimeRE +")", RegexOptions.IgnoreCase);
             m = deadline.Match(input);
             if (m.Success)
             {
                 var matches = m.Groups;
-                DateTime? end = ParseDate(matches[3].Value);
+
+                var x = new List<string>();
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    x.Add(matches[i].Value);
+                }
+
+                DateTime? end = ParseDate(matches[1].Value);
                 return Tuple.Create(m.Value, datetime, end);
             }
 
@@ -87,7 +114,6 @@ namespace Type
             if (keyword.IsMatch(value))
             {
                 // strip out keyword for date processing
-                
                 var tmp = new List<string>(value.Split(' '));
                 tmp.RemoveAt(0);
                 value = String.Join(" ", tmp.ToArray());
@@ -153,7 +179,7 @@ namespace Type
         {
             Match m;
             DateTime? datetime = null;
-            Regex ddmm = new Regex(DDMMYYYY, RegexOptions.IgnoreCase);
+            Regex ddmm = new Regex(DATE1, RegexOptions.IgnoreCase);
             m = ddmm.Match(input);
             if (m.Success)
             {
@@ -177,7 +203,7 @@ namespace Type
                 }
             }
 
-            Regex ddMonthyyyy = new Regex(DDMonthYYYY, RegexOptions.IgnoreCase);
+            Regex ddMonthyyyy = new Regex(DATE2, RegexOptions.IgnoreCase);
             m = ddMonthyyyy.Match(input);
             if (m.Success)
             {
@@ -205,5 +231,15 @@ namespace Type
             // return the empty string.
             return datetime;
         }
+
+        public static DateTime? ParseDateTime(string input)
+        {
+            DateTime? result = null;
+
+
+
+            return result;
+        }
+
     }
 }

@@ -182,9 +182,10 @@ namespace Language
         public void from_to()
         {
             string x = "This should from 12/11/2011 to 12/11 match";
-            Assert.AreEqual(RegExp.Date(x).Item1, "from 12/11/2011 to 12/11");
-            Assert.AreEqual(RegExp.Date(x).Item2, new DateTime(2011, 11, 12));
-            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(2012, 11, 12));
+            var tuple = RegExp.Date(x);
+            Assert.AreEqual(tuple.Item1, "from 12/11/2011 to 12/11");
+            Assert.AreEqual(tuple.Item2, new DateTime(2011, 11, 12));
+            Assert.AreEqual(tuple.Item3, new DateTime(2012, 11, 12));
         }
     }
 }
