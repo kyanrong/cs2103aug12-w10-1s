@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Type
 {
-    sealed class Command
+    public sealed class Command
     {
         #region Fields
         private static HashSet<string> acceptedCommands;
