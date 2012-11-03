@@ -44,8 +44,6 @@ namespace Type
         // @author A0092104
         private void DoEdit(Task selectedTask)
         {
-            Debug.Assert(selectedTask != null);
-
             //Populate inputBox with edit text.
             inputBox.Text = selectedTask.RawText;
             MoveCursorToEndOfWord();
