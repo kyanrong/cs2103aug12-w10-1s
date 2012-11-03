@@ -54,22 +54,28 @@ namespace Type
             RenderTasks();
         }
 
+        // @author A0092104
         private void HandleAutoComplete()
         {
             //AutoComplete is only defined if there are rendered tasks on screen.
             if (renderedTasks != null && renderedTasks.Count > 0)
             {
                 var result = Command.Parse(inputBox.Text);
+
+                // If the command is Invalid, we try to autocomplete the command.
+                // Otherwise, we complete the task.
                 if (result.CommandText != Command.Invalid)
                 {
-                    int completeBegin = LCPIndex(result.Text, renderedTasks[0].RawText);
-
+                    // If the input text is just the command, we append a space so that 
+                    // the user can continue typing.
+                    // Otherwise, we complete the partially written task.
+                    int completeBegin;
                     if (inputBox.Text.EndsWith(result.CommandText))
                     {
                         inputBox.Text += " ";
+                        MoveCursorToEndOfWord();
                     }
-
-                    if (completeBegin >= 0)
+                    else if ((completeBegin =  LCPIndex(result.Text, renderedTasks[0].RawText)) >= 0)
                     {
                         inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
                         MoveCursorToEndOfWord();
