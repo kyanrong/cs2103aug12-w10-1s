@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Type
 {
@@ -354,6 +355,56 @@ namespace Type
         {
             dataStore.ClearFile("taskcollection.csv");
             undoDataStore.ClearFile("undostack.csv");
+        }
+
+        // @author A0092104
+        // Marks all Tasks that contain any listed Hash Tag as Done.
+        public void UpdateDoneByHashTags(IList<string> hashTags)
+        {
+            Debug.Assert(hashTags != null);
+
+            foreach (var tag in hashTags)
+            {
+                UpdateDoneByHashTag(tag);
+            }
+        }
+
+        // @author A0092104
+        // Marks all Tasks that contain the specified tag as Done.
+        private void UpdateDoneByHashTag(string tag)
+        {
+            foreach (var t in tasks)
+            {
+                if (t.Tags.Contains(tag))
+                {
+                    t.Done = true;
+                }
+            }
+        }
+
+        // @author A0092104
+        // Archives all Tasks that contain any listed Hash Tag.
+        public void ArchiveAllByHashTags(IList<string> hashTags)
+        {
+            Debug.Assert(hashTags != null);
+
+            foreach (var tag in hashTags)
+            {
+                ArchiveAllByHashTag(tag);
+            }
+        }
+
+        // @author A0092104
+        // Archives all Tasks the contain the specified Hash Tag
+        private void ArchiveAllByHashTag(string tag)
+        {
+            foreach (var t in tasks)
+            {
+                if (t.Tags.Contains(tag))
+                {
+                    t.Archive = true;
+                }
+            }
         }
     }
 }

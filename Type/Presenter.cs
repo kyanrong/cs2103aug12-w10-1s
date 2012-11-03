@@ -20,6 +20,7 @@ namespace Type
         private Task selected;
         private Comparison<Task> comparator;
         
+        // @author A0092104
         public Presenter()
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
@@ -29,12 +30,14 @@ namespace Type
             globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
         }
 
+        // @author A0092104
         ~Presenter()
         {
             //We need to unregister the hotkey when the application closes to be a good Windows citizen.
             globalHook.StopListening();
         }
 
+        // @author A0092104
         /// <summary>
         /// Displays the UI window. Called when a defined key combination is pressed.
         /// </summary>
@@ -111,6 +114,7 @@ namespace Type
             }
         }
 
+        // @author A0092104
         private void Execute(string cmd, string content, Task selected)
         {
             //Store a reference to the selected task in case we need to use it again in edit mode.
@@ -132,23 +136,11 @@ namespace Type
                     break;
 
                 case Command.Done:
-                    if (selected != null)
-                    {
-                        tasks.UpdateDone(selected.Id, true);
-                    }
+                    HandleCommand_Done(content, selected);
                     break;
 
                 case Command.Archive:
-                    if (selected != null)
-                    {
-                        //Archive selected.
-                        tasks.UpdateArchive(selected.Id, true);
-                    }
-                    else
-                    {
-                        //Archive all done.
-                        tasks.ArchiveAll();
-                    }
+                    HandleCommand_Archive(content, selected);
                     break;
 
                 case Command.Undo:
@@ -167,6 +159,76 @@ namespace Type
             }
         }
 
+        // @author A0092104
+        private void HandleCommand_Archive(string content, Task selected)
+        {
+            if (selected != null)
+            {
+                //Archive selected.
+                tasks.UpdateArchive(selected.Id, true);
+            }
+            else
+            {
+                // If content is a list of hash tags, then archive each task that contains any of the
+                // supplied hash tags.
+                // Otherwise, the intention is to archive all 'done' rendered tasks.
+                var tags = GetHashTagList(content);
+                if (tags == null)
+                {
+                    //Archive all done.
+                    tasks.ArchiveAll();
+                }
+                else
+                {
+                    tasks.ArchiveAllByHashTags(tags);
+                }
+            }
+        }
+
+        // @author A0092104
+        private void HandleCommand_Done(string content, Task selected)
+        {
+            if (selected != null)
+            {
+                tasks.UpdateDone(selected.Id, true);
+            }
+            else
+            {
+                // If content is a list of hash tags, then mark each task that contains any of the
+                // supplied hash tags as 'done'.
+                // Otherwise, do nothing.
+                var tags = GetHashTagList(content);
+                if (tags != null)
+                {
+                    tasks.UpdateDoneByHashTags(tags);
+                }
+            }
+        }
+
+        // @author A0092104
+        private List<string> GetHashTagList(string input)
+        {
+            List<string> result = new List<string>();
+
+            var tokens = input.Split(' ');
+            bool isList = true;
+            for (int i = 0; i < tokens.Length && isList; i++)
+            {
+                var trimmed = tokens[i].Trim();
+                if (!trimmed.StartsWith("#"))
+                {
+                    isList = false;
+                }
+                else
+                {
+                    result.Add(trimmed);
+                }
+            }
+
+            return isList ? result : null;
+        }
+
+        // @author A0092104
         private void EditModeSelectedTask(string cmd, string content)
         {
             if (cmd == Command.Add)
