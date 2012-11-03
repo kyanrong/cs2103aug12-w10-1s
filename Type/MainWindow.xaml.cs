@@ -93,8 +93,7 @@ namespace Type
             taskTextBlockList = new List<TextBlock>();
 
             InitializeListBounderIndex();
-            isHighlighting = false;
-            highlightIndex = 0;
+            StopHighlighting();
 
             RenderTasks();
         }
