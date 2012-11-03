@@ -285,7 +285,7 @@ namespace Type
             var changed = new List<Task>();
             foreach (var t in tasks)
             {
-                if (t.Done)
+                if (t.Done && !t.Archive)
                 {
                     t.Archive = true;
                     // change row in datastore
