@@ -23,6 +23,8 @@ namespace Type
         private List<Tuple<string, ParsedType>> tokens;
         private List<string> tags;
 
+        #region Sort Order
+        // @author A0092104
         //Sort descending. Smallest value at the bottom.
         public static int DefaultComparison(Task a, Task b)
         {
@@ -31,6 +33,7 @@ namespace Type
             return aHash > bHash ? -1 : aHash == bHash ? 0 : 1;
         }
 
+        // @author A0092104
         // We create a natural ordering on a Task based on its properties.
         // 2's Int64
         // M                                                                              L
@@ -93,6 +96,7 @@ namespace Type
             }
             return false;
         }
+        #endregion
 
         // Constructor
         // from row.
