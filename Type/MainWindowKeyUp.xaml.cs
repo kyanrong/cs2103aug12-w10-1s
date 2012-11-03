@@ -259,11 +259,13 @@ namespace Type
             inputBox.Select(inputBox.Text.Length, 0);
         }
 
-        //Finds the longest common prefix of a and b.
+        // @author A0092104
+        // Finds the longest common prefix of a and b.
         private int LCPIndex(string a, string b)
         {
-            int found = -1;
-            for (int i = 0; i < Math.Min(a.Length, b.Length); i++)
+            var found = -1;
+            var commonLength = Math.Min(a.Length, b.Length);
+            for (int i = 0; i < commonLength; i++)
             {
                 if (a[i] == b[i])
                 {
@@ -274,7 +276,6 @@ namespace Type
                     break;
                 }
             }
-
             return found;
         }
     }
