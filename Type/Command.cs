@@ -13,16 +13,18 @@ namespace Type
 
         public string CommandText { get; set; }
         public string Text { get; set; }
+        public bool IsAlias { get; set; }
         #endregion
 
         #region Methods
         // @author A0092104
-        public Command(string CommandText, string Text)
+        public Command(string CommandText, string Text, bool IsAlias)
         {
             Debug.Assert(!CommandText.StartsWith(Command.Token));
 
             this.CommandText = CommandText;
             this.Text = Text;
+            this.IsAlias = IsAlias;
         }
         #endregion
 
@@ -81,6 +83,8 @@ namespace Type
         {
             Debug.Assert(input != null);
 
+            bool isAlias = false;
+            bool checkedAlias = false;
             string cmd;
             // Handle Type's command prefix.
             if (input.StartsWith(Command.Token))
@@ -94,6 +98,7 @@ namespace Type
                 if (!acceptedCommands.Contains(cmd))
                 {
                     cmd += Command.TryComplete(cmd);
+                    checkedAlias = true;
                 }
 
                 // Check if still invalid.
@@ -102,10 +107,15 @@ namespace Type
                     cmd = Command.Invalid;
                     input = string.Empty;
                 }
-                // If valid, handle special cases:
-                else if (cmd == Command.Help)
+                else
                 {
-                    input = string.Empty;
+                    isAlias = checkedAlias;
+
+                    // If valid, handle special cases:
+                    if (cmd == Command.Help)
+                    {
+                        input = string.Empty;
+                    }
                 }
             }
             // Handle special command prefixes.
@@ -125,7 +135,7 @@ namespace Type
                 cmd = Command.Add;
             }
 
-            return new Command(cmd, input.Trim());
+            return new Command(cmd, input.Trim(), isAlias);
         }
 
         //@author A0092104
