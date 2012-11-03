@@ -67,7 +67,8 @@ namespace Type
                 isOverdue = ((long)1 << 62);
             }
 
-            long minutes = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
+            var ticksDiff = DateTime.Now.Ticks - this.End.Ticks;
+            long minutes = (long)(new TimeSpan(ticksDiff)).TotalMinutes;
             magnitude = (minutes << 35) & (long)0x3FFFFFF800000000;
 
             Debug.Assert(this.priority >= -256 && this.priority <= 511);
@@ -180,7 +181,7 @@ namespace Type
             }
 
             // parse dates
-            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.DateTime(this.rawText);
+            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.DateTimeT(this.rawText);
             if (dateTimeMatch.Item1 != string.Empty)
             {
                 // we have a match

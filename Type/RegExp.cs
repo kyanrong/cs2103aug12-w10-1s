@@ -68,7 +68,7 @@ namespace Type
             return result;
         }
 
-        public static Tuple<string, DateTime?, DateTime?> DateTime(string input)
+        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input)
         {
             DateTime? datetime = null;
             Match m;
