@@ -8,11 +8,15 @@ namespace Type
 {
     sealed class Command
     {
+        #region Fields
         private static HashSet<string> acceptedCommands;
 
         public string CommandText { get; set; }
         public string Text { get; set; }
+        #endregion
 
+        #region Methods
+        // @author A0092104
         public Command(string CommandText, string Text)
         {
             Debug.Assert(!CommandText.StartsWith(Command.Token));
@@ -20,7 +24,9 @@ namespace Type
             this.CommandText = CommandText;
             this.Text = Text;
         }
+        #endregion
 
+        #region Static Methods
         // Initialize acceptedCommands map.
         static Command()
         {
@@ -36,6 +42,7 @@ namespace Type
             Debug.Assert(acceptedCommands.Count == 6);
         }
 
+        // @author A0092104
         /// <summary>
         /// Tries to auto complete a command based on the supplied prefix.
         /// </summary>
@@ -45,8 +52,15 @@ namespace Type
         {
             Debug.Assert(partial != null);
 
+            // The completion of the empty string is invalid.
+            if (partial == string.Empty)
+            {
+                return partial;
+            }
+
             var result = acceptedCommands.FirstOrDefault(cmdText => cmdText.StartsWith(partial));
 
+            // If there are no results, we return an empty completion.
             if (result == null)
             {
                 return string.Empty;
@@ -57,6 +71,7 @@ namespace Type
             }
         }
 
+        // @author A0092104
         /// <summary>
         /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
         /// </summary>
@@ -107,6 +122,7 @@ namespace Type
             return new Command(cmd, input.Trim());
         }
 
+        //@author A0092104
         private static string SplitCommand(ref string input)
         {
             string cmd;
@@ -124,12 +140,15 @@ namespace Type
             return cmd;
         }
 
+        // @author A0092104
         private static string RemoveCommandToken(string input)
         {
             input = input.Substring(Command.Token.Length);
             return input;
         }
+        #endregion
 
+        #region Static Enumerations
         //Tokens.
         public const string Token = ":";
         public const string SearchToken = "/";
@@ -147,5 +166,6 @@ namespace Type
         public const string Add = "add";
         public const string Invalid = "invalid";
         public const string Search = "search";
+        #endregion
     }
 }
