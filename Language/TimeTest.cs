@@ -57,7 +57,7 @@ namespace Language
         {
             string x = "This should 12/1 2pm match";
             int year = DateTime.Today.Year;
-            Assert.AreEqual(RegExp.Date(x).Item3, new DateTime(year, 1, 12, 14, 0, 0));
+            Assert.AreEqual(RegExp.DateTime(x).Item3, new DateTime(year, 1, 12, 14, 0, 0));
         }
 
     }
