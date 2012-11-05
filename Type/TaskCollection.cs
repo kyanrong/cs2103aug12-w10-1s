@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Type
 {
     public class TaskCollection
     {
+        #region Fields
+        // Task Collection
         private List<Task> tasks;
         private DataStore dataStore;
 
+        // Undo Stack
         private DataStore undoDataStore;
         private Stack<KeyValuePair<int, List<string>>> undoStack;
+        #endregion
 
+        #region Construction Methods
         // Constructor
         public TaskCollection()
         {
@@ -59,8 +65,9 @@ namespace Type
                 undoStack.Push(entry);
             }
         }
+        #endregion
 
-        // Undo related methods
+        #region Undo Related Methods
         //Enumeration of undo types
         public const string UndoAdd = "add";
         public const string UndoEdit = "edit";
@@ -185,8 +192,9 @@ namespace Type
             // add to undo stack
             undoStack.Push(new KeyValuePair<int, List<string>>(id, item));
         }
+        #endregion
 
-        // User Actions
+        #region User Actions
         // Delete Task (used in undo.)
         private void Delete(int index)
         {
@@ -285,7 +293,7 @@ namespace Type
             var changed = new List<Task>();
             foreach (var t in tasks)
             {
-                if (t.Done)
+                if (t.Done && !t.Archive)
                 {
                     t.Archive = true;
                     // change row in datastore
@@ -303,7 +311,32 @@ namespace Type
             }
         }
 
-        // Helper Methods
+        // @author A0092104
+        // Archives all Tasks that contain any listed Hash Tag.
+        public void ArchiveAllByHashTags(IList<string> hashTags)
+        {
+            Debug.Assert(hashTags != null);
+
+            foreach (var tag in hashTags)
+            {
+                ArchiveAllByHashTag(tag);
+            }
+        }
+
+        // @author A0092104
+        // Marks all Tasks that contain any listed Hash Tag as Done.
+        public void UpdateDoneByHashTags(IList<string> hashTags)
+        {
+            Debug.Assert(hashTags != null);
+
+            foreach (var tag in hashTags)
+            {
+                UpdateDoneByHashTag(tag);
+            }
+        }
+        #endregion
+
+        #region Helper Methods
         // Get Task
         private Task GetTask(int id)
         {
@@ -355,5 +388,32 @@ namespace Type
             dataStore.ClearFile("taskcollection.csv");
             undoDataStore.ClearFile("undostack.csv");
         }
+
+        // @author A0092104
+        // Marks all Tasks that contain the specified tag as Done.
+        private void UpdateDoneByHashTag(string tag)
+        {
+            foreach (var t in tasks)
+            {
+                if (t.Tags.Contains(tag))
+                {
+                    t.Done = true;
+                }
+            }
+        }
+
+        // @author A0092104
+        // Archives all Tasks the contain the specified Hash Tag
+        private void ArchiveAllByHashTag(string tag)
+        {
+            foreach (var t in tasks)
+            {
+                if (t.Tags.Contains(tag))
+                {
+                    t.Archive = true;
+                }
+            }
+        }
+        #endregion
     }
 }

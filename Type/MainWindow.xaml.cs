@@ -60,7 +60,12 @@ namespace Type
 
         private IList<Task> renderedTasks;
         private List<TextBlock> taskTextBlockList;
-        private int highlightIndex, listStartIndex, listEndIndex;
+
+        private bool isHighlighting;
+        private int highlightIndex;
+        private int listStartIndex;
+        private int listEndIndex;
+
         private Task selectedTask;
         private StackPanel taskView = new StackPanel();
 
@@ -86,8 +91,10 @@ namespace Type
             // TODO. abstract this number.
             renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             taskTextBlockList = new List<TextBlock>();
+
             InitializeListBounderIndex();
-            highlightIndex = 0;
+            StopHighlighting();
+
             RenderTasks();
         }
 
@@ -130,10 +137,12 @@ namespace Type
                     text = taskTextBlockList[i];
                     //highlight target textbox                    
 
-                    if (i == highlightIndex + listStartIndex)
+                    if ((i == highlightIndex + listStartIndex) && isHighlighting)
                     {
                         text.Background = Brushes.AliceBlue;
+
                         selectedTask = renderedTasks[i];
+                        //selectedTaskText = renderedTasks[i].RawText;
                     }
                     else
                     {
@@ -152,6 +161,8 @@ namespace Type
         //generate list of text block
         private void RenderTasks()
         {
+            StopHighlighting();
+
             taskTextBlockList.Clear();
             InitializeListBounderIndex();
 
@@ -264,7 +275,7 @@ namespace Type
                     break;
 
                 case Key.Escape:
-                    HandleHideWindow();
+                    HandleEscapeKey();
                     break;
 
                 case Key.Up:

@@ -30,7 +30,6 @@ namespace Type
                     break;
 
                 case Command.Help:
-                case Command.HelpSpelled:
                     DoHelp();
                     break;
 
@@ -39,7 +38,7 @@ namespace Type
                 case Command.Undo:
                 case Command.Edit:
                 case Command.Clear:
-                    DoOther(result);
+                    DoGenericCommand(result);
                     break;
                     
                 default:
@@ -55,22 +54,28 @@ namespace Type
             RenderTasks();
         }
 
+        // @author A0092104
         private void HandleAutoComplete()
         {
             //AutoComplete is only defined if there are rendered tasks on screen.
             if (renderedTasks != null && renderedTasks.Count > 0)
             {
                 var result = Command.Parse(inputBox.Text);
-                if (result.CommandText != Command.Invalid)
-                {
-                    int completeBegin = LCPIndex(result.Text, renderedTasks[0].RawText);
 
+                // If the command is Invalid, we try to autocomplete the command.
+                // Otherwise, we complete the task.
+                if (result.CommandText != Command.Invalid && !result.IsAlias)
+                {
+                    // If the input text is just the command, we append a space so that 
+                    // the user can continue typing.
+                    // Otherwise, we complete the partially written task.
+                    int completeBegin;
                     if (inputBox.Text.EndsWith(result.CommandText))
                     {
                         inputBox.Text += " ";
+                        MoveCursorToEndOfWord();
                     }
-
-                    if (completeBegin >= 0)
+                    else if ((completeBegin =  LCPIndex(result.Text, renderedTasks[0].RawText)) >= 0)
                     {
                         inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
                         MoveCursorToEndOfWord();
@@ -84,13 +89,21 @@ namespace Type
             }
         }
 
-        private void HandleHideWindow()
+        // @author A0092104U
+        private void HandleEscapeKey()
         {
-            //If the input box is not empty, we clear the input box, but do not hide the window.
-            //Otherwise, we hide the window.
-            //If the input box contains only whitespace (which will not be caught by the first condition),
-            //we clear it before hiding the window.
-            if (inputBox.Text.Trim() != string.Empty)
+            // If we are highlighting something, we stop highlighting, but do not hide the window;
+            // We also refresh the view so that the highlight no longer shows.
+            // If the input box is not empty, we clear the input box, but do not hide the window.
+            // Otherwise, we hide the window.
+            // If the input box contains only whitespace (which will not be caught by the first condition),
+            // we clear it before hiding the window.
+            if (isHighlighting)
+            {
+                StopHighlighting();
+                RefreshViewList();
+            }
+            else if (inputBox.Text.Trim() != string.Empty)
             {
                 inputBox.Clear();
             }
@@ -107,7 +120,14 @@ namespace Type
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
         {
-            highlightIndex--;
+            if (!isHighlighting)
+            {
+                StartHighlighting();
+            }
+            else
+            {
+                highlightIndex--;
+            }
 
             //when highlighIndex out of bound and current page is not the first page
             if (highlightIndex < 0 && listStartIndex > 0)
@@ -119,12 +139,44 @@ namespace Type
             CheckHighlightIndexBound();
 
             RefreshViewList();
+            //inputBox.Text = selectedTaskText;
+        }
+
+        // @author A0092104
+        private void StartHighlighting()
+        {
+            isHighlighting = true;
+            ResetSelection();
+        }
+
+        // @author A0092104
+        private void StopHighlighting()
+        {
+            isHighlighting = false;
+            ResetSelection();
+        }
+
+        // @author A0092104
+        private void ResetSelection()
+        {
+            highlightIndex = 0;
+
+            // We have a non-ambiguous match iff there is exactly one task rendered.
+            // Otherwise, set the selectedTask to null to represent no task selected.
+            selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
         }
 
         //modify the highlightIndex and may go to next page
         private void HandleDownArrow()
         {
-            highlightIndex++;
+            if (!isHighlighting)
+            {
+                StartHighlighting();
+            }
+            else
+            {
+                highlightIndex++;
+            }
 
             if ((highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1) && (listEndIndex != renderedTasks.Count))
             {
@@ -135,6 +187,7 @@ namespace Type
             CheckHighlightIndexBound();
 
             RefreshViewList();
+            //inputBox.Text = selectedTaskText;
         }
 
         //go to previous page, will modify listStartIndex and listEndIndex
@@ -152,6 +205,9 @@ namespace Type
 
             CheckListIndexBound();
             CheckHighlightIndexBound();
+
+            ResetSelection();
+
             RefreshViewList();
         }
 
@@ -170,6 +226,9 @@ namespace Type
 
             CheckListIndexBound();
             CheckHighlightIndexBound();
+
+            ResetSelection();
+
             RefreshViewList();
         }
 
@@ -206,11 +265,13 @@ namespace Type
             inputBox.Select(inputBox.Text.Length, 0);
         }
 
-        //Finds the longest common prefix of a and b.
+        // @author A0092104
+        // Finds the longest common prefix of a and b.
         private int LCPIndex(string a, string b)
         {
-            int found = -1;
-            for (int i = 0; i < Math.Min(a.Length, b.Length); i++)
+            var found = -1;
+            var commonLength = Math.Min(a.Length, b.Length);
+            for (int i = 0; i < commonLength; i++)
             {
                 if (a[i] == b[i])
                 {
@@ -221,7 +282,6 @@ namespace Type
                     break;
                 }
             }
-
             return found;
         }
     }
