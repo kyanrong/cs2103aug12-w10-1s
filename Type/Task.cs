@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Type
 {
@@ -22,6 +23,8 @@ namespace Type
         private List<Tuple<string, ParsedType>> tokens;
         private List<string> tags;
 
+        #region Sort Order
+        // @author A0092104
         //Sort descending. Smallest value at the bottom.
         public static int DefaultComparison(Task a, Task b)
         {
@@ -30,6 +33,7 @@ namespace Type
             return aHash > bHash ? -1 : aHash == bHash ? 0 : 1;
         }
 
+        // @author A0092104
         // We create a natural ordering on a Task based on its properties.
         // 2's Int64
         // M                                                                              L
@@ -41,7 +45,6 @@ namespace Type
         // T = Due Today - Bit Flag (0-false)
         // P = Priority  - Unsigned Little Endian Integer (Excess-256)
         // I = Identity  - Unique Task ID
-        // X = Unused
         public long DefaultOrderHash()
         {
             long isDone = 0;
@@ -51,26 +54,28 @@ namespace Type
 
             if (this.Done)
             {
-                isDone = (1 << 63);
+                isDone = ((long)1 << 63);
             }
 
             if (this.DueToday())
             {
-                isDueToday = (1 << 34);
+                isDueToday = ((long)1 << 34);
             }
 
-            bool overdue;
-            if (overdue = this.OverdueToday())
+            if (this.OverdueToday())
             {
-                isOverdue = (1 << 62);
+                isOverdue = ((long)1 << 62);
             }
 
-            long days = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
-            magnitude = (days << 35) & (long)0x3FFFFFF800000000;
+            var ticksDiff = DateTime.Now.Ticks - this.End.Ticks;
+            long minutes = (long)(new TimeSpan(ticksDiff)).TotalMinutes;
+            magnitude = (minutes << 35) & (long)0x3FFFFFF800000000;
 
+            Debug.Assert(this.priority >= -256 && this.priority <= 511);
             long priority256 = ((long)(this.priority + 256) << 24) & (long)0x00000003FF000000;
 
-            long taskId = (long)(this.Id & 0x00FFFFFF);
+            long taskId = ((long)this.Id & (long)0x0000000000FFFFFF);
+            Debug.Assert(this.Id == taskId);
 
             return (isDone | isDueToday | isOverdue | priority256 | taskId | magnitude);
         }
@@ -92,6 +97,7 @@ namespace Type
             }
             return false;
         }
+        #endregion
 
         // Constructor
         // from row.
@@ -175,7 +181,7 @@ namespace Type
             }
 
             // parse dates
-            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.Date(this.rawText);
+            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.DateTimeT(this.rawText);
             if (dateTimeMatch.Item1 != string.Empty)
             {
                 // we have a match
