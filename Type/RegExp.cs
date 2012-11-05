@@ -11,9 +11,9 @@ namespace Type
     {
         // date re
         // 1. DDMM[YY[YY]]
-        public static string DATE1 = "\\d{1,2}\\/\\d{1,2}(?:\\/\\d{2,4})?";
+        public static string DATE1 = "\\b\\d{1,2}\\/\\d{1,2}(?:\\/\\d{2,4})?\\b";
         // 2 DD string_rep_of_month [YY[YY]]
-        public static string DATE2 = "\\d{1,2}\\s(?:january|febuary|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:\\s\\d{2,4})?";
+        public static string DATE2 = "\\b\\d{1,2}\\s(?:january|febuary|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:\\s\\d{2,4})?\\b";
         
         // time re
         // 1. NN(am|pm)
@@ -27,7 +27,7 @@ namespace Type
 
         // datetime re
         // 1. date [time]
-        public static string DateTime1 = DateRE + "(?:\\s" + TimeRE + ")";
+        public static string DateTime1 = DateRE + "(?:\\s" + TimeRE + ")?";
         // 2. time [date]
         public static string DateTime2 = TimeRE + "(?:\\s" + DateRE + ")?";
 
