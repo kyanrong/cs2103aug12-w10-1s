@@ -53,6 +53,7 @@ namespace Type
         {
             if (result.Text.Trim() != string.Empty)
             {
+                isOriginalTasks = false;
                 renderedTasks = GetTasksByHashTag(result.Text.Trim());
             }
         }

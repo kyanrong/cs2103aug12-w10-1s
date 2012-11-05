@@ -48,6 +48,7 @@ namespace Type
             //Retrieve a list of tasks, unless the list has already been retrieved by Search.
             if (result.CommandText != Command.Search)
             {
+                isOriginalTasks = true;
                 renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             }
 

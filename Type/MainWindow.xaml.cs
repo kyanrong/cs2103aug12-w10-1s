@@ -65,6 +65,7 @@ namespace Type
         private int highlightIndex;
         private int listStartIndex;
         private int listEndIndex;
+        private bool isOriginalTasks;
 
         private Task selectedTask;
         private StackPanel taskView = new StackPanel();
@@ -89,6 +90,7 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
+            isOriginalTasks = true;
             renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             taskTextBlockList = new List<TextBlock>();
 
@@ -234,27 +236,38 @@ namespace Type
 
             if (inputBox.Text == string.Empty)
             {
+                isOriginalTasks = true;
                 renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+                RenderTasks();
             }
 
             else
             {
                 var result = Command.Parse(inputBox.Text);
 
-                if (result.CommandText == Command.Search)
+                if (result.CommandText == Command.Search && result.Text != string.Empty)
                 {
+                    isOriginalTasks = false;
                     renderedTasks = GetTasksByHashTag(result.Text);
-                    InitializeListBounderIndex();
+                    RenderTasks();
                 }
 
-                else if (result.CommandText != Command.Add)
+                else if (result.CommandText != Command.Add && result.Text!=string.Empty)
                 {
+                    isOriginalTasks = false;
                     renderedTasks = GetFilterSuggestions(result.Text);
-                    InitializeListBounderIndex();
+                    RenderTasks();
+                }
+
+                else if (!isOriginalTasks && result.Text == string.Empty)
+                {
+                    isOriginalTasks = true;
+                    renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+                    RenderTasks();
                 }
             }
 
-            RenderTasks();
+            
             invalidCmdPopup.IsOpen = false;
             helpDescriptionPopup.IsOpen = false;
         }
@@ -266,6 +279,7 @@ namespace Type
             {
                 case Key.Enter:
                     HandleSendCommand();
+                    isOriginalTasks = true;
                     renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
                     RenderTasks();
                     break;
