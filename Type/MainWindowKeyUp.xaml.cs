@@ -117,31 +117,6 @@ namespace Type
             }
         }
 
-        //modify the highlight index and may go to the previous page.
-        private void HandleUpArrow()
-        {
-            if (!isHighlighting)
-            {
-                StartHighlighting();
-            }
-            else
-            {
-                highlightIndex--;
-            }
-
-            //when highlighIndex out of bound and current page is not the first page
-            if (highlightIndex < 0 && listStartIndex > 0)
-            {
-                HandleLeftArrow();//move to previous page
-                highlightIndex = (listEndIndex-1) % NUMBER_OF_TASKS_DISPLAYED;
-            }
-
-            CheckHighlightIndexBound();
-
-            RefreshViewList();
-            //inputBox.Text = selectedTaskText;
-        }
-
         // @author A0092104
         private void StartHighlighting()
         {
@@ -164,6 +139,32 @@ namespace Type
             // We have a non-ambiguous match iff there is exactly one task rendered.
             // Otherwise, set the selectedTask to null to represent no task selected.
             selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
+        }
+
+        //@author A0088574M
+        //modify the highlight index and may go to the previous page.
+        private void HandleUpArrow()
+        {
+            if (!isHighlighting)
+            {
+                StartHighlighting();
+            }
+            else
+            {
+                highlightIndex--;
+            }
+
+            //when highlighIndex out of bound and current page is not the first page
+            if (highlightIndex < 0 && listStartIndex > 0)
+            {
+                HandleLeftArrow();//move to previous page
+                highlightIndex = (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED;
+            }
+
+            CheckHighlightIndexBound();
+
+            RefreshViewList();
+            //inputBox.Text = selectedTaskText;
         }
 
         //modify the highlightIndex and may go to next page
