@@ -9,7 +9,7 @@ namespace Type
 {
     public class Task
     {
-        // Parsed Types
+        #region Enumerations
         public enum ParsedType
         {
             String,
@@ -18,12 +18,52 @@ namespace Type
             PriorityHigh,
             PriorityLow
         }
+        #endregion
 
+        #region Fields
         private string rawText;
         private List<Tuple<string, ParsedType>> tokens;
         private List<string> tags;
 
-        #region Sort Order
+        // Task Done
+        public bool Done { get; set; }
+
+        // Task Archive
+        public bool Archive { get; set; }
+
+        // Other Properties
+        public int Id { get; set; }
+        public int priority { get; private set; }
+        private bool hasStart;
+        public DateTime Start { get; private set; }
+        private bool hasEnd;
+        public DateTime End { get; private set; }
+
+        public string RawText
+        {
+            get
+            {
+                return rawText;
+            }
+            set
+            {
+                rawText = value;
+                this.Parse();
+            }
+        }
+
+        public IList<string> Tags
+        {
+            get { return tags.AsReadOnly(); }
+        }
+
+        public IList<Tuple<string, ParsedType>> Tokens
+        {
+            get { return tokens.AsReadOnly(); }
+        }
+        #endregion
+
+        #region Sort Orders
         // @author A0092104
         //Sort descending. Smallest value at the bottom.
         public static int DefaultComparison(Task a, Task b)
@@ -113,7 +153,7 @@ namespace Type
         }
         #endregion
 
-        // Constructor
+        #region Constructors
         // from row.
         public Task(List<string> row)
         {
@@ -146,7 +186,9 @@ namespace Type
             // parse the input
             this.Parse();
         }
+        #endregion
 
+        #region Parsing
         private void Parse()
         {
             // default token.
@@ -291,7 +333,9 @@ namespace Type
                 this.tokens = res;
             }
         }
+        #endregion
 
+        #region Helper Methods
         public Task Clone()
         {
             return new Task(this.ToRow());
@@ -307,44 +351,10 @@ namespace Type
             return row;
         }
 
-        // Task Done
-        public bool Done { get; set; }
-
-        // Task Archive
-        public bool Archive { get; set; }
-
-        // Other Properties
-        public int Id { get; set; }
-        public int priority { get; private set; }
-        private bool hasStart;
-        public DateTime Start { get; private set; }
-        private bool hasEnd;
-        public DateTime End { get; private set; }
-        
-        public string RawText
-        {
-            get
-            {
-                return rawText;
-            }
-            set
-            {
-                rawText = value;
-                this.Parse();
-            }
-        }
-
-        public IList<string> Tags
-        {
-            get { return tags.AsReadOnly(); }
-        }
-        public IList<Tuple<string, ParsedType>> Tokens
-        {
-            get { return tokens.AsReadOnly(); }
-        }
         public override string ToString()
         {
             return this.RawText;
         }
+        #endregion
     }
 }
