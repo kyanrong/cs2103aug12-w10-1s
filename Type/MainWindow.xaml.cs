@@ -139,7 +139,7 @@ namespace Type
 
                     if ((i == highlightIndex + listStartIndex) && isHighlighting)
                     {
-                        text.Background = Brushes.AliceBlue;
+                        text.Background = Brushes.Beige;
 
                         selectedTask = renderedTasks[i];
                         //selectedTaskText = renderedTasks[i].RawText;

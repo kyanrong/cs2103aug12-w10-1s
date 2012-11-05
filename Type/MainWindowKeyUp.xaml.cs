@@ -157,7 +157,7 @@ namespace Type
             //when highlighIndex out of bound and current page is not the first page
             if (highlightIndex < 0 && listStartIndex > 0)
             {
-                HandleLeftArrow();//move to previous page
+                MoveToPreviousPage();
                 highlightIndex = (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED;
             }
 
@@ -181,7 +181,7 @@ namespace Type
 
             if ((highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1) && (listEndIndex != renderedTasks.Count))
             {
-                HandleRightArrow();//move to next page
+                MoveToNextPage();
                 highlightIndex = 0;
             }
 
@@ -190,19 +190,41 @@ namespace Type
             RefreshViewList();
             //inputBox.Text = selectedTaskText;
         }
-
-        //go to previous page, will modify listStartIndex and listEndIndex
-        //may modify highlightIndex
+        
         private void HandleLeftArrow()
         {
-            //already at the first page, no need changes
-            if (listStartIndex == 0)
+            //in case user only want to move the cursor, not the page
+            if (inputBox.Text != string.Empty)
             {
                 return;
             }
 
-            listStartIndex -= NUMBER_OF_TASKS_DISPLAYED;            
-            listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
+            MoveToPreviousPage();
+        }
+        
+        private void HandleRightArrow()
+        {
+            //in case user only want to move the cursor, not the page
+            if (inputBox.Text != string.Empty)
+            {
+                return;
+            }
+           
+            MoveToNextPage();
+        }
+
+        //go to next page, will modify listStartIndex and listEndIndex
+        //may modify highlightIndex
+        private void MoveToNextPage()
+        {
+            //already at the last page
+            if (listEndIndex == renderedTasks.Count)
+            {
+                return;
+            }
+
+            listEndIndex += NUMBER_OF_TASKS_DISPLAYED;
+            listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
 
             CheckListIndexBound();
             CheckHighlightIndexBound();
@@ -212,18 +234,18 @@ namespace Type
             RefreshViewList();
         }
 
-        //go to next page, will modify listStartIndex and listEndIndex
+        //go to previous page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
-        private void HandleRightArrow()
+        private void MoveToPreviousPage()
         {
-            //already at the last page, no need changes
-            if (listEndIndex == renderedTasks.Count)
+            //already at the first page
+            if (listStartIndex == 0)
             {
                 return;
             }
 
-            listEndIndex += NUMBER_OF_TASKS_DISPLAYED;
-            listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
+            listStartIndex -= NUMBER_OF_TASKS_DISPLAYED;
+            listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
 
             CheckListIndexBound();
             CheckHighlightIndexBound();
