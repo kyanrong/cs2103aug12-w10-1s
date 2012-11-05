@@ -57,18 +57,21 @@ namespace Type
                 isDone = ((long)1 << 63);
             }
 
+            var ticksDiff = DateTime.Now.Ticks - this.End.Ticks;
+            long minutes = 0;
             if (this.DueToday())
             {
                 isDueToday = ((long)1 << 34);
             }
-
-            if (this.OverdueToday())
+            else if (this.OverdueToday())
             {
                 isOverdue = ((long)1 << 62);
+                minutes = (long)(new TimeSpan(ticksDiff)).TotalMinutes;
             }
-
-            var ticksDiff = DateTime.Now.Ticks - this.End.Ticks;
-            long minutes = (long)(new TimeSpan(ticksDiff)).TotalMinutes;
+            else if (this.Future())
+            {
+                minutes = (long)(new TimeSpan(ticksDiff)).TotalMinutes;
+            }
             magnitude = (minutes << 35) & (long)0x3FFFFFF800000000;
 
             Debug.Assert(this.priority >= -256 && this.priority <= 511);
@@ -79,12 +82,23 @@ namespace Type
 
             return (isDone | isDueToday | isOverdue | priority256 | taskId | magnitude);
         }
+        #endregion
+
+        #region Sort Order Helper Methods
+        private bool Future()
+        {
+            if (hasEnd)
+            {
+                return this.End > DateTime.Now;
+            }
+            return false;
+        }
 
         private bool OverdueToday()
         {
             if (hasEnd)
             {
-                return this.End.Date < DateTime.Now.Date;
+                return this.End < DateTime.Now;
             }
             return false;
         }
@@ -93,7 +107,7 @@ namespace Type
         {
             if (hasEnd)
             {
-                return this.End.Date == DateTime.Now.Date;
+                return this.End == DateTime.Now;
             }
             return false;
         }
