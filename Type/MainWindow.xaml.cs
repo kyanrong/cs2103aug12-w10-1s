@@ -126,14 +126,16 @@ namespace Type
         {
             taskView.Children.Clear();
             tasksGrid.Children.Clear();
-            
+
 
             if (renderedTasks.Count == 0)
             {
                 DisplayEmptyViewList();
             }
             else
+            {
                 DisplayNonEmptyViewList();
+            }
 
             // append task view to grid view
             tasksGrid.Children.Add(taskView);
