@@ -11,7 +11,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Globalization;
 
 namespace Type
 {
@@ -270,6 +269,8 @@ namespace Type
         {
             DisplayInputLabel();
 
+            parseResult = Command.Parse(inputBox.Text);
+
             if (inputBox.Text == string.Empty)
             {
                 isOriginalTasks = true;
@@ -279,8 +280,6 @@ namespace Type
 
             else
             {
-                parseResult = Command.Parse(inputBox.Text);
-
                 if (parseResult.CommandText == Command.Search && parseResult.Text != string.Empty)
                 {
                     isOriginalTasks = false;
