@@ -451,7 +451,7 @@ namespace Type
                 if (t.Tags.Contains(tag))
                 {
                     affected.Add(t);
-                    t.Done = true;
+                    this.UpdateDone(t.Id, true, false);
                 }
             }
             return affected;
@@ -467,7 +467,7 @@ namespace Type
                 if (t.Tags.Contains(tag))
                 {
                     affected.Add(t);
-                    t.Archive = true;
+                    this.UpdateArchive(t.Id, true, false);
                 }
             }
             return affected;
