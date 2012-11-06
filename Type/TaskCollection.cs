@@ -8,6 +8,10 @@ namespace Type
 {
     public class TaskCollection
     {
+        #region Constants
+        private const string TAG_ARCHIVE = "#archive";
+        #endregion
+
         #region Fields
         // Task Collection
         private List<Task> tasks;
@@ -271,10 +275,10 @@ namespace Type
         }
 
         // Update archive
-        public Task UpdateArchive(int id, bool archive, bool addToUndoStack = true)
+        public Task UpdateArchive(int id, bool archiveStatus, bool addToUndoStack = true)
         {
             Task t = this.GetTask(id);
-            t.Archive = archive;
+            InternalMarkArchive(archiveStatus, t);
 
             // change row in datastore
             List<string> row = t.ToRow();
@@ -297,7 +301,8 @@ namespace Type
             {
                 if (t.Done && !t.Archive)
                 {
-                    t.Archive = true;
+                    InternalMarkArchive(true, t);
+
                     // change row in datastore
                     List<string> row = t.ToRow();
                     dataStore.ChangeRow(t.Id, row);
@@ -336,19 +341,11 @@ namespace Type
                 UpdateDoneByHashTag(tag);
             }
         }
-        #endregion
 
-        #region Helper Methods
-        // Get Task
-        private Task GetTask(int id)
+        public void Clear()
         {
-            return tasks.Find(task => task.Id == id);
-        }
-
-        // Get All Tasks
-        private IList<Task> Get()
-        {
-            return tasks;
+            dataStore.ClearFile("taskcollection.csv");
+            undoDataStore.ClearFile("undostack.csv");
         }
 
         // Get number of Tasks starting from skip
@@ -374,21 +371,58 @@ namespace Type
             );
         }
 
+        // @author A0092104U
+        /// <summary>
+        /// Filters the current TaskCollection by hash tags. Specifying more than one hash tag takes the intersection of results. (logical AND)
+        /// </summary>
+        /// <param name="hashTags">List of hash tags to filter by.</param>
+        /// <returns>List of Tasks that match criteria.</returns>
         public List<Task> ByHashTags(IList<string> hashTags)
         {
             var resultSet = new HashSet<Task>();
-            foreach (var tag in hashTags)
+
+            // If the list is empty, return an empty result set.
+            // Otherwise, run an initial query. If there is exactly one item in the list, return the result of the initial query.
+            // Otherwise, continue running additional queries and taking their intersections. Finally, return the result set.
+            if (hashTags.Count == 0)
             {
-                var queryResults = tasks.FindAll(task => task.Tags.Contains(tag));
-                resultSet.UnionWith(queryResults);
+                return resultSet.ToList();
             }
-            return resultSet.ToList();
+            else
+            {
+                var initialResult = tasks.FindAll(task => task.Tags.Contains(hashTags[0]));
+                resultSet.UnionWith(initialResult);
+
+                if (hashTags.Count == 1)
+                {
+                    return resultSet.ToList();
+                }
+                else
+                {
+                    for (int i = 1; i < hashTags.Count; i++)
+                    {
+                        var tag = hashTags[i];
+                        var queryResults = tasks.FindAll(task => task.Tags.Contains(tag));
+                        resultSet.IntersectWith(queryResults);
+                    }
+
+                    return resultSet.ToList();
+                }
+            }
+        }
+        #endregion
+
+        #region Helper Methods
+        // Get Task
+        private Task GetTask(int id)
+        {
+            return tasks.Find(task => task.Id == id);
         }
 
-        public void Clear()
+        // Get All Tasks
+        private IList<Task> Get()
         {
-            dataStore.ClearFile("taskcollection.csv");
-            undoDataStore.ClearFile("undostack.csv");
+            return tasks;
         }
 
         // @author A0092104
@@ -415,6 +449,34 @@ namespace Type
                     t.Archive = true;
                 }
             }
+        }
+
+        // @author A0092104U
+        // Changes the archive status of a task.
+        // If the task is archived, we append the hashtag #archive so that it shows up in searches.
+        // If the task is unarchived, we remove all hashtags #archive to return it to its original state.
+        private void InternalMarkArchive(bool archiveStatus, Task t)
+        {
+            string pattern = " " + TAG_ARCHIVE;
+            if (!t.RawText.Contains(TAG_ARCHIVE))
+            {
+                if (archiveStatus)
+                {
+                    this.UpdateRawText(t.Id, (t.RawText + pattern), false);
+                }
+            }
+            else
+            {
+                if (!archiveStatus)
+                {
+                    while (t.RawText.Contains(TAG_ARCHIVE))
+                    {
+                        this.UpdateRawText(t.Id, t.RawText.Replace(pattern, ""), false);
+                    }
+                }
+            }
+
+            t.Archive = archiveStatus;
         }
         #endregion
     }
