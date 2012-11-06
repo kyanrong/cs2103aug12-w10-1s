@@ -35,7 +35,14 @@ namespace Type
 
             ExecuteCommand(result.CommandText, result.Text, target);
 
+            // Clear the input box if the command was not edit.
+            // If the command was edit, and a null task was sent to the Presenter,
+            // then it was an invalid edit command. Clear the input box.
             if (result.CommandText != Command.Edit)
+            {
+                inputBox.Clear();
+            }
+            else if (selectedTask == null)
             {
                 inputBox.Clear();
             }
