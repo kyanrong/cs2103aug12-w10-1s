@@ -241,6 +241,8 @@ namespace Type
         {
             DisplayInputLabel();
 
+            parseResult = Command.Parse(inputBox.Text);
+
             if (inputBox.Text == string.Empty)
             {
                 isOriginalTasks = true;
@@ -250,8 +252,6 @@ namespace Type
 
             else
             {
-                parseResult = Command.Parse(inputBox.Text);
-
                 if (parseResult.CommandText == Command.Search && parseResult.Text != string.Empty)
                 {
                     isOriginalTasks = false;
@@ -273,7 +273,6 @@ namespace Type
                     RenderTasks();
                 }
             }
-
             
             invalidCmdPopup.IsOpen = false;
             helpDescriptionPopup.IsOpen = false;
