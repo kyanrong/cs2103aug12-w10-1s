@@ -99,14 +99,10 @@ namespace Type
             // Otherwise, we hide the window.
             // If the input box contains only whitespace (which will not be caught by the first condition),
             // we clear it before hiding the window.
-            if (isHighlighting)
-            {
-                StopHighlighting();
-                RefreshViewList();
-            }
-            else if (inputBox.Text.Trim() != string.Empty)
+            if (inputBox.Text.Trim() != string.Empty)
             {
                 inputBox.Clear();
+                RefreshViewList();
             }
             else
             {
@@ -118,42 +114,12 @@ namespace Type
             }
         }
 
-        // @author A0092104
-        private void StartHighlighting()
-        {
-            isHighlighting = true;
-            ResetSelection();
-        }
-
-        // @author A0092104
-        private void StopHighlighting()
-        {
-            isHighlighting = false;
-            ResetSelection();
-        }
-
-        // @author A0092104
-        private void ResetSelection()
-        {
-            highlightIndex = 0;
-
-            // We have a non-ambiguous match iff there is exactly one task rendered.
-            // Otherwise, set the selectedTask to null to represent no task selected.
-            selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
-        }
-
         //@author A0088574M
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
         {
-            if (!isHighlighting)
-            {
-                StartHighlighting();
-            }
-            else
-            {
-                highlightIndex--;
-            }
+            highlightIndex--;
+
 
             //when highlighIndex out of bound and current page is not the first page
             if (highlightIndex < 0 && listStartIndex > 0)
@@ -171,14 +137,7 @@ namespace Type
         //modify the highlightIndex and may go to next page
         private void HandleDownArrow()
         {
-            if (!isHighlighting)
-            {
-                StartHighlighting();
-            }
-            else
-            {
-                highlightIndex++;
-            }
+            highlightIndex++;
 
             if ((highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1) && (listEndIndex != renderedTasks.Count))
             {
@@ -230,8 +189,6 @@ namespace Type
             CheckListIndexBound();
             CheckHighlightIndexBound();
 
-            ResetSelection();
-
             RefreshViewList();
         }
 
@@ -250,8 +207,6 @@ namespace Type
 
             CheckListIndexBound();
             CheckHighlightIndexBound();
-
-            ResetSelection();
 
             RefreshViewList();
         }
