@@ -240,6 +240,8 @@ namespace Type
         private void InputBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             DisplayInputLabel();
+           
+            parseResult = Command.Parse(inputBox.Text);
 
             if (inputBox.Text == string.Empty)
             {
@@ -250,8 +252,6 @@ namespace Type
 
             else
             {
-                parseResult = Command.Parse(inputBox.Text);
-
                 if (parseResult.CommandText == Command.Search && parseResult.Text != string.Empty)
                 {
                     isOriginalTasks = false;
