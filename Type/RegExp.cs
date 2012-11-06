@@ -192,7 +192,21 @@ namespace Type
                 string[] tokens = input.Split('/');
                 int date = int.Parse(tokens[0]);
                 int month = int.Parse(tokens[1]);
-                int year = tokens.Length == 3 ? GetYearFromToken(tokens[2]) : DateTime.Today.Year;
+
+                int year = DateTime.Today.Year;
+                if (tokens.Length == 3)
+                {
+                    year = GetYearFromToken(tokens[2]);
+                }
+                else
+                {
+                    // check if year is this year/next
+                    DateTime res = new DateTime(year, month, date);
+                    if (res < DateTime.Today)
+                    {
+                        year = year + 1;
+                    }
+                }
                 return Tuple.Create(year, month, date);
             }
 
@@ -205,7 +219,20 @@ namespace Type
                 string[] tokens = input.Split(' ');
                 int date = int.Parse(tokens[0]);
                 int month = MonthFromString(tokens[1]);
-                int year = tokens.Length == 3 ? GetYearFromToken(tokens[2]) : DateTime.Today.Year;
+                int year = DateTime.Today.Year;
+                if (tokens.Length == 3)
+                {
+                    year = GetYearFromToken(tokens[2]);
+                }
+                else
+                {
+                    // check if year is this year/next
+                    DateTime res = new DateTime(year, month, date);
+                    if (res < DateTime.Today)
+                    {
+                        year = year + 1;
+                    }
+                }
                 return Tuple.Create(year, month, date);
             }
 
