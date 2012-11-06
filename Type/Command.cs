@@ -6,21 +6,29 @@ using System.Diagnostics;
 
 namespace Type
 {
-    sealed class Command
+    public sealed class Command
     {
+        #region Fields
         private static HashSet<string> acceptedCommands;
 
         public string CommandText { get; set; }
         public string Text { get; set; }
+        public bool IsAlias { get; set; }
+        #endregion
 
-        public Command(string CommandText, string Text)
+        #region Methods
+        // @author A0092104
+        public Command(string CommandText, string Text, bool IsAlias)
         {
             Debug.Assert(!CommandText.StartsWith(Command.Token));
 
             this.CommandText = CommandText;
             this.Text = Text;
+            this.IsAlias = IsAlias;
         }
+        #endregion
 
+        #region Static Methods
         // Initialize acceptedCommands map.
         static Command()
         {
@@ -36,6 +44,7 @@ namespace Type
             Debug.Assert(acceptedCommands.Count == 6);
         }
 
+        // @author A0092104
         /// <summary>
         /// Tries to auto complete a command based on the supplied prefix.
         /// </summary>
@@ -45,8 +54,15 @@ namespace Type
         {
             Debug.Assert(partial != null);
 
+            // The completion of the empty string is invalid.
+            if (partial == string.Empty)
+            {
+                return partial;
+            }
+
             var result = acceptedCommands.FirstOrDefault(cmdText => cmdText.StartsWith(partial));
 
+            // If there are no results, we return an empty completion.
             if (result == null)
             {
                 return string.Empty;
@@ -57,6 +73,7 @@ namespace Type
             }
         }
 
+        // @author A0092104
         /// <summary>
         /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
         /// </summary>
@@ -66,6 +83,8 @@ namespace Type
         {
             Debug.Assert(input != null);
 
+            bool isAlias = false;
+            bool checkedAlias = false;
             string cmd;
             // Handle Type's command prefix.
             if (input.StartsWith(Command.Token))
@@ -75,16 +94,28 @@ namespace Type
                 // Split given command into a pair of <Command, Input>
                 cmd = SplitCommand(ref input);
 
-                // First check if invalid.
+                // If the command is initially invalid, try to complete it.
+                if (!acceptedCommands.Contains(cmd))
+                {
+                    cmd += Command.TryComplete(cmd);
+                    checkedAlias = true;
+                }
+
+                // Check if still invalid.
                 if (!acceptedCommands.Contains(cmd))
                 {
                     cmd = Command.Invalid;
                     input = string.Empty;
                 }
-                // If valid, handle special cases:
-                else if (cmd == Command.Help)
+                else
                 {
-                    input = string.Empty;
+                    isAlias = checkedAlias;
+
+                    // If valid, handle special cases:
+                    if (cmd == Command.Help)
+                    {
+                        input = string.Empty;
+                    }
                 }
             }
             // Handle special command prefixes.
@@ -104,9 +135,10 @@ namespace Type
                 cmd = Command.Add;
             }
 
-            return new Command(cmd, input.Trim());
+            return new Command(cmd, input.Trim(), isAlias);
         }
 
+        //@author A0092104
         private static string SplitCommand(ref string input)
         {
             string cmd;
@@ -124,12 +156,15 @@ namespace Type
             return cmd;
         }
 
+        // @author A0092104
         private static string RemoveCommandToken(string input)
         {
             input = input.Substring(Command.Token.Length);
             return input;
         }
+        #endregion
 
+        #region Static Enumerations
         //Tokens.
         public const string Token = ":";
         public const string SearchToken = "/";
@@ -147,5 +182,6 @@ namespace Type
         public const string Add = "add";
         public const string Invalid = "invalid";
         public const string Search = "search";
+        #endregion
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Diagnostics;
 
 namespace Type
 {
@@ -18,11 +19,11 @@ namespace Type
             }
         }
 
-        private void DoOther(Command result)
+        private void DoGenericCommand(Command result)
         {
             Task target = null;
 
-            if (renderedTasks.Count != 0 && result.Text != string.Empty)
+            if (renderedTasks.Count > 0)
             {
                 target = selectedTask;
 
@@ -34,12 +35,20 @@ namespace Type
 
             ExecuteCommand(result.CommandText, result.Text, target);
 
+            // Clear the input box if the command was not edit.
+            // If the command was edit, and a null task was sent to the Presenter,
+            // then it was an invalid edit command. Clear the input box.
             if (result.CommandText != Command.Edit)
+            {
+                inputBox.Clear();
+            }
+            else if (selectedTask == null)
             {
                 inputBox.Clear();
             }
         }
 
+        // @author A0092104
         private void DoEdit(Task selectedTask)
         {
             //Populate inputBox with edit text.
@@ -51,6 +60,7 @@ namespace Type
         {
             if (result.Text.Trim() != string.Empty)
             {
+                isOriginalTasks = false;
                 renderedTasks = GetTasksByHashTag(result.Text.Trim());
             }
         }

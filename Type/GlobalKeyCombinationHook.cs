@@ -6,15 +6,21 @@ using System.ComponentModel;
 
 namespace Type
 {
+    #region Delegates
     /// <summary>
     /// Handler to execute when a key combination is pressed.
     /// </summary>
     internal delegate void KeyCombinationHandler();
+    #endregion
 
+    // @author A0092104
     class GlobalKeyCombinationHook
     {
+        #region Constants
         private const string ATOM_NAME = "TypeShortcut";
+        #endregion
 
+        #region Fields
         //Handles and references to a System.Windows.Window for listening to system messages.
         private Window targetWindow;
         private HwndSource targetWindowHandle;
@@ -26,7 +32,9 @@ namespace Type
 
         //Callback to execute if the key combination is caught.
         private KeyCombinationHandler combinationHandler;
+        #endregion
 
+        #region Methods
         /// <summary>
         /// Creates a GlobalKeyCombination Hook object.
         /// </summary>
@@ -167,8 +175,9 @@ namespace Type
 
             return IntPtr.Zero;
         }
+        #endregion
 
-        //Win32 functions
+        #region Win32 Functions
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
@@ -182,7 +191,9 @@ namespace Type
 
         [DllImport("kernel32", SetLastError = true)]
         public static extern short GlobalDeleteAtom(short nAtom);
+        #endregion
 
+        #region Win32 Constants
         //fsModifiers defined by Win32 RegisterHotKey
         public const uint MOD_ALT = 0x0001;
         public const uint MOD_CONTROL = 0x0002;
@@ -192,5 +203,6 @@ namespace Type
 
         //WM_HOTKEY value
         private const int WM_HOTKEY = 0x0312;
+        #endregion
     }
 }

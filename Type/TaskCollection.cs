@@ -2,17 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Type
 {
     public class TaskCollection
     {
+        #region Constants
+        private const string TAG_ARCHIVE = "#archive";
+        #endregion
+
+        #region Fields
+        // Task Collection
         private List<Task> tasks;
         private DataStore dataStore;
 
+        // Undo Stack
         private DataStore undoDataStore;
         private Stack<KeyValuePair<int, List<string>>> undoStack;
+        #endregion
 
+        #region Construction Methods
         // Constructor
         public TaskCollection()
         {
@@ -59,12 +69,14 @@ namespace Type
                 undoStack.Push(entry);
             }
         }
+        #endregion
 
-        // Undo related methods
+        #region Undo Related Methods
         //Enumeration of undo types
         public const string UndoAdd = "add";
         public const string UndoEdit = "edit";
         public const string UndoDone = "done";
+        public const string UndoDoneAll = "doneall";
         public const string UndoArchive = "archive";
         public const string UndoArchiveAll = "archiveall";
 
@@ -111,6 +123,15 @@ namespace Type
                     // update done state of task
                     this.UpdateDone(index, !done, false);
 
+                    break;
+                case UndoDoneAll:
+                    for (int i = 1; i < undoItemData.Count; i++)
+                    {
+                        index = int.Parse(undoItemData[i]);
+
+                        // update archived state of task
+                        this.UpdateDone(index, false, false);
+                    }
                     break;
 
                 case UndoArchive:
@@ -185,8 +206,9 @@ namespace Type
             // add to undo stack
             undoStack.Push(new KeyValuePair<int, List<string>>(id, item));
         }
+        #endregion
 
-        // User Actions
+        #region User Actions
         // Delete Task (used in undo.)
         private void Delete(int index)
         {
@@ -232,6 +254,8 @@ namespace Type
                 this.PushUndo(UndoEdit, clone);
             }
 
+            // update lastMod
+            t.lastMod = DateTime.Today;
             t.RawText = str;
 
             // change row in datastore
@@ -261,10 +285,10 @@ namespace Type
         }
 
         // Update archive
-        public Task UpdateArchive(int id, bool archive, bool addToUndoStack = true)
+        public Task UpdateArchive(int id, bool archiveStatus, bool addToUndoStack = true)
         {
             Task t = this.GetTask(id);
-            t.Archive = archive;
+            InternalMarkArchive(archiveStatus, t);
 
             // change row in datastore
             List<string> row = t.ToRow();
@@ -285,9 +309,10 @@ namespace Type
             var changed = new List<Task>();
             foreach (var t in tasks)
             {
-                if (t.Done)
+                if (t.Done && !t.Archive)
                 {
-                    t.Archive = true;
+                    InternalMarkArchive(true, t);
+
                     // change row in datastore
                     List<string> row = t.ToRow();
                     dataStore.ChangeRow(t.Id, row);
@@ -303,17 +328,40 @@ namespace Type
             }
         }
 
-        // Helper Methods
-        // Get Task
-        private Task GetTask(int id)
+        // @author A0092104
+        // Archives all Tasks that contain any listed Hash Tag.
+        public void ArchiveAllByHashTags(IList<string> hashTags)
         {
-            return tasks.Find(task => task.Id == id);
+            Debug.Assert(hashTags != null);
+
+            List<Task> affected = new List<Task>();
+            foreach (var tag in hashTags)
+            {
+                affected.Concat(ArchiveAllByHashTag(tag));
+            }
+
+            this.PushUndo(UndoArchiveAll, null, affected);
         }
 
-        // Get All Tasks
-        private IList<Task> Get()
+        // @author A0092104
+        // Marks all Tasks that contain any listed Hash Tag as Done.
+        public void UpdateDoneByHashTags(IList<string> hashTags)
         {
-            return tasks;
+            Debug.Assert(hashTags != null);
+
+            List<Task> affected = new List<Task>();
+            foreach (var tag in hashTags)
+            {
+                affected.Concat(UpdateDoneByHashTag(tag));
+            }
+
+            this.PushUndo(UndoDoneAll, null, affected);
+        }
+
+        public void Clear()
+        {
+            dataStore.ClearFile("taskcollection.csv");
+            undoDataStore.ClearFile("undostack.csv");
         }
 
         // Get number of Tasks starting from skip
@@ -339,21 +387,119 @@ namespace Type
             );
         }
 
+        // @author A0092104U
+        /// <summary>
+        /// Filters the current TaskCollection by hash tags. Specifying more than one hash tag takes the intersection of results. (logical AND)
+        /// </summary>
+        /// <param name="hashTags">List of hash tags to filter by.</param>
+        /// <returns>List of Tasks that match criteria.</returns>
         public List<Task> ByHashTags(IList<string> hashTags)
         {
             var resultSet = new HashSet<Task>();
-            foreach (var tag in hashTags)
+
+            // If the list is empty, return an empty result set.
+            // Otherwise, run an initial query. If there is exactly one item in the list, return the result of the initial query.
+            // Otherwise, continue running additional queries and taking their intersections. Finally, return the result set.
+            if (hashTags.Count == 0)
             {
-                var queryResults = tasks.FindAll(task => task.Tags.Contains(tag));
-                resultSet.UnionWith(queryResults);
+                return resultSet.ToList();
             }
-            return resultSet.ToList();
+            else
+            {
+                var initialResult = tasks.FindAll(task => task.Tags.Contains(hashTags[0]));
+                resultSet.UnionWith(initialResult);
+
+                if (hashTags.Count == 1)
+                {
+                    return resultSet.ToList();
+                }
+                else
+                {
+                    for (int i = 1; i < hashTags.Count; i++)
+                    {
+                        var tag = hashTags[i];
+                        var queryResults = tasks.FindAll(task => task.Tags.Contains(tag));
+                        resultSet.IntersectWith(queryResults);
+                    }
+
+                    return resultSet.ToList();
+                }
+            }
+        }
+        #endregion
+
+        #region Helper Methods
+        // Get Task
+        private Task GetTask(int id)
+        {
+            return tasks.Find(task => task.Id == id);
         }
 
-        public void Clear()
+        // Get All Tasks
+        private IList<Task> Get()
         {
-            dataStore.ClearFile("taskcollection.csv");
-            undoDataStore.ClearFile("undostack.csv");
+            return tasks;
         }
+
+        // @author A0092104
+        // Marks all Tasks that contain the specified tag as Done.
+        private List<Task> UpdateDoneByHashTag(string tag)
+        {
+            var affected = new List<Task>();
+            foreach (var t in tasks)
+            {
+                if (t.Tags.Contains(tag))
+                {
+                    affected.Add(t);
+                    this.UpdateDone(t.Id, true, false);
+                }
+            }
+            return affected;
+        }
+
+        // @author A0092104
+        // Archives all Tasks the contain the specified Hash Tag
+        private List<Task> ArchiveAllByHashTag(string tag)
+        {
+            var affected = new List<Task>();
+            foreach (var t in tasks)
+            {
+                if (t.Tags.Contains(tag))
+                {
+                    affected.Add(t);
+                    this.UpdateArchive(t.Id, true, false);
+                }
+            }
+            return affected;
+        }
+
+        // @author A0092104U
+        // Changes the archive status of a task.
+        // If the task is archived, we append the hashtag #archive so that it shows up in searches.
+        // If the task is unarchived, we remove all hashtags #archive to return it to its original state.
+        private void InternalMarkArchive(bool archiveStatus, Task t)
+        {
+            string pattern = " " + TAG_ARCHIVE;
+            if (!t.RawText.Contains(TAG_ARCHIVE))
+            {
+                if (archiveStatus)
+                {
+                    this.UpdateRawText(t.Id, (t.RawText + pattern), false);
+                }
+            }
+            else
+            {
+                if (!archiveStatus)
+                {
+                    while (t.RawText.Contains(TAG_ARCHIVE))
+                    {
+                        this.UpdateRawText(t.Id, t.RawText.Replace(pattern, ""), false);
+                    }
+                }
+            }
+
+            t.Archive = archiveStatus;
+        }
+        #endregion
     }
 }

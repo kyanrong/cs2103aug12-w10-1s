@@ -46,11 +46,14 @@ namespace Type
 
     public partial class MainWindow : Window
     {
+        #region Constants
         private const string TEXT_WELCOME = "start typing...";
         private const string TEXT_NOTASKS = "no tasks.";
         private const int NUMBER_OF_TASKS_LOADED = 50;
         private const int NUMBER_OF_TASKS_DISPLAYED = 6;
+        #endregion
 
+        #region Fields
         private List<String> helpDescription = new List<String>();
 
         private ExecuteCommandCallback ExecuteCommand;
@@ -60,9 +63,17 @@ namespace Type
 
         private IList<Task> renderedTasks;
         private List<TextBlock> taskTextBlockList;
-        private int highlightIndex, listStartIndex, listEndIndex;
+
+        private bool isHighlighting;
+        private int highlightIndex;
+        private int listStartIndex;
+        private int listEndIndex;
+        private bool isOriginalTasks;
+
         private Task selectedTask;
+        private Command parseResult;
         private StackPanel taskView = new StackPanel();
+        #endregion
 
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
@@ -84,10 +95,15 @@ namespace Type
 
             // bootstrap tasks
             // TODO. abstract this number.
+            isOriginalTasks = true;
             renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             taskTextBlockList = new List<TextBlock>();
+
+            parseResult = Command.Parse(inputBox.Text);
+
             InitializeListBounderIndex();
-            highlightIndex = 0;
+            StopHighlighting();
+
             RenderTasks();
         }
 
@@ -130,10 +146,12 @@ namespace Type
                     text = taskTextBlockList[i];
                     //highlight target textbox                    
 
-                    if (i == highlightIndex + listStartIndex)
+                    if ((i == highlightIndex + listStartIndex) && isHighlighting)
                     {
-                        text.Background = Brushes.AliceBlue;
+                        text.Background = Brushes.Beige;
+
                         selectedTask = renderedTasks[i];
+                        //selectedTaskText = renderedTasks[i].RawText;
                     }
                     else
                     {
@@ -152,6 +170,8 @@ namespace Type
         //generate list of text block
         private void RenderTasks()
         {
+            StopHighlighting();
+
             taskTextBlockList.Clear();
             InitializeListBounderIndex();
 
@@ -223,27 +243,38 @@ namespace Type
 
             if (inputBox.Text == string.Empty)
             {
+                isOriginalTasks = true;
                 renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+                RenderTasks();
             }
 
             else
             {
-                var result = Command.Parse(inputBox.Text);
+                parseResult = Command.Parse(inputBox.Text);
 
-                if (result.CommandText == Command.Search)
+                if (parseResult.CommandText == Command.Search && parseResult.Text != string.Empty)
                 {
-                    renderedTasks = GetTasksByHashTag(result.Text);
-                    InitializeListBounderIndex();
+                    isOriginalTasks = false;
+                    renderedTasks = GetTasksByHashTag(parseResult.Text);
+                    RenderTasks();
                 }
 
-                else if (result.CommandText != Command.Add)
+                else if (parseResult.CommandText != Command.Add && parseResult.Text!=string.Empty)
                 {
-                    renderedTasks = GetFilterSuggestions(result.Text);
-                    InitializeListBounderIndex();
+                    isOriginalTasks = false;
+                    renderedTasks = GetFilterSuggestions(parseResult.Text);
+                    RenderTasks();
+                }
+
+                else if (!isOriginalTasks && parseResult.Text == string.Empty)
+                {
+                    isOriginalTasks = true;
+                    renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+                    RenderTasks();
                 }
             }
 
-            RenderTasks();
+            
             invalidCmdPopup.IsOpen = false;
             helpDescriptionPopup.IsOpen = false;
         }
@@ -255,8 +286,7 @@ namespace Type
             {
                 case Key.Enter:
                     HandleSendCommand();
-                    renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
-                    RenderTasks();
+                    isOriginalTasks = true;
                     break;
 
                 case Key.Tab:
@@ -264,7 +294,7 @@ namespace Type
                     break;
 
                 case Key.Escape:
-                    HandleHideWindow();
+                    HandleEscapeKey();
                     break;
 
                 case Key.Up:
