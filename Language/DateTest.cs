@@ -32,7 +32,7 @@ namespace Language
             string x = "This should 12/1 match";
             Assert.AreEqual(RegExp.DateTimeT(x).Item1, "12/1");
             int year = DateTime.Today.Year;
-            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year, 1, 12));
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year + 1, 1, 12));
         }
 
         [TestMethod]
@@ -72,7 +72,11 @@ namespace Language
                 string x = "This should 11 " + month + " match";
                 Assert.AreEqual(RegExp.DateTimeT(x).Item1, "11 " + month);
                 int year = DateTime.Today.Year;
-                Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year, i + 1, 11));
+                DateTime date = (DateTime)RegExp.DateTimeT(x).Item3;
+                Assert.AreEqual(
+                    date.Month,
+                    i + 1
+                );
             }
             string[] months2 = {
                 "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
@@ -83,7 +87,11 @@ namespace Language
                 string x = "This should 11 " + month + " match";
                 Assert.AreEqual(RegExp.DateTimeT(x).Item1, "11 " + month);
                 int year = DateTime.Today.Year;
-                Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year, i + 1, 11));
+                DateTime date = (DateTime)RegExp.DateTimeT(x).Item3;
+                Assert.AreEqual(
+                    date.Month,
+                    i + 1
+                );
             }
         }
 
@@ -131,7 +139,11 @@ namespace Language
                 string x = "This should by 11 " + month + " match";
                 Assert.AreEqual(RegExp.DateTimeT(x).Item1, "by 11 " + month);
                 int year = DateTime.Today.Year;
-                Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year, i + 1, 11));
+                DateTime date = (DateTime)RegExp.DateTimeT(x).Item3;
+                Assert.AreEqual(
+                    date.Month,
+                    i + 1
+                );
             }
             string[] months2 = {
                 "January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
@@ -142,7 +154,11 @@ namespace Language
                 string x = "This should due 11 " + month + " match";
                 Assert.AreEqual(RegExp.DateTimeT(x).Item1, "due 11 " + month);
                 int year = DateTime.Today.Year;
-                Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year, i + 1, 11));
+                DateTime date = (DateTime)RegExp.DateTimeT(x).Item3;
+                Assert.AreEqual(
+                    date.Month,
+                    i + 1
+                );
             }
         }
 
