@@ -13,20 +13,20 @@ namespace Type
         private void HandleSendCommand()
         {
             //Parse input.
-            var result = Command.Parse(inputBox.Text);
+            //var parseResult = Command.Parse(inputBox.Text);
 
-            switch (result.CommandText)
+            switch (parseResult.CommandText)
             {
                 case Command.Invalid:
                     invalidCmdPopup.IsOpen = true;
                     break;
 
                 case Command.Search:
-                    DoSearch(result);
+                    DoSearch(parseResult);
                     break;
 
                 case Command.Add:
-                    DoAdd(result);
+                    DoAdd(parseResult);
                     break;
 
                 case Command.Help:
@@ -38,7 +38,7 @@ namespace Type
                 case Command.Undo:
                 case Command.Edit:
                 case Command.Clear:
-                    DoGenericCommand(result);
+                    DoGenericCommand(parseResult);
                     break;
                     
                 default:
@@ -46,7 +46,7 @@ namespace Type
             }
 
             //Retrieve a list of tasks, unless the list has already been retrieved by Search.
-            if (result.CommandText != Command.Search)
+            if (parseResult.CommandText != Command.Search)
             {
                 isOriginalTasks = true;
                 renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
@@ -61,22 +61,22 @@ namespace Type
             //AutoComplete is only defined if there are rendered tasks on screen.
             if (renderedTasks != null && renderedTasks.Count > 0)
             {
-                var result = Command.Parse(inputBox.Text);
+                //var parseResult = Command.Parse(inputBox.Text);
 
                 // If the command is Invalid, we try to autocomplete the command.
                 // Otherwise, we complete the task.
-                if (result.CommandText != Command.Invalid && !result.IsAlias)
+                if (parseResult.CommandText != Command.Invalid && !parseResult.IsAlias)
                 {
                     // If the input text is just the command, we append a space so that 
                     // the user can continue typing.
                     // Otherwise, we complete the partially written task.
                     int completeBegin;
-                    if (inputBox.Text.EndsWith(result.CommandText))
+                    if (inputBox.Text.EndsWith(parseResult.CommandText))
                     {
                         inputBox.Text += " ";
                         MoveCursorToEndOfWord();
                     }
-                    else if ((completeBegin =  LCPIndex(result.Text, renderedTasks[0].RawText)) >= 0)
+                    else if ((completeBegin =  LCPIndex(parseResult.Text, renderedTasks[0].RawText)) >= 0)
                     {
                         inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
                         MoveCursorToEndOfWord();
