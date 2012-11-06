@@ -99,6 +99,8 @@ namespace Type
             renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             taskTextBlockList = new List<TextBlock>();
 
+            parseResult = Command.Parse(inputBox.Text);
+
             InitializeListBounderIndex();
             StopHighlighting();
 

@@ -121,6 +121,7 @@ namespace Type
         // @author A0092104
         private void StartHighlighting()
         {
+            highlightIndex = 0;
             isHighlighting = true;
             ResetSelection();
         }
@@ -135,8 +136,6 @@ namespace Type
         // @author A0092104
         private void ResetSelection()
         {
-            highlightIndex = 0;
-
             // We have a non-ambiguous match iff there is exactly one task rendered.
             // Otherwise, set the selectedTask to null to represent no task selected.
             selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
@@ -146,13 +145,16 @@ namespace Type
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
         {
-            if (!isHighlighting)
+            if (!isHighlighting && listStartIndex != 0)
             {
                 StartHighlighting();
             }
-            else
+            
+            highlightIndex--;
+
+            if (highlightIndex < 0 && listStartIndex == 0)
             {
-                highlightIndex--;
+                StopHighlighting();
             }
 
             //when highlighIndex out of bound and current page is not the first page
@@ -194,24 +196,22 @@ namespace Type
         
         private void HandleLeftArrow()
         {
-            //in case user only want to move the cursor, not the page
-            if (inputBox.Text != string.Empty)
+            //in case user only want to move the cursor in the text box, not the page
+            //but user can still use the left key when searching for task in filter list
+            if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
-                return;
+                MoveToPreviousPage();
             }
-
-            MoveToPreviousPage();
         }
         
         private void HandleRightArrow()
         {
-            //in case user only want to move the cursor, not the page
-            if (inputBox.Text != string.Empty)
+            //in case user only want to move the cursor in the text box, not the page
+            //but user can still use the right key when searching for task in filter list
+            if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
-                return;
+                MoveToNextPage();
             }
-           
-            MoveToNextPage();
         }
 
         //go to next page, will modify listStartIndex and listEndIndex
