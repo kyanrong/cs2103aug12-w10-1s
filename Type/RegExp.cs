@@ -15,6 +15,10 @@ namespace Type
         // 2 DD string_rep_of_month [YY[YY]]
         public static string DATE2 = "\\b\\d{1,2}\\s(?:january|febuary|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:\\s\\d{2,4})?\\b";
         
+        // 3 Nice Dates
+        public static string DATE3 = "\\btoday|tdy\\b";
+        public static string DATE4 = "\\btomorrow|tmr\\b";
+        
         // time re
         // 1. NN(am|pm)
         public static string TIME1 = "\\b\\d{1,2}(?:am|pm)\\b";
@@ -22,7 +26,7 @@ namespace Type
         public static string TIME2 = "\\b\\d{1,2}:\\d{2}(?:am|pm)?\\b";
 
         // Combine cases.
-        public static string DateRE = "(?:" + DATE1 + "|" + DATE2 + ")";
+        public static string DateRE = "(?:" + DATE1 + "|" + DATE2 + "|" + DATE3 + "|" + DATE4 + ")";
         public static string TimeRE = "(?:" + TIME1 + "|" + TIME2 + ")";
 
         // datetime re
@@ -196,6 +200,32 @@ namespace Type
                 int date = int.Parse(tokens[0]);
                 int month = MonthFromString(tokens[1]);
                 int year = tokens.Length == 3 ? GetYearFromToken(tokens[2]) : DateTime.Today.Year;
+                return Tuple.Create(year, month, date);
+            }
+
+            // case 3.
+            // nice, today
+            Regex re3 = new Regex(DATE3, RegexOptions.IgnoreCase);
+            m = re3.Match(input);
+            if (m.Success)
+            {
+                DateTime today = DateTime.Today;
+                int date = today.Day;
+                int month = today.Month;
+                int year = today.Year;
+                return Tuple.Create(year, month, date);
+            }
+
+            // case 4.
+            // nice, today
+            Regex re4 = new Regex(DATE4, RegexOptions.IgnoreCase);
+            m = re4.Match(input);
+            if (m.Success)
+            {
+                DateTime tmr = DateTime.Today.AddDays(1);
+                int date = tmr.Day;
+                int month = tmr.Month;
+                int year = tmr.Year;
                 return Tuple.Create(year, month, date);
             }
 

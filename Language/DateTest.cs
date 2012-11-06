@@ -187,5 +187,26 @@ namespace Language
             Assert.AreEqual(tuple.Item2, new DateTime(2011, 11, 12));
             Assert.AreEqual(tuple.Item3, new DateTime(2012, 11, 12));
         }
+
+        [TestMethod]
+        public void nice()
+        {
+            string x = "This should today match";
+            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "today");
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, DateTime.Today);
+
+            x = "This should tdy match";
+            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "tdy");
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, DateTime.Today);
+
+            x = "This should tomorrow match";
+            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "tomorrow");
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, DateTime.Today.AddDays(1));
+
+            x = "This should tmr match";
+            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "tmr");
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, DateTime.Today.AddDays(1));
+        }
+
     }
 }
