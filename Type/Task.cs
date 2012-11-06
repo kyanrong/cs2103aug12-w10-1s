@@ -33,6 +33,7 @@ namespace Type
 
         // Other Properties
         public int Id { get; set; }
+        public DateTime lastMod { get; set; }
         public int priority { get; private set; }
         private bool hasStart;
         public DateTime Start { get; private set; }
@@ -164,6 +165,7 @@ namespace Type
             this.RawText = row[0];
             this.Done = Boolean.Parse(row[1]);
             this.Archive = Boolean.Parse(row[2]);
+            this.lastMod = row.Count < 4 ? DateTime.Today : DateTime.Parse(row[3]);
             this.Setup();
         }
         // from rawText
@@ -174,7 +176,7 @@ namespace Type
             this.Archive = false;
             this.hasEnd = false;
             this.hasStart = false;
-
+            this.lastMod = DateTime.Today;
             this.Setup();
         }
 
@@ -237,7 +239,7 @@ namespace Type
             }
 
             // parse dates
-            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.DateTimeT(this.rawText);
+            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.DateTimeT(this.rawText, this.lastMod);
             if (dateTimeMatch.Item1 != string.Empty)
             {
                 // we have a match
@@ -348,6 +350,7 @@ namespace Type
             row.Add(this.RawText);
             row.Add(this.Done.ToString());
             row.Add(this.Archive.ToString());
+            row.Add(this.lastMod.ToString());
             return row;
         }
 

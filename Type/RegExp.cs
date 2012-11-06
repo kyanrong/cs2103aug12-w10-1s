@@ -72,7 +72,8 @@ namespace Type
             return result;
         }
 
-        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input)
+
+        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input, DateTime today)
         {
             DateTime? datetime = null;
             Match m;
@@ -84,8 +85,8 @@ namespace Type
             if (m.Success)
             {
                 var matches = m.Groups;
-                DateTime? start = ParseDateTime(matches[1].Value);
-                DateTime? end = ParseDateTime(matches[2].Value);
+                DateTime? start = ParseDateTime(matches[1].Value, today);
+                DateTime? end = ParseDateTime(matches[2].Value, today);
                 return Tuple.Create(m.Value, start, end);
             }
 
@@ -95,13 +96,18 @@ namespace Type
             if (m.Success)
             {
                 var matches = m.Groups;
-                DateTime? end = ParseDateTime(matches[1].Value);
+                DateTime? end = ParseDateTime(matches[1].Value, today);
                 return Tuple.Create(m.Value, datetime, end);
             }
 
             // if none of the regexp matches
             // return the empty string.
             return Tuple.Create(String.Empty, datetime, datetime);
+        }
+
+        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input)
+        {
+            return DateTimeT(input, DateTime.Today);
         }
 
         private static string[] SanitizeToken(string value, string match, char split)
@@ -174,7 +180,7 @@ namespace Type
         }
 
         // extracts information from a date string and returns it in a tuple
-        public static Tuple<int, int, int> DateFromDateString(string input)
+        public static Tuple<int, int, int> DateFromDateString(string input, DateTime today)
         {
             // case 1.
             // DD/MM[/YY[YY]]
@@ -209,7 +215,6 @@ namespace Type
             m = re3.Match(input);
             if (m.Success)
             {
-                DateTime today = DateTime.Today;
                 int date = today.Day;
                 int month = today.Month;
                 int year = today.Year;
@@ -222,7 +227,7 @@ namespace Type
             m = re4.Match(input);
             if (m.Success)
             {
-                DateTime tmr = DateTime.Today.AddDays(1);
+                DateTime tmr = today.AddDays(1);
                 int date = tmr.Day;
                 int month = tmr.Month;
                 int year = tmr.Year;
@@ -234,6 +239,10 @@ namespace Type
             return Tuple.Create(-1, -1, -1);
         }
 
+        public static Tuple<int, int, int> DateFromDateString(string input)
+        {
+            return DateFromDateString(input, DateTime.Today);
+        }
         // extracts information from time string and returns it in a tuple
         public static Tuple<int, int> TimeFromTimeString(string input)
         {
@@ -278,13 +287,13 @@ namespace Type
         }
 
         // returns datetime object if input string matches one of the acceptable formats
-        private static DateTime? ParseDateTime(string input)
+        private static DateTime? ParseDateTime(string input, DateTime today)
         {
             // booleans to keep track if either date/time is matched.
             // either one is necessary for input to qualify as a date/time
             bool date = false;
             bool time = false;
-            DateTime result = DateTime.Today;
+            DateTime result = today;
 
             Match m;
             // get date information
@@ -294,7 +303,7 @@ namespace Type
             {
                 date = true;
                 string dateString = m.Groups[0].Value;
-                var dateTuple = DateFromDateString(dateString);
+                var dateTuple = DateFromDateString(dateString, today);
 
                 int year = dateTuple.Item1;
                 int month = dateTuple.Item2;
@@ -348,6 +357,11 @@ namespace Type
             {
                 return result;
             }
+        }
+
+        private static DateTime? ParseDateTime(string input)
+        {
+            return ParseDateTime(input, DateTime.Today);
         }
     }
 }
