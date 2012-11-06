@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStoreTest", "DataStoreT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SortOrderTests", "SortOrderTests\SortOrderTests.csproj", "{CF576AAF-9D43-4D34-8FC6-A179BC86557E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandObjectTests", "CommandObjectTests\CommandObjectTests.csproj", "{FC714DB7-255B-46AB-87D2-8327991E7332}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Type.vsmdi
@@ -109,6 +111,21 @@ Global
 		{CF576AAF-9D43-4D34-8FC6-A179BC86557E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{CF576AAF-9D43-4D34-8FC6-A179BC86557E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CF576AAF-9D43-4D34-8FC6-A179BC86557E}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.language|Any CPU.ActiveCfg = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.language|Any CPU.Build.0 = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.language|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.language|Mixed Platforms.Build.0 = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.language|x86.ActiveCfg = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FC714DB7-255B-46AB-87D2-8327991E7332}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

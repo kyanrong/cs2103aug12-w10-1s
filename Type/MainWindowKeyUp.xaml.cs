@@ -30,7 +30,6 @@ namespace Type
                     break;
 
                 case Command.Help:
-                case Command.HelpSpelled:
                     DoHelp();
                     break;
 
@@ -39,7 +38,7 @@ namespace Type
                 case Command.Undo:
                 case Command.Edit:
                 case Command.Clear:
-                    DoOther(result);
+                    DoGenericCommand(result);
                     break;
                     
                 default:
@@ -49,28 +48,35 @@ namespace Type
             //Retrieve a list of tasks, unless the list has already been retrieved by Search.
             if (result.CommandText != Command.Search)
             {
+                isOriginalTasks = true;
                 renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             }
 
             RenderTasks();
         }
 
+        // @author A0092104
         private void HandleAutoComplete()
         {
             //AutoComplete is only defined if there are rendered tasks on screen.
             if (renderedTasks != null && renderedTasks.Count > 0)
             {
                 var result = Command.Parse(inputBox.Text);
-                if (result.CommandText != Command.Invalid)
-                {
-                    int completeBegin = LCPIndex(result.Text, renderedTasks[0].RawText);
 
+                // If the command is Invalid, we try to autocomplete the command.
+                // Otherwise, we complete the task.
+                if (result.CommandText != Command.Invalid && !result.IsAlias)
+                {
+                    // If the input text is just the command, we append a space so that 
+                    // the user can continue typing.
+                    // Otherwise, we complete the partially written task.
+                    int completeBegin;
                     if (inputBox.Text.EndsWith(result.CommandText))
                     {
                         inputBox.Text += " ";
+                        MoveCursorToEndOfWord();
                     }
-
-                    if (completeBegin >= 0)
+                    else if ((completeBegin =  LCPIndex(result.Text, renderedTasks[0].RawText)) >= 0)
                     {
                         inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
                         MoveCursorToEndOfWord();
@@ -84,15 +90,19 @@ namespace Type
             }
         }
 
-        private void HandleHideWindow()
+        // @author A0092104U
+        private void HandleEscapeKey()
         {
-            //If the input box is not empty, we clear the input box, but do not hide the window.
-            //Otherwise, we hide the window.
-            //If the input box contains only whitespace (which will not be caught by the first condition),
-            //we clear it before hiding the window.
+            // If we are highlighting something, we stop highlighting, but do not hide the window;
+            // We also refresh the view so that the highlight no longer shows.
+            // If the input box is not empty, we clear the input box, but do not hide the window.
+            // Otherwise, we hide the window.
+            // If the input box contains only whitespace (which will not be caught by the first condition),
+            // we clear it before hiding the window.
             if (inputBox.Text.Trim() != string.Empty)
             {
                 inputBox.Clear();
+                RefreshViewList();
             }
             else
             {
@@ -104,21 +114,24 @@ namespace Type
             }
         }
 
+        //@author A0088574M
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
         {
             highlightIndex--;
 
+
             //when highlighIndex out of bound and current page is not the first page
             if (highlightIndex < 0 && listStartIndex > 0)
             {
-                HandleLeftArrow();//move to previous page
-                highlightIndex = (listEndIndex-1) % NUMBER_OF_TASKS_DISPLAYED;
+                MoveToPreviousPage();
+                highlightIndex = (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED;
             }
 
             CheckHighlightIndexBound();
 
             RefreshViewList();
+            //inputBox.Text = selectedTaskText;
         }
 
         //modify the highlightIndex and may go to next page
@@ -128,38 +141,43 @@ namespace Type
 
             if ((highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1) && (listEndIndex != renderedTasks.Count))
             {
-                HandleRightArrow();//move to next page
+                MoveToNextPage();
                 highlightIndex = 0;
             }
 
             CheckHighlightIndexBound();
 
             RefreshViewList();
+            //inputBox.Text = selectedTaskText;
         }
-
-        //go to previous page, will modify listStartIndex and listEndIndex
-        //may modify highlightIndex
+        
         private void HandleLeftArrow()
         {
-            //already at the first page, no need changes
-            if (listStartIndex == 0)
+            //in case user only want to move the cursor, not the page
+            if (inputBox.Text != string.Empty)
             {
                 return;
             }
 
-            listStartIndex -= NUMBER_OF_TASKS_DISPLAYED;            
-            listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
-
-            CheckListIndexBound();
-            CheckHighlightIndexBound();
-            RefreshViewList();
+            MoveToPreviousPage();
+        }
+        
+        private void HandleRightArrow()
+        {
+            //in case user only want to move the cursor, not the page
+            if (inputBox.Text != string.Empty)
+            {
+                return;
+            }
+           
+            MoveToNextPage();
         }
 
         //go to next page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
-        private void HandleRightArrow()
+        private void MoveToNextPage()
         {
-            //already at the last page, no need changes
+            //already at the last page
             if (listEndIndex == renderedTasks.Count)
             {
                 return;
@@ -170,6 +188,26 @@ namespace Type
 
             CheckListIndexBound();
             CheckHighlightIndexBound();
+
+            RefreshViewList();
+        }
+
+        //go to previous page, will modify listStartIndex and listEndIndex
+        //may modify highlightIndex
+        private void MoveToPreviousPage()
+        {
+            //already at the first page
+            if (listStartIndex == 0)
+            {
+                return;
+            }
+
+            listStartIndex -= NUMBER_OF_TASKS_DISPLAYED;
+            listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
+
+            CheckListIndexBound();
+            CheckHighlightIndexBound();
+
             RefreshViewList();
         }
 
@@ -206,11 +244,13 @@ namespace Type
             inputBox.Select(inputBox.Text.Length, 0);
         }
 
-        //Finds the longest common prefix of a and b.
+        // @author A0092104
+        // Finds the longest common prefix of a and b.
         private int LCPIndex(string a, string b)
         {
-            int found = -1;
-            for (int i = 0; i < Math.Min(a.Length, b.Length); i++)
+            var found = -1;
+            var commonLength = Math.Min(a.Length, b.Length);
+            for (int i = 0; i < commonLength; i++)
             {
                 if (a[i] == b[i])
                 {
@@ -221,7 +261,6 @@ namespace Type
                     break;
                 }
             }
-
             return found;
         }
     }

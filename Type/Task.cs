@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Type
 {
     public class Task
     {
-        // Parsed Types
+        #region Enumerations
         public enum ParsedType
         {
             String,
@@ -17,11 +18,53 @@ namespace Type
             PriorityHigh,
             PriorityLow
         }
+        #endregion
 
+        #region Fields
         private string rawText;
         private List<Tuple<string, ParsedType>> tokens;
         private List<string> tags;
 
+        // Task Done
+        public bool Done { get; set; }
+
+        // Task Archive
+        public bool Archive { get; set; }
+
+        // Other Properties
+        public int Id { get; set; }
+        public int priority { get; private set; }
+        private bool hasStart;
+        public DateTime Start { get; private set; }
+        private bool hasEnd;
+        public DateTime End { get; private set; }
+
+        public string RawText
+        {
+            get
+            {
+                return rawText;
+            }
+            set
+            {
+                rawText = value;
+                this.Parse();
+            }
+        }
+
+        public IList<string> Tags
+        {
+            get { return tags.AsReadOnly(); }
+        }
+
+        public IList<Tuple<string, ParsedType>> Tokens
+        {
+            get { return tokens.AsReadOnly(); }
+        }
+        #endregion
+
+        #region Sort Orders
+        // @author A0092104
         //Sort descending. Smallest value at the bottom.
         public static int DefaultComparison(Task a, Task b)
         {
@@ -30,6 +73,7 @@ namespace Type
             return aHash > bHash ? -1 : aHash == bHash ? 0 : 1;
         }
 
+        // @author A0092104
         // We create a natural ordering on a Task based on its properties.
         // 2's Int64
         // M                                                                              L
@@ -41,7 +85,6 @@ namespace Type
         // T = Due Today - Bit Flag (0-false)
         // P = Priority  - Unsigned Little Endian Integer (Excess-256)
         // I = Identity  - Unique Task ID
-        // X = Unused
         public long DefaultOrderHash()
         {
             long isDone = 0;
@@ -51,35 +94,51 @@ namespace Type
 
             if (this.Done)
             {
-                isDone = (1 << 63);
+                isDone = ((long)1 << 63);
             }
 
+            var ticksDiff = DateTime.Now.Ticks - this.End.Ticks;
+            long minutes = 0;
             if (this.DueToday())
             {
-                isDueToday = (1 << 34);
+                isDueToday = ((long)1 << 34);
             }
-
-            bool overdue;
-            if (overdue = this.OverdueToday())
+            else if (this.OverdueToday())
             {
-                isOverdue = (1 << 62);
+                isOverdue = ((long)1 << 62);
+                minutes = (long)(new TimeSpan(ticksDiff)).TotalMinutes;
             }
+            else if (this.Future())
+            {
+                minutes = (long)(new TimeSpan(ticksDiff)).TotalMinutes;
+            }
+            magnitude = (minutes << 35) & (long)0x3FFFFFF800000000;
 
-            long days = (long)(DateTime.Now.Date - this.End.Date).TotalMinutes;
-            magnitude = (days << 35) & (long)0x3FFFFFF800000000;
-
+            Debug.Assert(this.priority >= -256 && this.priority <= 511);
             long priority256 = ((long)(this.priority + 256) << 24) & (long)0x00000003FF000000;
 
-            long taskId = (long)(this.Id & 0x00FFFFFF);
+            long taskId = ((long)this.Id & (long)0x0000000000FFFFFF);
+            Debug.Assert(this.Id == taskId);
 
             return (isDone | isDueToday | isOverdue | priority256 | taskId | magnitude);
+        }
+        #endregion
+
+        #region Sort Order Helper Methods
+        private bool Future()
+        {
+            if (hasEnd)
+            {
+                return this.End > DateTime.Now;
+            }
+            return false;
         }
 
         private bool OverdueToday()
         {
             if (hasEnd)
             {
-                return this.End.Date < DateTime.Now.Date;
+                return this.End < DateTime.Now;
             }
             return false;
         }
@@ -88,12 +147,13 @@ namespace Type
         {
             if (hasEnd)
             {
-                return this.End.Date == DateTime.Now.Date;
+                return this.End == DateTime.Now;
             }
             return false;
         }
+        #endregion
 
-        // Constructor
+        #region Constructors
         // from row.
         public Task(List<string> row)
         {
@@ -126,7 +186,9 @@ namespace Type
             // parse the input
             this.Parse();
         }
+        #endregion
 
+        #region Parsing
         private void Parse()
         {
             // default token.
@@ -175,7 +237,7 @@ namespace Type
             }
 
             // parse dates
-            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.Date(this.rawText);
+            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.DateTimeT(this.rawText);
             if (dateTimeMatch.Item1 != string.Empty)
             {
                 // we have a match
@@ -271,7 +333,9 @@ namespace Type
                 this.tokens = res;
             }
         }
+        #endregion
 
+        #region Helper Methods
         public Task Clone()
         {
             return new Task(this.ToRow());
@@ -287,44 +351,10 @@ namespace Type
             return row;
         }
 
-        // Task Done
-        public bool Done { get; set; }
-
-        // Task Archive
-        public bool Archive { get; set; }
-
-        // Other Properties
-        public int Id { get; set; }
-        public int priority { get; private set; }
-        private bool hasStart;
-        public DateTime Start { get; private set; }
-        private bool hasEnd;
-        public DateTime End { get; private set; }
-        
-        public string RawText
-        {
-            get
-            {
-                return rawText;
-            }
-            set
-            {
-                rawText = value;
-                this.Parse();
-            }
-        }
-
-        public IList<string> Tags
-        {
-            get { return tags.AsReadOnly(); }
-        }
-        public IList<Tuple<string, ParsedType>> Tokens
-        {
-            get { return tokens.AsReadOnly(); }
-        }
         public override string ToString()
         {
             return this.RawText;
         }
+        #endregion
     }
 }
