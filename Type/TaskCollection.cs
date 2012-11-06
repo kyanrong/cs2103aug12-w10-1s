@@ -76,6 +76,7 @@ namespace Type
         public const string UndoAdd = "add";
         public const string UndoEdit = "edit";
         public const string UndoDone = "done";
+        public const string UndoDoneAll = "doneall";
         public const string UndoArchive = "archive";
         public const string UndoArchiveAll = "archiveall";
 
@@ -122,6 +123,15 @@ namespace Type
                     // update done state of task
                     this.UpdateDone(index, !done, false);
 
+                    break;
+                case UndoDoneAll:
+                    for (int i = 1; i < undoItemData.Count; i++)
+                    {
+                        index = int.Parse(undoItemData[i]);
+
+                        // update archived state of task
+                        this.UpdateDone(index, false, false);
+                    }
                     break;
 
                 case UndoArchive:
@@ -324,10 +334,13 @@ namespace Type
         {
             Debug.Assert(hashTags != null);
 
+            List<Task> affected = new List<Task>();
             foreach (var tag in hashTags)
             {
-                ArchiveAllByHashTag(tag);
+                affected.Concat(ArchiveAllByHashTag(tag));
             }
+
+            this.PushUndo(UndoArchiveAll, null, affected);
         }
 
         // @author A0092104
@@ -336,10 +349,13 @@ namespace Type
         {
             Debug.Assert(hashTags != null);
 
+            List<Task> affected = new List<Task>();
             foreach (var tag in hashTags)
             {
-                UpdateDoneByHashTag(tag);
+                affected.Concat(UpdateDoneByHashTag(tag));
             }
+
+            this.PushUndo(UndoDoneAll, null, affected);
         }
 
         public void Clear()
@@ -427,28 +443,34 @@ namespace Type
 
         // @author A0092104
         // Marks all Tasks that contain the specified tag as Done.
-        private void UpdateDoneByHashTag(string tag)
+        private List<Task> UpdateDoneByHashTag(string tag)
         {
+            var affected = new List<Task>();
             foreach (var t in tasks)
             {
                 if (t.Tags.Contains(tag))
                 {
+                    affected.Add(t);
                     t.Done = true;
                 }
             }
+            return affected;
         }
 
         // @author A0092104
         // Archives all Tasks the contain the specified Hash Tag
-        private void ArchiveAllByHashTag(string tag)
+        private List<Task> ArchiveAllByHashTag(string tag)
         {
+            var affected = new List<Task>();
             foreach (var t in tasks)
             {
                 if (t.Tags.Contains(tag))
                 {
+                    affected.Add(t);
                     t.Archive = true;
                 }
             }
+            return affected;
         }
 
         // @author A0092104U
