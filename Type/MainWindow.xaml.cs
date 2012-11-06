@@ -47,11 +47,14 @@ namespace Type
 
     public partial class MainWindow : Window
     {
+        #region Constants
         private const string TEXT_WELCOME = "start typing...";
         private const string TEXT_NOTASKS = "no tasks.";
         private const int NUMBER_OF_TASKS_LOADED = 50;
         private const int NUMBER_OF_TASKS_DISPLAYED = 6;
+        #endregion
 
+        #region Fields
         private List<String> helpDescription = new List<String>();
 
         private ExecuteCommandCallback ExecuteCommand;
@@ -69,7 +72,9 @@ namespace Type
         private bool isOriginalTasks;
 
         private Task selectedTask;
+        private Command parseResult;
         private StackPanel taskView = new StackPanel();
+        #endregion
 
         public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
@@ -94,6 +99,8 @@ namespace Type
             isOriginalTasks = true;
             renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             taskTextBlockList = new List<TextBlock>();
+
+            parseResult = Command.Parse(inputBox.Text);
 
             InitializeListBounderIndex();
             StopHighlighting();
@@ -270,23 +277,23 @@ namespace Type
 
             else
             {
-                var result = Command.Parse(inputBox.Text);
+                parseResult = Command.Parse(inputBox.Text);
 
-                if (result.CommandText == Command.Search && result.Text != string.Empty)
+                if (parseResult.CommandText == Command.Search && parseResult.Text != string.Empty)
                 {
                     isOriginalTasks = false;
-                    renderedTasks = GetTasksByHashTag(result.Text);
+                    renderedTasks = GetTasksByHashTag(parseResult.Text);
                     RenderTasks();
                 }
 
-                else if (result.CommandText != Command.Add && result.Text!=string.Empty)
+                else if (parseResult.CommandText != Command.Add && parseResult.Text!=string.Empty)
                 {
                     isOriginalTasks = false;
-                    renderedTasks = GetFilterSuggestions(result.Text);
+                    renderedTasks = GetFilterSuggestions(parseResult.Text);
                     RenderTasks();
                 }
 
-                else if (!isOriginalTasks && result.Text == string.Empty)
+                else if (!isOriginalTasks && parseResult.Text == string.Empty)
                 {
                     isOriginalTasks = true;
                     renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
@@ -306,8 +313,6 @@ namespace Type
                 case Key.Enter:
                     HandleSendCommand();
                     isOriginalTasks = true;
-                    renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
-                    RenderTasks();
                     break;
 
                 case Key.Tab:
