@@ -8,6 +8,9 @@ namespace Type
 {
     public class DataStore
     {
+        private const char SEPERATOR = ',';
+        private const char ESCAPE = '/';
+
         private string path;
         private int nextIndex;
 
@@ -225,7 +228,17 @@ namespace Type
 
             foreach (string str in list)
             {
-                result += "," + str;
+                string tempString = "";
+
+                for (int i = 0; i < str.Length; i++)
+                {
+                    if (str[i] == ESCAPE || str[i] == SEPERATOR)
+                    {
+                        tempString += ESCAPE;
+                    }
+                    tempString += str[i];
+                }
+                result += SEPERATOR + tempString;
             }
 
             return result;
@@ -264,21 +277,37 @@ namespace Type
         private Tuple<int, List<string>> ProcessRow(string rawString)
         {
             // split comma separated line into tokens
-            string[] tokens = rawString.Split(',');
+            List<string> contents = new List<string>();
+            contents.Add("");
+            int count = 0;
+
+            for (int i = 0; i < rawString.Length; i++)
+            {
+                if (rawString[i] == SEPERATOR)
+                {
+                    contents.Add("");
+                    count++;
+                }
+                else if (rawString[i] == ESCAPE)
+                {
+                    i++;
+                    contents[count] += rawString[i];
+                }
+                else
+                {
+                    contents[count] += rawString[i];
+                }
+            }
 
             // coerce first value to index.
             int index;
-            if (!int.TryParse(tokens[0], out index))
+            if (!int.TryParse(contents[0], out index))
             {
                 throw new System.MissingFieldException("missing index");
             }
 
             // build row contents
-            List<string> contents = new List<string>();
-            for (int i = 1; i < tokens.Length; i++)
-            {
-                contents.Add(tokens[i]);
-            }
+            contents.RemoveAt(0);
 
             return Tuple.Create(index, contents);
         }
