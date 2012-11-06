@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Globalization;
 
 namespace Type
 {
@@ -125,46 +126,65 @@ namespace Type
         {
             taskView.Children.Clear();
             tasksGrid.Children.Clear();
-            TextBlock text = new TextBlock();
+
 
             if (renderedTasks.Count == 0)
             {
-                text.Text = TEXT_NOTASKS;
-
-                StyleNoTasks(text);
-
-                taskView.Children.Add(text);
-                DisplayBlueBorder(taskView);
+                DisplayEmptyViewList();
             }
             else
             {
-                DisplayBlueBorder(taskView);
-                // loop over each task and create task view
-                // append each to tasks grid
-                for (int i = listStartIndex; i < listEndIndex; i++)
-                {  
-                    text = taskTextBlockList[i];
-                    //highlight target textbox                    
-
-                    if ((i == highlightIndex + listStartIndex) && isHighlighting)
-                    {
-                        text.Background = Brushes.Beige;
-
-                        selectedTask = renderedTasks[i];
-                        //selectedTaskText = renderedTasks[i].RawText;
-                    }
-                    else
-                    {
-                        text.Background = Brushes.White;
-                    }
-                    taskView.Children.Add(text);
-                    DisplayBlueBorder(taskView);
-                }
+                DisplayNonEmptyViewList();
             }
 
             // append task view to grid view
             tasksGrid.Children.Add(taskView);
             DisplayDashedBorder(tasksGrid);
+        }
+
+        private void DisplayNonEmptyViewList()
+        {
+            TextBlock text = new TextBlock();
+
+            DisplayBlueBorder(taskView);
+
+            // loop over each task and create task view
+            // append each to tasks grid
+            for (int i = listStartIndex; i < listEndIndex; i++)
+            {
+                text = taskTextBlockList[i];
+                //highlight target textbox                    
+
+                if ((i == highlightIndex + listStartIndex) && isHighlighting)
+                {
+                    text.Background = Brushes.Beige;
+
+                    selectedTask = renderedTasks[i];
+
+                    text.TextWrapping = TextWrapping.Wrap;
+                }
+                else
+                {
+                    text.Background = Brushes.White;
+
+                    text.TextWrapping = TextWrapping.NoWrap;
+                }
+
+                taskView.Children.Add(text);
+                DisplayBlueBorder(taskView);
+            }
+        }
+
+        private void DisplayEmptyViewList()
+        {
+            TextBlock text = new TextBlock();
+
+            text.Text = TEXT_NOTASKS;
+
+            StyleNoTasks(text);
+
+            taskView.Children.Add(text);
+            DisplayBlueBorder(taskView);
         }
 
         //generate list of text block
@@ -175,9 +195,17 @@ namespace Type
             taskTextBlockList.Clear();
             InitializeListBounderIndex();
 
+            RenderTasksDecorations();
+
+            RefreshViewList();
+        }
+
+        private void RenderTasksDecorations()
+        {
             for (int i = 0; i < renderedTasks.Count; i++)
             {
                 TextBlock text = new TextBlock();
+
                 // style tokens within the textblock
                 foreach (Tuple<string, Task.ParsedType> tuple in renderedTasks[i].Tokens)
                 {
@@ -212,12 +240,13 @@ namespace Type
                             StylePriorityLow(run);
                         }
                     }
+
                     text.Inlines.Add(run);
                 }
+
                 StyleTasks(text);
                 taskTextBlockList.Add(text);
             }
-            RefreshViewList();
         }
 
         private void InitializeListBounderIndex()
@@ -241,8 +270,6 @@ namespace Type
         {
             DisplayInputLabel();
 
-            parseResult = Command.Parse(inputBox.Text);
-
             if (inputBox.Text == string.Empty)
             {
                 isOriginalTasks = true;
@@ -252,6 +279,8 @@ namespace Type
 
             else
             {
+                parseResult = Command.Parse(inputBox.Text);
+
                 if (parseResult.CommandText == Command.Search && parseResult.Text != string.Empty)
                 {
                     isOriginalTasks = false;
@@ -273,7 +302,7 @@ namespace Type
                     RenderTasks();
                 }
             }
-            
+        
             invalidCmdPopup.IsOpen = false;
             helpDescriptionPopup.IsOpen = false;
         }
