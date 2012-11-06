@@ -280,8 +280,6 @@ namespace Type
                 case Key.Enter:
                     HandleSendCommand();
                     isOriginalTasks = true;
-                    renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
-                    RenderTasks();
                     break;
 
                 case Key.Tab:
