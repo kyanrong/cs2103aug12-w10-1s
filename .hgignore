@@ -18,6 +18,9 @@ DataStoreTest\obj\**
 SortOrderTests\bin\**
 SortOrderTests\obj\**
 
+CommandObjectTests\bin\**
+CommandObjectTests\obj\**
+
 TestResults\**
 
 *.suo
