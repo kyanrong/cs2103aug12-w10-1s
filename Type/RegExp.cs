@@ -15,6 +15,10 @@ namespace Type
         // 2 DD string_rep_of_month [YY[YY]]
         public static string DATE2 = "\\b\\d{1,2}\\s(?:january|febuary|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:\\s\\d{2,4})?\\b";
         
+        // 3 Nice Dates
+        public static string DATE3 = "\\btoday|tdy\\b";
+        public static string DATE4 = "\\btomorrow|tmr\\b";
+        
         // time re
         // 1. NN(am|pm)
         public static string TIME1 = "\\b\\d{1,2}(?:am|pm)\\b";
@@ -22,7 +26,7 @@ namespace Type
         public static string TIME2 = "\\b\\d{1,2}:\\d{2}(?:am|pm)?\\b";
 
         // Combine cases.
-        public static string DateRE = "(?:" + DATE1 + "|" + DATE2 + ")";
+        public static string DateRE = "(?:" + DATE1 + "|" + DATE2 + "|" + DATE3 + "|" + DATE4 + ")";
         public static string TimeRE = "(?:" + TIME1 + "|" + TIME2 + ")";
 
         // datetime re
@@ -68,7 +72,8 @@ namespace Type
             return result;
         }
 
-        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input)
+
+        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input, DateTime today)
         {
             DateTime? datetime = null;
             Match m;
@@ -80,8 +85,8 @@ namespace Type
             if (m.Success)
             {
                 var matches = m.Groups;
-                DateTime? start = ParseDateTime(matches[1].Value);
-                DateTime? end = ParseDateTime(matches[2].Value);
+                DateTime? start = ParseDateTime(matches[1].Value, today);
+                DateTime? end = ParseDateTime(matches[2].Value, today);
                 return Tuple.Create(m.Value, start, end);
             }
 
@@ -91,13 +96,18 @@ namespace Type
             if (m.Success)
             {
                 var matches = m.Groups;
-                DateTime? end = ParseDateTime(matches[1].Value);
+                DateTime? end = ParseDateTime(matches[1].Value, today);
                 return Tuple.Create(m.Value, datetime, end);
             }
 
             // if none of the regexp matches
             // return the empty string.
             return Tuple.Create(String.Empty, datetime, datetime);
+        }
+
+        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input)
+        {
+            return DateTimeT(input, DateTime.Today);
         }
 
         private static string[] SanitizeToken(string value, string match, char split)
@@ -170,7 +180,7 @@ namespace Type
         }
 
         // extracts information from a date string and returns it in a tuple
-        public static Tuple<int, int, int> DateFromDateString(string input)
+        public static Tuple<int, int, int> DateFromDateString(string input, DateTime today)
         {
             // case 1.
             // DD/MM[/YY[YY]]
@@ -182,7 +192,21 @@ namespace Type
                 string[] tokens = input.Split('/');
                 int date = int.Parse(tokens[0]);
                 int month = int.Parse(tokens[1]);
-                int year = tokens.Length == 3 ? GetYearFromToken(tokens[2]) : DateTime.Today.Year;
+
+                int year = DateTime.Today.Year;
+                if (tokens.Length == 3)
+                {
+                    year = GetYearFromToken(tokens[2]);
+                }
+                else
+                {
+                    // check if year is this year/next
+                    DateTime res = new DateTime(year, month, date);
+                    if (res < DateTime.Today)
+                    {
+                        year = year + 1;
+                    }
+                }
                 return Tuple.Create(year, month, date);
             }
 
@@ -195,7 +219,45 @@ namespace Type
                 string[] tokens = input.Split(' ');
                 int date = int.Parse(tokens[0]);
                 int month = MonthFromString(tokens[1]);
-                int year = tokens.Length == 3 ? GetYearFromToken(tokens[2]) : DateTime.Today.Year;
+                int year = DateTime.Today.Year;
+                if (tokens.Length == 3)
+                {
+                    year = GetYearFromToken(tokens[2]);
+                }
+                else
+                {
+                    // check if year is this year/next
+                    DateTime res = new DateTime(year, month, date);
+                    if (res < DateTime.Today)
+                    {
+                        year = year + 1;
+                    }
+                }
+                return Tuple.Create(year, month, date);
+            }
+
+            // case 3.
+            // nice, today
+            Regex re3 = new Regex(DATE3, RegexOptions.IgnoreCase);
+            m = re3.Match(input);
+            if (m.Success)
+            {
+                int date = today.Day;
+                int month = today.Month;
+                int year = today.Year;
+                return Tuple.Create(year, month, date);
+            }
+
+            // case 4.
+            // nice, today
+            Regex re4 = new Regex(DATE4, RegexOptions.IgnoreCase);
+            m = re4.Match(input);
+            if (m.Success)
+            {
+                DateTime tmr = today.AddDays(1);
+                int date = tmr.Day;
+                int month = tmr.Month;
+                int year = tmr.Year;
                 return Tuple.Create(year, month, date);
             }
 
@@ -204,6 +266,10 @@ namespace Type
             return Tuple.Create(-1, -1, -1);
         }
 
+        public static Tuple<int, int, int> DateFromDateString(string input)
+        {
+            return DateFromDateString(input, DateTime.Today);
+        }
         // extracts information from time string and returns it in a tuple
         public static Tuple<int, int> TimeFromTimeString(string input)
         {
@@ -248,13 +314,13 @@ namespace Type
         }
 
         // returns datetime object if input string matches one of the acceptable formats
-        private static DateTime? ParseDateTime(string input)
+        private static DateTime? ParseDateTime(string input, DateTime today)
         {
             // booleans to keep track if either date/time is matched.
             // either one is necessary for input to qualify as a date/time
             bool date = false;
             bool time = false;
-            DateTime result = DateTime.Today;
+            DateTime result = today;
 
             Match m;
             // get date information
@@ -264,7 +330,7 @@ namespace Type
             {
                 date = true;
                 string dateString = m.Groups[0].Value;
-                var dateTuple = DateFromDateString(dateString);
+                var dateTuple = DateFromDateString(dateString, today);
 
                 int year = dateTuple.Item1;
                 int month = dateTuple.Item2;
@@ -318,6 +384,11 @@ namespace Type
             {
                 return result;
             }
+        }
+
+        private static DateTime? ParseDateTime(string input)
+        {
+            return ParseDateTime(input, DateTime.Today);
         }
     }
 }

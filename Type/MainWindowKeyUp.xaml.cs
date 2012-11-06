@@ -13,20 +13,20 @@ namespace Type
         private void HandleSendCommand()
         {
             //Parse input.
-            var result = Command.Parse(inputBox.Text);
+            //var parseResult = Command.Parse(inputBox.Text);
 
-            switch (result.CommandText)
+            switch (parseResult.CommandText)
             {
                 case Command.Invalid:
                     invalidCmdPopup.IsOpen = true;
                     break;
 
                 case Command.Search:
-                    DoSearch(result);
+                    DoSearch(parseResult);
                     break;
 
                 case Command.Add:
-                    DoAdd(result);
+                    DoAdd(parseResult);
                     break;
 
                 case Command.Help:
@@ -38,7 +38,7 @@ namespace Type
                 case Command.Undo:
                 case Command.Edit:
                 case Command.Clear:
-                    DoGenericCommand(result);
+                    DoGenericCommand(parseResult);
                     break;
                     
                 default:
@@ -46,7 +46,7 @@ namespace Type
             }
 
             //Retrieve a list of tasks, unless the list has already been retrieved by Search.
-            if (result.CommandText != Command.Search)
+            if (parseResult.CommandText != Command.Search)
             {
                 isOriginalTasks = true;
                 renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
@@ -61,22 +61,22 @@ namespace Type
             //AutoComplete is only defined if there are rendered tasks on screen.
             if (renderedTasks != null && renderedTasks.Count > 0)
             {
-                var result = Command.Parse(inputBox.Text);
+                //var parseResult = Command.Parse(inputBox.Text);
 
                 // If the command is Invalid, we try to autocomplete the command.
                 // Otherwise, we complete the task.
-                if (result.CommandText != Command.Invalid && !result.IsAlias)
+                if (parseResult.CommandText != Command.Invalid && !parseResult.IsAlias)
                 {
                     // If the input text is just the command, we append a space so that 
                     // the user can continue typing.
                     // Otherwise, we complete the partially written task.
                     int completeBegin;
-                    if (inputBox.Text.EndsWith(result.CommandText))
+                    if (inputBox.Text.EndsWith(parseResult.CommandText))
                     {
                         inputBox.Text += " ";
                         MoveCursorToEndOfWord();
                     }
-                    else if ((completeBegin =  LCPIndex(result.Text, renderedTasks[0].RawText)) >= 0)
+                    else if ((completeBegin =  LCPIndex(parseResult.Text, renderedTasks[0].RawText)) >= 0)
                     {
                         inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
                         MoveCursorToEndOfWord();
@@ -121,6 +121,7 @@ namespace Type
         // @author A0092104
         private void StartHighlighting()
         {
+            highlightIndex = 0;
             isHighlighting = true;
             ResetSelection();
         }
@@ -135,8 +136,6 @@ namespace Type
         // @author A0092104
         private void ResetSelection()
         {
-            highlightIndex = 0;
-
             // We have a non-ambiguous match iff there is exactly one task rendered.
             // Otherwise, set the selectedTask to null to represent no task selected.
             selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
@@ -146,13 +145,16 @@ namespace Type
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
         {
-            if (!isHighlighting)
+            if (!isHighlighting && listStartIndex != 0)
             {
                 StartHighlighting();
             }
-            else
+            
+            highlightIndex--;
+
+            if (highlightIndex < 0 && listStartIndex == 0)
             {
-                highlightIndex--;
+                StopHighlighting();
             }
 
             //when highlighIndex out of bound and current page is not the first page
@@ -194,24 +196,22 @@ namespace Type
         
         private void HandleLeftArrow()
         {
-            //in case user only want to move the cursor, not the page
-            if (inputBox.Text != string.Empty)
+            //in case user only want to move the cursor in the text box, not the page
+            //but user can still use the left key when searching for task in filter list
+            if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
-                return;
+                MoveToPreviousPage();
             }
-
-            MoveToPreviousPage();
         }
         
         private void HandleRightArrow()
         {
-            //in case user only want to move the cursor, not the page
-            if (inputBox.Text != string.Empty)
+            //in case user only want to move the cursor in the text box, not the page
+            //but user can still use the right key when searching for task in filter list
+            if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
-                return;
+                MoveToNextPage();
             }
-           
-            MoveToNextPage();
         }
 
         //go to next page, will modify listStartIndex and listEndIndex
