@@ -1,4 +1,4 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace Type
         #region Fields
         private string rawText;
         private List<Tuple<string, ParsedType>> tokens;
-        private List<string> tags;
+        public List<string> Tags;
 
         // Task Done
         public bool Done { get; set; }
@@ -52,10 +52,10 @@ namespace Type
             }
         }
 
-        public IList<string> Tags
-        {
-            get { return tags.AsReadOnly(); }
-        }
+        //public IList<string> Tags
+        //{
+        //    get { return tags.AsReadOnly(); }
+        //}
 
         public IList<Tuple<string, ParsedType>> Tokens
         {
@@ -198,9 +198,9 @@ namespace Type
             this.tokens = result;
 
             // parse hashtags
-            this.tags = RegExp.HashTags(this.RawText);
+            this.Tags = RegExp.HashTags(this.RawText);
 
-            foreach (string hashtag in this.tags)
+            foreach (string hashtag in this.Tags)
             {
                 // find token contain hashtag.
                 var res = new List<Tuple<string, ParsedType>>();

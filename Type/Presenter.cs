@@ -9,17 +9,22 @@ namespace Type
 {
     public class Presenter
     {
+        #region Constants
         //Key combination to catch.
         private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
         private const uint COMBINATION_TRIGGER = 0x20;
+        #endregion
 
+        #region Fields
         private GlobalKeyCombinationHook globalHook;
         private MainWindow ui;
         private TaskCollection tasks;
         private bool editMode;
         private Task selected;
         private Comparison<Task> comparator;
-        
+        #endregion
+
+        #region Constructors
         // @author A0092104
         public Presenter()
         {
@@ -36,7 +41,9 @@ namespace Type
             //We need to unregister the hotkey when the application closes to be a good Windows citizen.
             globalHook.StopListening();
         }
+        #endregion
 
+        #region UI Handler
         // @author A0092104
         /// <summary>
         /// Displays the UI window. Called when a defined key combination is pressed.
@@ -45,7 +52,9 @@ namespace Type
         {
             ui.Show();
         }
+        #endregion
 
+        #region Delegate Targets
         /// <summary>
         /// Retrieves a list of suggestions that begin with a specified prefix.
         /// </summary>
@@ -92,7 +101,7 @@ namespace Type
             resultSet.Sort(comparator);
             return resultSet;
         }
-        
+
         /// <summary>
         /// Parses a raw string and executes its command, if valid.
         /// If no valid command is found, this method does nothing.
@@ -113,7 +122,9 @@ namespace Type
                 Execute(cmd, content, selected);
             }
         }
+        #endregion
 
+        #region Decision Making
         // @author A0092104
         private void Execute(string cmd, string content, Task selected)
         {
@@ -158,7 +169,9 @@ namespace Type
                     break;
             }
         }
+        #endregion
 
+        #region Helper Methods
         // @author A0092104
         private void HandleCommand_Archive(string content, Task selected)
         {
@@ -242,5 +255,6 @@ namespace Type
             //Escape from edit mode after this function call.
             editMode = false;
         }
+        #endregion
     }
 }
