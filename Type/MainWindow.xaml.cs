@@ -61,7 +61,6 @@ namespace Type
         private IList<Task> renderedTasks;
         private List<TextBlock> taskTextBlockList;
 
-        private bool isHighlighting;
         private int highlightIndex;
         private int listStartIndex;
         private int listEndIndex;
@@ -95,7 +94,6 @@ namespace Type
             taskTextBlockList = new List<TextBlock>();
 
             InitializeListBounderIndex();
-            StopHighlighting();
 
             RenderTasks();
         }
@@ -139,7 +137,7 @@ namespace Type
                     text = taskTextBlockList[i];
                     //highlight target textbox                    
 
-                    if ((i == highlightIndex + listStartIndex) && isHighlighting)
+                    if (i == highlightIndex + listStartIndex)
                     {
                         text.Background = Brushes.Beige;
 
@@ -163,8 +161,6 @@ namespace Type
         //generate list of text block
         private void RenderTasks()
         {
-            StopHighlighting();
-
             taskTextBlockList.Clear();
             InitializeListBounderIndex();
 
