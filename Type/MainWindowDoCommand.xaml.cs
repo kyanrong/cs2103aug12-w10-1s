@@ -52,7 +52,10 @@ namespace Type
         private void DoEdit(Task selectedTask)
         {
             //Populate inputBox with edit text.
-            inputBox.Text = selectedTask.RawText;
+            if (selectedTask != null)
+            {
+                inputBox.Text = selectedTask.RawText;
+            }
             MoveCursorToEndOfWord();
         }
 
