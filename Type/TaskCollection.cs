@@ -240,6 +240,8 @@ namespace Type
                 this.PushUndo(UndoEdit, clone);
             }
 
+            // update lastMod
+            t.lastMod = DateTime.Today;
             t.RawText = str;
 
             // change row in datastore

@@ -207,6 +207,5 @@ namespace Language
             Assert.AreEqual(RegExp.DateTimeT(x).Item1, "tmr");
             Assert.AreEqual(RegExp.DateTimeT(x).Item3, DateTime.Today.AddDays(1));
         }
-
     }
 }
