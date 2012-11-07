@@ -1,8 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
 
 namespace Type
 {
