@@ -58,6 +58,8 @@ namespace Type
         //@author A0092104U
         private void HandleAutoComplete()
         {
+            const string SPACE = " ";
+
             // AutoComplete is only defined if there are rendered tasks on screen.
             if (renderedTasks != null && renderedTasks.Count > 0)
             {
@@ -65,7 +67,7 @@ namespace Type
                 // Otherwise, we complete the task.
                 if ((parseResult.CommandText == Command.Invalid || parseResult.IsAlias) && parseResult.Text == string.Empty)
                 {
-                    inputBox.Text += Command.TryComplete(inputBox.Text.Substring(1));
+                    inputBox.Text += (Command.TryComplete(inputBox.Text.Substring(1)) + SPACE);
                     MoveCursorToEndOfWord();
                 }
                 else
@@ -76,12 +78,12 @@ namespace Type
                     int completeBegin;
                     if (inputBox.Text.EndsWith(parseResult.CommandText))
                     {
-                        inputBox.Text += " ";
+                        inputBox.Text += SPACE;
                         MoveCursorToEndOfWord();
                     }
                     else if ((completeBegin = LCPIndex(parseResult.Text, renderedTasks[0].RawText)) >= 0)
                     {
-                        inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
+                        inputBox.Text = inputBox.Text.Trim() + renderedTasks[0].RawText.Substring(completeBegin + 1);
                         MoveCursorToEndOfWord();
                     }
                 }
@@ -161,7 +163,6 @@ namespace Type
             CheckHighlightIndexBound();
 
             RefreshViewList();
-            //inputBox.Text = selectedTaskText;
         }
 
         //modify the highlightIndex and may go to next page
@@ -185,7 +186,6 @@ namespace Type
             CheckHighlightIndexBound();
 
             RefreshViewList();
-            //inputBox.Text = selectedTaskText;
         }
 
         private void HandleLeftArrow()
