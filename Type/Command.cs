@@ -168,6 +168,7 @@ namespace Type
         //Tokens.
         public const string Token = ":";
         public const string SearchToken = "/";
+        public const string HashToken = "#";
 
         //Enumeration of accepted explicit commands.
         public const string Edit = "edit";

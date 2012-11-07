@@ -101,9 +101,9 @@ namespace Type
             //Prepend a hash to the tag name if it doesn't already have one.
             for (int i = 0; i < tags.Count; i++)
             {
-                if (!tags[i].StartsWith("#"))
+                if (!tags[i].StartsWith(Command.HashToken))
                 {
-                    tags[i] = "#" + tags[i];
+                    tags[i] = Command.HashToken + tags[i];
                 }
             }
 
@@ -236,7 +236,7 @@ namespace Type
             for (int i = 0; i < tokens.Length && isList; i++)
             {
                 var trimmed = tokens[i].Trim();
-                if (!trimmed.StartsWith("#"))
+                if (!trimmed.StartsWith(Command.HashToken))
                 {
                     isList = false;
                 }
