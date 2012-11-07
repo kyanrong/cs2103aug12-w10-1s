@@ -170,6 +170,7 @@ namespace Type
             //inputBox.Text = selectedTaskText;
         }
 
+        //@author A0088574M
         //modify the highlightIndex and may go to next page
         private void HandleDownArrow()
         {
@@ -194,6 +195,7 @@ namespace Type
             //inputBox.Text = selectedTaskText;
         }
         
+        //@author A0088574M
         private void HandleLeftArrow()
         {
             //in case user only want to move the cursor in the text box, not the page
@@ -204,6 +206,7 @@ namespace Type
             }
         }
         
+        //@author A0088574M
         private void HandleRightArrow()
         {
             //in case user only want to move the cursor in the text box, not the page
@@ -214,6 +217,7 @@ namespace Type
             }
         }
 
+        //@author A0088574M
         //go to next page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToNextPage()
@@ -235,6 +239,7 @@ namespace Type
             RefreshViewList();
         }
 
+        //@author A0088574M
         //go to previous page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToPreviousPage()
@@ -256,6 +261,7 @@ namespace Type
             RefreshViewList();
         }
 
+        //@author A0088574M
         //if the list index is out of bound then set it back to the correct bound
         private void CheckListIndexBound()
         {
@@ -270,6 +276,7 @@ namespace Type
             }
         }
 
+        //@author A0088574M
         //if the highLightIndex out of bound the set it back to the correct bound
         private void CheckHighlightIndexBound()
         {

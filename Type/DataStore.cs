@@ -41,6 +41,7 @@ namespace Type
             }
         }
 
+        //@author A0088574M
         // append a new row to the file and return a unique ID that identify that row value
         public int InsertRow(List<string> row)
         {
@@ -56,6 +57,7 @@ namespace Type
             return currentIndex;
         }
 
+        //@author A0088574M
         // The value of the row with the index will be changed to the new value
         // will not change the file data if the index out of bound
         // throw MissingFieldException if any index checked in the file before the target index is found missing
@@ -100,6 +102,7 @@ namespace Type
             WriteToFile(list);
         }
 
+        //@author A0088574M
         // returns row given index
         // if index out of bound or not found will return null
         // throw MissingFieldException if any index checked in the file before the target index is found missing
@@ -140,6 +143,7 @@ namespace Type
             return target.Item2;//Item2 is the value
         }
 
+        //@author A0088574M
         // Get all rows in the data store
         // throw MissingFieldException if any index in the file is missing
         public Dictionary<int, List<string>> Get()
@@ -244,6 +248,7 @@ namespace Type
             return result;
         }
 
+        //@author A0088574M
         // Append String as a new line at the end of the file
         private void AppendStringToFile(string str)
         {
@@ -256,6 +261,7 @@ namespace Type
             fs.Close();
         }
 
+        //@author A0088574M
         // Clear the file and replace the contents with a list of string
         private void WriteToFile(List<string> rows)
         {
@@ -272,6 +278,7 @@ namespace Type
             fs.Close();
         }
 
+        //@author A0088574M
         // returns a Tuple of the row's index and it's contents
         // throw MissingFieldException if the index of that row is missing
         private Tuple<int, List<string>> ProcessRow(string rawString)

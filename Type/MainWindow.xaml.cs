@@ -126,7 +126,6 @@ namespace Type
             taskView.Children.Clear();
             tasksGrid.Children.Clear();
 
-
             if (renderedTasks.Count == 0)
             {
                 DisplayEmptyViewList();
@@ -141,6 +140,7 @@ namespace Type
             DisplayDashedBorder(tasksGrid);
         }
 
+        //@author A0088574M
         private void DisplayNonEmptyViewList()
         {
             TextBlock text = new TextBlock();
@@ -248,16 +248,15 @@ namespace Type
             }
         }
 
+        //@author A0088574M
         private void InitializeListBounderIndex()
         {
-            highlightIndex = 0;
             listStartIndex = 0;
 
-            if (renderedTasks.Count > 6)
+            if (renderedTasks.Count > NUMBER_OF_TASKS_DISPLAYED)
             {
-                listEndIndex = 6;
+                listEndIndex = NUMBER_OF_TASKS_DISPLAYED;
             }
-
             else
             {
                 listEndIndex = renderedTasks.Count;
@@ -277,7 +276,6 @@ namespace Type
                 renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
                 RenderTasks();
             }
-
             else
             {
                 if (parseResult.CommandText == Command.Search && parseResult.Text != string.Empty)
@@ -286,14 +284,12 @@ namespace Type
                     renderedTasks = GetTasksByHashTag(parseResult.Text);
                     RenderTasks();
                 }
-
                 else if (parseResult.CommandText != Command.Add && parseResult.Text!=string.Empty)
                 {
                     isOriginalTasks = false;
                     renderedTasks = GetFilterSuggestions(parseResult.Text);
                     RenderTasks();
                 }
-
                 else if (!isOriginalTasks && parseResult.Text == string.Empty)
                 {
                     isOriginalTasks = true;
