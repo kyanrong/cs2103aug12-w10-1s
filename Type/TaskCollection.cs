@@ -362,6 +362,7 @@ namespace Type
             this.PushUndo(UndoDoneAll, null, affected);
         }
 
+        //@author A0083834Y
         public void Clear()
         {
             dataStore.ClearFile("taskcollection.csv");

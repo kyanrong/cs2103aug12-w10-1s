@@ -12,7 +12,7 @@ namespace Type
     {
         private void HandleSendCommand()
         {
-            //Parse input.
+            // Parse input.
             //var parseResult = Command.Parse(inputBox.Text);
 
             switch (parseResult.CommandText)
@@ -45,7 +45,7 @@ namespace Type
                     break;
             }
 
-            //Retrieve a list of tasks, unless the list has already been retrieved by Search.
+            // Retrieve a list of tasks, unless the list has already been retrieved by Search.
             if (parseResult.CommandText != Command.Search)
             {
                 isOriginalTasks = true;
@@ -58,7 +58,7 @@ namespace Type
         // @author A0092104
         private void HandleAutoComplete()
         {
-            //AutoComplete is only defined if there are rendered tasks on screen.
+            // AutoComplete is only defined if there are rendered tasks on screen.
             if (renderedTasks != null && renderedTasks.Count > 0)
             {
                 //var parseResult = Command.Parse(inputBox.Text);
@@ -121,7 +121,7 @@ namespace Type
         // @author A0092104
         private void StartHighlighting()
         {
-            highlightIndex = 0;
+            highlightListIndex = 0;
             isHighlighting = true;
             ResetSelection();
         }
@@ -150,18 +150,18 @@ namespace Type
                 StartHighlighting();
             }
             
-            highlightIndex--;
+            highlightListIndex--;
 
-            if (highlightIndex < 0 && listStartIndex == 0)
+            if (highlightListIndex < 0 && listStartIndex == 0)
             {
                 StopHighlighting();
             }
 
             //when highlighIndex out of bound and current page is not the first page
-            if (highlightIndex < 0 && listStartIndex > 0)
+            if (highlightListIndex < 0 && listStartIndex > 0)
             {
                 MoveToPreviousPage();
-                highlightIndex = (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED;
+                highlightListIndex = (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED;
             }
 
             CheckHighlightIndexBound();
@@ -179,13 +179,13 @@ namespace Type
             }
             else
             {
-                highlightIndex++;
+                highlightListIndex++;
             }
 
-            if ((highlightIndex > NUMBER_OF_TASKS_DISPLAYED-1) && (listEndIndex != renderedTasks.Count))
+            if ((highlightListIndex > NUMBER_OF_TASKS_DISPLAYED-1) && (listEndIndex != renderedTasks.Count))
             {
                 MoveToNextPage();
-                highlightIndex = 0;
+                highlightListIndex = 0;
             }
 
             CheckHighlightIndexBound();
@@ -193,7 +193,7 @@ namespace Type
             RefreshViewList();
             //inputBox.Text = selectedTaskText;
         }
-        
+
         private void HandleLeftArrow()
         {
             //in case user only want to move the cursor in the text box, not the page
@@ -203,14 +203,10 @@ namespace Type
                 MoveToPreviousPage();
 
                 int tempIndex = highlightPageIndex - 1;
-                if (isWithinPageRange(tempIndex))
-                {
-                    highlightPageIndex = tempIndex;
-                    StyleHighlightedPageButton(highlightPageIndex);
-                }
+                highlightPageButton(tempIndex);
             }
         }
-        
+
         private void HandleRightArrow()
         {
             //in case user only want to move the cursor in the text box, not the page
@@ -220,14 +216,12 @@ namespace Type
                 MoveToNextPage();
                 
                 int tempIndex = highlightPageIndex + 1;
-                if (isWithinPageRange(tempIndex))
-                {
-                    highlightPageIndex = tempIndex;
-                    StyleHighlightedPageButton(highlightPageIndex);
-                }
+                highlightPageButton(tempIndex);
             }
         }
 
+        //@author A0083834Y
+        //Check if highlightPageIndex will be within the min and max page number
         private bool isWithinPageRange(int tempIndex)
         {
             int pages = GetPageNumber();
@@ -242,6 +236,18 @@ namespace Type
             }
         }
 
+        //@author A0083834Y
+        //Style page button if index is within range
+        private void highlightPageButton(int tempIndex)
+        {
+            if (isWithinPageRange(tempIndex))
+            {
+                highlightPageIndex = tempIndex;
+                StyleHighlightedPageButton(highlightPageIndex);
+            }
+        }
+
+        
         //go to next page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToNextPage()
@@ -301,16 +307,17 @@ namespace Type
         //if the highLightIndex out of bound the set it back to the correct bound
         private void CheckHighlightIndexBound()
         {
-            if (highlightIndex < 0)
+            if (highlightListIndex < 0)
             {
-                highlightIndex = 0;
+                highlightListIndex = 0;
             }
-            if (highlightIndex > (listEndIndex-1) % NUMBER_OF_TASKS_DISPLAYED)
+            if (highlightListIndex > (listEndIndex-1) % NUMBER_OF_TASKS_DISPLAYED)
             {
-                highlightIndex = (listEndIndex-1) % NUMBER_OF_TASKS_DISPLAYED;
+                highlightListIndex = (listEndIndex-1) % NUMBER_OF_TASKS_DISPLAYED;
             }
         }
-        
+
+        //@author A0083834Y
         // Used for auto complete.
         private void MoveCursorToEndOfWord()
         {

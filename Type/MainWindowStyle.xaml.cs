@@ -12,7 +12,8 @@ namespace Type
 {
     public partial class MainWindow : Window
     {
-        // default style for text 
+        //@author A0083834Y
+        // Default style for text 
         private void DefaultStyle(TextBlock textBlock)
         {
             textBlock.FontSize = 20;
@@ -20,22 +21,21 @@ namespace Type
             textBlock.Padding = new Thickness(10);
         }
         
-        // style for active tasks
+        // Style for active tasks
         private void StyleTasks(TextBlock textBlock)
         {
             DefaultStyle(textBlock);
             textBlock.Margin = new Thickness(15, 0, 0, 0);
         }
 
-
-        // style for "no tasks" text
+        // Style for "no tasks" text
         private void StyleNoTasks(TextBlock textBlock)
         {
             DefaultStyle(textBlock);
             textBlock.TextAlignment = TextAlignment.Center;
         }
 
-        // style for completed parsed types (hash tags, datetime, priority)
+        // Style for completed parsed types (hash tags, datetime, priority)
         private void StyleDoneParsedTypes(Run run)
         {
             run.TextDecorations = TextDecorations.Strikethrough;
@@ -43,55 +43,56 @@ namespace Type
             run.Foreground = Brushes.SlateGray;
         }
 
-        // style for hashtags (blue)
+        // Style for hashtags (blue)
         private void StyleHashTags(Run run)
         {
             run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x23, 0x7f));
             run.FontWeight = FontWeights.DemiBold;
         }
 
-        // style for datetime (red)
+        // Style for datetime (red)
         private void StyleDateTime(Run run)
         {
             run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0xd7, 0x00, 0x00));
             run.FontWeight = FontWeights.DemiBold;
         }
 
-        // style for priorityhigh (orange)
+        // Style for priorityhigh (orange)
         private void StylePriorityHigh(Run run)
         {
             run.Foreground = Brushes.Gold;
             run.FontWeight = FontWeights.DemiBold;
         }
 
-        // style for prioritylow (green)
+        // Style for prioritylow (green)
         private void StylePriorityLow(Run run)
         {
             run.Foreground = Brushes.OliveDrab;
             run.FontWeight = FontWeights.DemiBold;
         }
 
-        // style for highlighted page button 
+        // Style for highlighted page button 
         private void StyleHighlightedPageButton(int index)
         {
-            Ellipse ellipse = ellipseArray[index];
+            Ellipse ellipse = pageButtonArray[index];
             ellipse.Fill = Brushes.Black;
         }
 
-        // display blue border
+        // Display blue border after each task
         private void DisplayBlueBorder(StackPanel parentStackPanel)
         {
             Line line = DrawBlueLine();
             AddStackPanel(parentStackPanel, line);
         }
 
-        // display dashed border
+        // Display dashed border at the end of current page
         private void DisplayDashedBorder(StackPanel parentStackPanel)
         {
             Rectangle dashedLine = DrawDashedLine();
             AddStackPanel(parentStackPanel, dashedLine);
         }
 
+        // Display page button (gray)
         private void DisplayPageButton(StackPanel parentStackPanel, int pageNumber)
         {
             StackPanel pageButtons = new StackPanel();
@@ -100,13 +101,14 @@ namespace Type
 
             for (int i = 1; i < pageNumber + 1; i++)
             {
-                ellipseArray[i] = DrawEllipse();
-                pageButtons.Children.Add(ellipseArray[i]);
+                pageButtonArray[i] = DrawEllipse();
+                pageButtons.Children.Add(pageButtonArray[i]);
             }
 
             AddStackPanel(parentStackPanel, pageButtons);
         }
 
+        // Append shape to parent stackpanel
         private void AddStackPanel(StackPanel parentStackPanel, Shape shape)
         {
             StackPanel border = new StackPanel();
@@ -114,6 +116,7 @@ namespace Type
             parentStackPanel.Children.Add(border);
         }
 
+        // Append child stackpanel to parent stackpanel (for page buttons)
         private void AddStackPanel(StackPanel parentStackPanel, StackPanel childStackPanel)
         {
             parentStackPanel.Children.Add(childStackPanel);
@@ -145,6 +148,7 @@ namespace Type
             return dashedLine;
         }
 
+        // For page buttons
         private Ellipse DrawEllipse()
         {
             Ellipse ellipse = new Ellipse();
