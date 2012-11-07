@@ -22,7 +22,7 @@ namespace Type
         private Stack<KeyValuePair<int, List<string>>> undoStack;
         #endregion
 
-        #region Construction Methods
+        #region Constructors
         // Constructor
         public TaskCollection()
         {
@@ -332,7 +332,7 @@ namespace Type
             this.PushUndo(UndoArchiveAll, null, changed);
         }
 
-        // @author A0092104
+        //@author A0092104U
         // Archives all Tasks that contain any listed Hash Tag.
         public void ArchiveAllByHashTags(IList<string> hashTags)
         {
@@ -347,7 +347,7 @@ namespace Type
             this.PushUndo(UndoArchiveAll, null, affected);
         }
 
-        // @author A0092104
+        //@author A0092104U
         // Marks all Tasks that contain any listed Hash Tag as Done.
         public void UpdateDoneByHashTags(IList<string> hashTags)
         {
@@ -392,7 +392,7 @@ namespace Type
             );
         }
 
-        // @author A0092104U
+        //@author A0092104U
         /// <summary>
         /// Filters the current TaskCollection by hash tags. Specifying more than one hash tag takes the intersection of results. (logical AND)
         /// </summary>
@@ -428,6 +428,23 @@ namespace Type
                     }
 
                     return resultSet.ToList();
+                }
+            }
+        }
+
+        public void MidnightReParse()
+        {
+            foreach (var t in tasks)
+            {
+                var clone = t.Clone();
+                t.Parse();
+
+                // check if differ
+                if (t.RawText != clone.RawText)
+                {
+                    // change row in datastore
+                    List<string> row = t.ToRow();
+                    dataStore.ChangeRow(t.Id, row);
                 }
             }
         }
@@ -505,24 +522,6 @@ namespace Type
 
             t.Archive = archiveStatus;
         }
-
-        public void MidnightReParse()
-        {
-            foreach (var t in tasks)
-            {
-                var clone = t.Clone();
-                t.Parse();
-
-                // check if differ
-                if (t.RawText != clone.RawText)
-                {
-                    // change row in datastore
-                    List<string> row = t.ToRow();
-                    dataStore.ChangeRow(t.Id, row);
-                }
-            }
-        }
-
         #endregion
     }
 }
