@@ -65,12 +65,12 @@ namespace Type
         private List<TextBlock> taskTextBlockList;
 
         private bool isHighlighting;
-        private int highlightIndex;
+        private int highlightListIndex;
         private int listStartIndex;
         private int listEndIndex;
         private bool isOriginalTasks;
 
-        private Ellipse[] ellipseArray;
+        private Ellipse[] pageButtonArray;
         private int highlightPageIndex = 1;
 
         private Task selectedTask;
@@ -87,22 +87,21 @@ namespace Type
             this.GetTasks = GetTasks;
             this.GetTasksByHashTag = GetTasksByHashTag;
 
-            // focus cursor in input box
+            // Focus cursor in input box
             inputBox.Focus();
 
-            // display input label
+            // Display input label
             DisplayInputLabel();
 
-            // populate help lists
+            // Populate help lists
             PopulateHelpList();
 
-            // bootstrap tasks
-            // TODO. abstract this number.
+            // Bootstrap tasks
             isOriginalTasks = true;
             renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             taskTextBlockList = new List<TextBlock>();
 
-            ellipseArray = new Ellipse[NUMBER_OF_TASKS_LOADED + 1];
+            pageButtonArray = new Ellipse[NUMBER_OF_TASKS_LOADED + 1];
 
             parseResult = Command.Parse(inputBox.Text);
 
@@ -112,6 +111,7 @@ namespace Type
             RenderTasks();
         }
 
+        //@author A0083834Y
         // Input Label
         private void DisplayInputLabel()
         {
@@ -140,16 +140,18 @@ namespace Type
                 DisplayNonEmptyViewList();
             }
 
-            // append task view to grid view
+            // Append task view to grid view
             tasksGrid.Children.Add(taskView);
 
+            // Display page buttons
             int pages = GetPageNumber();
             DisplayPageButton(tasksGrid, pages);
 
             DisplayDashedBorder(tasksGrid);    
         }
 
-        // Get number of pages in current tasklist
+        //@author A0083834Y
+        // Get number of pages in current task list
         private int GetPageNumber()
         {
             int pages;
@@ -171,20 +173,21 @@ namespace Type
 
         }
 
+        // If task list is not empty
         private void DisplayNonEmptyViewList()
         {
             TextBlock text = new TextBlock();
 
             DisplayBlueBorder(taskView);
 
-            // loop over each task and create task view
-            // append each to tasks grid
+            // Loop over each task and create task view
+            // Append each to tasks grid
             for (int i = listStartIndex; i < listEndIndex; i++)
             {
                 text = taskTextBlockList[i];
 
-                //highlight target textbox                    
-                if ((i == highlightIndex + listStartIndex) && isHighlighting)
+                // Highlight target textbox                    
+                if ((i == highlightListIndex + listStartIndex) && isHighlighting)
                 {
                     text.Background = Brushes.Beige;
 
@@ -204,6 +207,7 @@ namespace Type
             }
         }
 
+        // If task list is empty
         private void DisplayEmptyViewList()
         {
             TextBlock text = new TextBlock();
@@ -216,7 +220,7 @@ namespace Type
             DisplayBlueBorder(taskView);
         }
 
-        //generate list of text block
+        // Generate list of text block
         private void RenderTasks()
         {
             StopHighlighting();
@@ -235,7 +239,7 @@ namespace Type
             {
                 TextBlock text = new TextBlock();
 
-                // style tokens within the textblock
+                // Style tokens within the textblock
                 foreach (Tuple<string, Task.ParsedType> tuple in renderedTasks[i].Tokens)
                 {
                     Run run = new Run(tuple.Item1);
@@ -280,7 +284,7 @@ namespace Type
 
         private void InitializeListBounderIndex()
         {
-            highlightIndex = 0;
+            highlightListIndex = 0;
             listStartIndex = 0;
 
             if (renderedTasks.Count > NUMBER_OF_TASKS_DISPLAYED)

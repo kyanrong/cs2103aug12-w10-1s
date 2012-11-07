@@ -68,6 +68,7 @@ namespace Type
             }
         }
 
+        //@author A0083834Y
         private void DoHelp()
         {
             helpDescriptionListBox.DataContext = helpDescription;

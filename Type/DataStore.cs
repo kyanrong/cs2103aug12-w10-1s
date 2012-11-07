@@ -214,6 +214,7 @@ namespace Type
             WriteToFile(list);
         }
 
+        //@author A0083834Y
         public void ClearFile(String fileName)
         {
             File.Delete(fileName);
