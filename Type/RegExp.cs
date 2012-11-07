@@ -9,6 +9,7 @@ namespace Type
 {
     public class RegExp
     {
+        #region regular expressions
         // date re
         // 1. DDMM[YY[YY]]
         public static string DATE1 = "\\b\\d{1,2}\\/\\d{1,2}(?:\\/\\d{2,4})?\\b";
@@ -37,8 +38,9 @@ namespace Type
 
         // Combine cases
         public static string DateTimeRE = DateTime1 + "|" + DateTime2;
+        #endregion
 
-
+        #region priority
         public static Tuple<string, int> Priority(string input)
         {
             Match m;
@@ -58,7 +60,9 @@ namespace Type
 
             return Tuple.Create(string.Empty, 0);
         }
+        #endregion
 
+        #region hashtag
         public static List<string> HashTags(string input)
         {
             Regex r = new Regex("#(.+?)\\b");
@@ -71,8 +75,9 @@ namespace Type
             }
             return result;
         }
+        #endregion
 
-
+        #region datetime
         public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input, DateTime today)
         {
             DateTime? datetime = null;
@@ -116,7 +121,9 @@ namespace Type
         {
             return DateTimeT(input, DateTime.Today);
         }
+        #endregion
 
+        #region datetime helpers
         private static string[] SanitizeToken(string value, string match, char split)
         {
             // check if keyword is matched
@@ -185,7 +192,9 @@ namespace Type
             }
             return year;
         }
+        #endregion
 
+        #region date
         // extracts information from a date string and returns it in a tuple
         public static Tuple<int, int, int> DateFromDateString(string input, DateTime today)
         {
@@ -277,6 +286,9 @@ namespace Type
         {
             return DateFromDateString(input, DateTime.Today);
         }
+        #endregion
+
+        #region time
         // extracts information from time string and returns it in a tuple
         public static Tuple<int, int> TimeFromTimeString(string input)
         {
@@ -319,7 +331,9 @@ namespace Type
             // return invalid time tuple
             return Tuple.Create(-1, -1);
         }
+        #endregion
 
+        #region date + time
         // returns datetime object if input string matches one of the acceptable formats
         private static DateTime? ParseDateTime(string input, DateTime today)
         {
@@ -397,5 +411,6 @@ namespace Type
         {
             return ParseDateTime(input, DateTime.Today);
         }
+        #endregion
     }
 }
