@@ -50,7 +50,7 @@ namespace Type
         private const string TEXT_WELCOME = "start typing...";
         private const string TEXT_NOTASKS = "no tasks.";
         private const int NUMBER_OF_TASKS_LOADED = 50;
-        private const int NUMBER_OF_TASKS_DISPLAYED = 6;
+        private const int NUMBER_OF_TASKS_DISPLAYED = 5;
         #endregion
 
         #region Fields
@@ -139,11 +139,32 @@ namespace Type
             // append task view to grid view
             tasksGrid.Children.Add(taskView);
 
-            DisplayPageButton(tasksGrid, 6);
+            int pages = GetPageNumber();
+            DisplayPageButton(tasksGrid, pages);
 
-            DisplayDashedBorder(tasksGrid);
+            DisplayDashedBorder(tasksGrid);    
+        }
 
-            
+        // Get number of pages in current tasklist
+        private int GetPageNumber()
+        {
+            int pages;
+
+            if (renderedTasks.Count < NUMBER_OF_TASKS_DISPLAYED)
+            {
+                pages = 1;
+            }
+            else if (renderedTasks.Count % NUMBER_OF_TASKS_DISPLAYED != 0)
+            {
+                pages = renderedTasks.Count / NUMBER_OF_TASKS_DISPLAYED + 1;
+            }
+            else
+            {
+                pages = renderedTasks.Count / NUMBER_OF_TASKS_DISPLAYED;
+            }
+
+            return pages;
+
         }
 
         private void DisplayNonEmptyViewList()
@@ -157,8 +178,8 @@ namespace Type
             for (int i = listStartIndex; i < listEndIndex; i++)
             {
                 text = taskTextBlockList[i];
-                //highlight target textbox                    
 
+                //highlight target textbox                    
                 if ((i == highlightIndex + listStartIndex) && isHighlighting)
                 {
                     text.Background = Brushes.Beige;
@@ -258,9 +279,9 @@ namespace Type
             highlightIndex = 0;
             listStartIndex = 0;
 
-            if (renderedTasks.Count > 6)
+            if (renderedTasks.Count > NUMBER_OF_TASKS_DISPLAYED)
             {
-                listEndIndex = 6;
+                listEndIndex = NUMBER_OF_TASKS_DISPLAYED;
             }
 
             else
