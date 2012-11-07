@@ -11,7 +11,7 @@ namespace Type
     public class DateChangeNotifier
     {
         #region Events
-        public event DateChangeEventHandler dateChange;
+        public event DateChangeEventHandler DateChange;
         #endregion
 
         #region Fields
@@ -37,7 +37,7 @@ namespace Type
         #region Event Methods
         protected virtual void OnDateChange(EventArgs e)
         {
-            if (dateChange != null) dateChange(this, e);
+            if (DateChange != null) DateChange(this, e);
         }
 
         private void timer_Elapsed(object sender, ElapsedEventArgs e)

@@ -27,6 +27,7 @@ namespace Type
         private bool editMode;
         private Task selected;
         private Comparison<Task> comparator;
+        private DateChangeNotifier dateNotifier;
         #endregion
 
         #region Constructors
@@ -45,6 +46,8 @@ namespace Type
                 MessageBox.Show(ERR_HOTKEY);
                 Application.Current.Shutdown(ERR_HOTKEY_CODE);
             }
+            dateNotifier = new DateChangeNotifier();
+            dateNotifier.DateChange += new DateChangeEventHandler(dateNotifier_DateChange);
         }
 
         ~Presenter()
@@ -61,6 +64,14 @@ namespace Type
         public void ShowUi()
         {
             ui.Show();
+        }
+        #endregion
+
+        #region Date Change Handler
+        private void dateNotifier_DateChange(object sender, EventArgs e)
+        {
+            tasks.MidnightReParse();
+            ui.ForceRedraw();
         }
         #endregion
 
