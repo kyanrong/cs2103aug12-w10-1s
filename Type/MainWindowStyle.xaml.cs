@@ -72,26 +72,44 @@ namespace Type
         }
 
         // display blue border
-        private void DisplayBlueBorder(StackPanel stackPanel)
+        private void DisplayBlueBorder(StackPanel parentStackPanel)
         {
             Line line = DrawBlueLine();
-            AddBorder(stackPanel, line);
+            AddStackPanel(parentStackPanel, line);
         }
-
-        
 
         // display dashed border
-        private void DisplayDashedBorder(StackPanel stackPanel)
+        private void DisplayDashedBorder(StackPanel parentStackPanel)
         {
             Rectangle dashedLine = DrawDashedLine();
-            AddBorder(stackPanel, dashedLine);
+            AddStackPanel(parentStackPanel, dashedLine);
         }
 
-        private void AddBorder(StackPanel stackPanel, Shape shape)
+        private void DisplayPageButton(StackPanel parentStackPanel, int pageNumber)
+        {
+            StackPanel pageButtons = new StackPanel();
+            pageButtons.Orientation = Orientation.Horizontal;
+            pageButtons.HorizontalAlignment = HorizontalAlignment.Center;
+
+            for (int i = 0; i < pageNumber; i++)
+            {
+                Ellipse ellipse = DrawEllipse();
+                pageButtons.Children.Add(ellipse);
+            }
+
+            AddStackPanel(parentStackPanel, pageButtons);
+        }
+
+        private void AddStackPanel(StackPanel parentStackPanel, Shape shape)
         {
             StackPanel border = new StackPanel();
             border.Children.Add(shape);
-            stackPanel.Children.Add(border);
+            parentStackPanel.Children.Add(border);
+        }
+
+        private void AddStackPanel(StackPanel parentStackPanel, StackPanel childStackPanel)
+        {
+            parentStackPanel.Children.Add(childStackPanel);
         }
 
         private Line DrawBlueLine()
@@ -115,9 +133,22 @@ namespace Type
             dashedLine.Stroke = Brushes.SandyBrown;
             dashedLine.StrokeThickness = 0.5;
             dashedLine.StrokeDashArray = new DoubleCollection() { 4, 3 };
-            dashedLine.Margin = new Thickness(0, 20, 0, 0);
+            dashedLine.Margin = new Thickness(0, 10, 0, 0);
 
             return dashedLine;
+        }
+
+        private Ellipse DrawEllipse()
+        {
+            Ellipse ellipse = new Ellipse();
+
+            ellipse.Stroke = Brushes.Gainsboro;
+            ellipse.Fill = Brushes.Gainsboro;
+            ellipse.Margin = new Thickness(3, 10, 0, 0);
+            ellipse.Width = 7;
+            ellipse.Height = 7;
+            
+            return ellipse;
         }
     }
 }

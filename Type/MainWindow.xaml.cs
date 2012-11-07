@@ -138,7 +138,12 @@ namespace Type
 
             // append task view to grid view
             tasksGrid.Children.Add(taskView);
+
+            DisplayPageButton(tasksGrid, 6);
+
             DisplayDashedBorder(tasksGrid);
+
+            
         }
 
         private void DisplayNonEmptyViewList()
