@@ -163,7 +163,7 @@ namespace Type
             // parsing should be idempotent
             // re-parsing on the same rawText
             // should return the same values
-            this.RawText = row[0];
+            this.rawText = row[0];
             this.Done = Boolean.Parse(row[1]);
             this.Archive = Boolean.Parse(row[2]);
             this.lastMod = row.Count < 4 ? DateTime.Today : DateTime.Parse(row[3]);
@@ -172,7 +172,7 @@ namespace Type
         // from rawText
         public Task(string rawText)
         {
-            this.RawText = rawText;
+            this.rawText = rawText;
             this.Done = false;
             this.Archive = false;
             this.hasEnd = false;
@@ -192,7 +192,7 @@ namespace Type
         #endregion
 
         #region Parsing
-        private void Parse()
+        public void Parse()
         {
             // default token.
             var result = new List<Tuple<string, ParsedType>>();

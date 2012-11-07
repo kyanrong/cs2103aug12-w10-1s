@@ -505,6 +505,24 @@ namespace Type
 
             t.Archive = archiveStatus;
         }
+
+        public void MidnightReParse()
+        {
+            foreach (var t in tasks)
+            {
+                var clone = t.Clone();
+                t.Parse();
+
+                // check if differ
+                if (t.RawText != clone.RawText)
+                {
+                    // change row in datastore
+                    List<string> row = t.ToRow();
+                    dataStore.ChangeRow(t.Id, row);
+                }
+            }
+        }
+
         #endregion
     }
 }
