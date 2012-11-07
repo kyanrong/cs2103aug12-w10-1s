@@ -87,7 +87,10 @@ namespace Type
                 var matches = m.Groups;
                 DateTime? start = ParseDateTime(matches[1].Value, today);
                 DateTime? end = ParseDateTime(matches[2].Value, today);
-                return Tuple.Create(m.Value, start, end);
+                if (start != null && end != null)
+                {
+                    return Tuple.Create(m.Value, start, end);
+                }
             }
 
             // DEADLINE TASKS
@@ -97,7 +100,11 @@ namespace Type
             {
                 var matches = m.Groups;
                 DateTime? end = ParseDateTime(matches[1].Value, today);
-                return Tuple.Create(m.Value, datetime, end);
+                if (end != null)
+                {
+                    return Tuple.Create(m.Value, datetime, end);
+                }
+                
             }
 
             // if none of the regexp matches
@@ -328,16 +335,16 @@ namespace Type
             m = getDate.Match(input);
             if (m.Success)
             {
-                date = true;
-                string dateString = m.Groups[0].Value;
-                var dateTuple = DateFromDateString(dateString, today);
-
-                int year = dateTuple.Item1;
-                int month = dateTuple.Item2;
-                int day = dateTuple.Item3;
-
                 try
                 {
+                    date = true;
+                    string dateString = m.Groups[0].Value;
+                    var dateTuple = DateFromDateString(dateString, today);
+
+                    int year = dateTuple.Item1;
+                    int month = dateTuple.Item2;
+                    int day = dateTuple.Item3;
+                
                     result = new DateTime(year, month, day);
                 }
                 catch (Exception e)
