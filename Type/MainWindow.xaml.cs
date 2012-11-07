@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 
 namespace Type
 {
+    #region Delegates
     /// <summary>
     /// Retrieves a list of suggestions that begin with a specified prefix.
     /// </summary>
@@ -43,6 +44,12 @@ namespace Type
     /// <param name="content">String containing hash tags separated by ' '.</param>
     /// <returns>Read-only list of tasks.</returns>
     public delegate IList<Task> GetTasksByHashTagCallback(string content);
+
+    /// <summary>
+    /// Forces the UI to redraw its contents based on the current input box state.
+    /// </summary>
+    public delegate void ForceRedrawCallback();
+    #endregion
 
     public partial class MainWindow : Window
     {
@@ -418,15 +425,23 @@ namespace Type
             helpDescription.Add(":sort <field>");
         }
 
+        //@author A0092104U
         /// <summary>
         /// Forces the UI to update its task list and redraw.
         /// </summary>
         public void ForceRedraw()
         {
-            // Force a UI Redraw by changing the text of the input box.
-            var originalState = inputBox.Text;
-            inputBox.Clear();
-            inputBox.Text = originalState;
+            if (inputBox.Dispatcher.CheckAccess())
+            {
+                // Force a UI Redraw by changing the text of the input box.
+                var originalState = inputBox.Text;
+                inputBox.Clear();
+                inputBox.Text = originalState;
+            }
+            else
+            {
+                inputBox.Dispatcher.Invoke(new ForceRedrawCallback(ForceRedraw));
+            }
         }
     }
 }
