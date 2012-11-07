@@ -299,7 +299,7 @@ namespace Type
         }
 
         // Event Listener when Input Box text changes.
-        private void InputBoxTextChanged(object sender, TextChangedEventArgs e)
+        private void inputBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             DisplayInputLabel();
 
@@ -341,7 +341,7 @@ namespace Type
         }
 
         // Event Listener, onKeyUp Input Box
-        private void InputBoxKeyUp(object sender, KeyEventArgs e)
+        private void inputBox_KeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -416,6 +416,17 @@ namespace Type
 
             helpDescription.Add("Sort the display");
             helpDescription.Add(":sort <field>");
+        }
+
+        /// <summary>
+        /// Forces the UI to update its task list and redraw.
+        /// </summary>
+        public void ForceRedraw()
+        {
+            // Force a UI Redraw by changing the text of the input box.
+            var originalState = inputBox.Text;
+            inputBox.Clear();
+            inputBox.Text = originalState;
         }
     }
 }
