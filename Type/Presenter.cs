@@ -175,7 +175,9 @@ namespace Type
         // @author A0092104
         private void HandleCommand_Archive(string content, Task selected)
         {
-            if (selected != null)
+            var tags = GetHashTagList(content);
+
+            if (tags == null)
             {
                 //Archive selected.
                 tasks.UpdateArchive(selected.Id, true);
@@ -185,7 +187,6 @@ namespace Type
                 // If content is a list of hash tags, then archive each task that contains any of the
                 // supplied hash tags.
                 // Otherwise, the intention is to archive all 'done' rendered tasks.
-                var tags = GetHashTagList(content);
                 if (tags == null)
                 {
                     //Archive all done.
@@ -201,7 +202,9 @@ namespace Type
         // @author A0092104
         private void HandleCommand_Done(string content, Task selected)
         {
-            if (selected != null)
+            var tags = GetHashTagList(content);
+
+            if (tags == null)
             {
                 tasks.UpdateDone(selected.Id, true);
             }
@@ -210,7 +213,6 @@ namespace Type
                 // If content is a list of hash tags, then mark each task that contains any of the
                 // supplied hash tags as 'done'.
                 // Otherwise, do nothing.
-                var tags = GetHashTagList(content);
                 if (tags != null)
                 {
                     tasks.UpdateDoneByHashTags(tags);
