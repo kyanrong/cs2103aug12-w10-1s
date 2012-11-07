@@ -55,17 +55,20 @@ namespace Type
             RenderTasks();
         }
 
-        // @author A0092104
+        //@author A0092104U
         private void HandleAutoComplete()
         {
             // AutoComplete is only defined if there are rendered tasks on screen.
             if (renderedTasks != null && renderedTasks.Count > 0)
             {
-                //var parseResult = Command.Parse(inputBox.Text);
-
                 // If the command is Invalid, we try to autocomplete the command.
                 // Otherwise, we complete the task.
-                if (parseResult.CommandText != Command.Invalid && !parseResult.IsAlias)
+                if ((parseResult.CommandText == Command.Invalid || parseResult.IsAlias) && parseResult.Text == string.Empty)
+                {
+                    inputBox.Text += Command.TryComplete(inputBox.Text.Substring(1));
+                    MoveCursorToEndOfWord();
+                }
+                else
                 {
                     // If the input text is just the command, we append a space so that 
                     // the user can continue typing.
@@ -76,21 +79,15 @@ namespace Type
                         inputBox.Text += " ";
                         MoveCursorToEndOfWord();
                     }
-                    else if ((completeBegin =  LCPIndex(parseResult.Text, renderedTasks[0].RawText)) >= 0)
+                    else if ((completeBegin = LCPIndex(parseResult.Text, renderedTasks[0].RawText)) >= 0)
                     {
                         inputBox.Text += renderedTasks[0].RawText.Substring(completeBegin + 1);
                         MoveCursorToEndOfWord();
                     }
                 }
-                else
-                {
-                    inputBox.Text += Command.TryComplete(inputBox.Text.Substring(1));
-                    MoveCursorToEndOfWord();
-                }
             }
         }
 
-        // @author A0092104U
         private void HandleEscapeKey()
         {
             // If we are highlighting something, we stop highlighting, but do not hide the window;
@@ -118,7 +115,6 @@ namespace Type
             }
         }
 
-        // @author A0092104
         private void StartHighlighting()
         {
             highlightListIndex = 0;
@@ -126,14 +122,12 @@ namespace Type
             ResetSelection();
         }
 
-        // @author A0092104
         private void StopHighlighting()
         {
             isHighlighting = false;
             ResetSelection();
         }
 
-        // @author A0092104
         private void ResetSelection()
         {
             // We have a non-ambiguous match iff there is exactly one task rendered.

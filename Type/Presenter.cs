@@ -7,12 +7,17 @@ using System.Windows.Input;
 
 namespace Type
 {
+    //@author A0092104U
     public class Presenter
     {
         #region Constants
         //Key combination to catch.
         private const uint COMBINATION_MOD = GlobalKeyCombinationHook.MOD_SHIFT;
         private const uint COMBINATION_TRIGGER = 0x20;
+
+        //Fatal error messages
+        private const string ERR_HOTKEY = "Fatal Error: Could not set Windows hotkey.";
+        private const int ERR_HOTKEY_CODE = -1;
         #endregion
 
         #region Fields
@@ -25,17 +30,23 @@ namespace Type
         #endregion
 
         #region Constructors
-        // @author A0092104
         public Presenter()
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
             comparator = Task.DefaultComparison;
             tasks = new TaskCollection();
             ui = new MainWindow(GetTasksWithPartialText, HandleCommand, GetTasksNoFilter, GetTasksByHashTags);
-            globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
+            try
+            {
+                globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(ERR_HOTKEY);
+                Application.Current.Shutdown(ERR_HOTKEY_CODE);
+            }
         }
 
-        // @author A0092104
         ~Presenter()
         {
             //We need to unregister the hotkey when the application closes to be a good Windows citizen.
@@ -44,7 +55,6 @@ namespace Type
         #endregion
 
         #region UI Handler
-        // @author A0092104
         /// <summary>
         /// Displays the UI window. Called when a defined key combination is pressed.
         /// </summary>
@@ -125,7 +135,6 @@ namespace Type
         #endregion
 
         #region Decision Making
-        // @author A0092104
         private void Execute(string cmd, string content, Task selected)
         {
             //Store a reference to the selected task in case we need to use it again in edit mode.
@@ -172,12 +181,11 @@ namespace Type
         #endregion
 
         #region Helper Methods
-        // @author A0092104
         private void HandleCommand_Archive(string content, Task selected)
         {
             var tags = GetHashTagList(content);
 
-            if (tags == null)
+            if (tags == null && content.Trim() != string.Empty && selected != null)
             {
                 //Archive selected.
                 tasks.UpdateArchive(selected.Id, true);
@@ -199,7 +207,6 @@ namespace Type
             }
         }
 
-        // @author A0092104
         private void HandleCommand_Done(string content, Task selected)
         {
             var tags = GetHashTagList(content);
@@ -220,7 +227,6 @@ namespace Type
             }
         }
 
-        // @author A0092104
         private List<string> GetHashTagList(string input)
         {
             List<string> result = new List<string>();
@@ -240,10 +246,9 @@ namespace Type
                 }
             }
 
-            return isList ? result : null;
+            return (isList ? result : null);
         }
 
-        // @author A0092104
         private void EditModeSelectedTask(string cmd, string content)
         {
             if (cmd == Command.Add)
