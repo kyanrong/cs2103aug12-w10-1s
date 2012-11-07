@@ -34,3 +34,5 @@ TestResults\**
 *.pdb
 *.vsmdi
 *.orig
+Binaries/taskcollection.csv
+Binaries/undostack.csv
