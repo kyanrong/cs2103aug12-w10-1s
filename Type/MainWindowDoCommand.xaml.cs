@@ -48,7 +48,7 @@ namespace Type
             }
         }
 
-        // @author A0092104
+        //@author A0092104U
         private void DoEdit(Task selectedTask)
         {
             //Populate inputBox with edit text.
@@ -59,6 +59,7 @@ namespace Type
             MoveCursorToEndOfWord();
         }
 
+        //@author A0092104U
         private void DoSearch(Command result)
         {
             if (result.Text.Trim() != string.Empty)

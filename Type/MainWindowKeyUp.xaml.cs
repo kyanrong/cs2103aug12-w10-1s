@@ -12,9 +12,6 @@ namespace Type
     {
         private void HandleSendCommand()
         {
-            // Parse input.
-            //var parseResult = Command.Parse(inputBox.Text);
-
             switch (parseResult.CommandText)
             {
                 case Command.Invalid:
@@ -318,7 +315,7 @@ namespace Type
             inputBox.Select(inputBox.Text.Length, 0);
         }
 
-        // @author A0092104
+        //@author A0092104U
         // Finds the longest common prefix of a and b.
         private int LCPIndex(string a, string b)
         {

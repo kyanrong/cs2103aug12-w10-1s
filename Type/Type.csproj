@@ -78,6 +78,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DateChangeNotifier.cs" />
     <Compile Include="MainWindowDoCommand.xaml.cs" />
     <Compile Include="MainWindowKeyUp.xaml.cs" />
     <Compile Include="MainWindowStyle.xaml.cs" />
@@ -88,7 +89,6 @@
     </Compile>
     <Compile Include="TaskCollection.cs" />
     <Compile Include="Presenter.cs" />
-    <Compile Include="LocalInstaller.cs" />
     <Compile Include="GlobalKeyCombinationHook.cs" />
     <Compile Include="Task.cs" />
     <Page Include="MainWindow.xaml">

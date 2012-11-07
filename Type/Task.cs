@@ -66,7 +66,7 @@ namespace Type
         #endregion
 
         #region Sort Orders
-        // @author A0092104
+        //@author A0092104U
         //Sort descending. Smallest value at the bottom.
         public static int DefaultComparison(Task a, Task b)
         {
@@ -75,7 +75,7 @@ namespace Type
             return aHash > bHash ? -1 : aHash == bHash ? 0 : 1;
         }
 
-        // @author A0092104
+        //@author A0092104U
         // We create a natural ordering on a Task based on its properties.
         // 2's Int64
         // M                                                                              L
