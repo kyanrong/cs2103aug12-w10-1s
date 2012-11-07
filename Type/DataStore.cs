@@ -9,7 +9,7 @@ namespace Type
     public class DataStore
     {
         private const char SEPERATOR = ',';
-        private const char ESCAPE = '/';
+        private const char ESCAPE = '\\';
 
         private string path;
         private int nextIndex;
