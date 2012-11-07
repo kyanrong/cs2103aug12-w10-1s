@@ -70,6 +70,9 @@ namespace Type
         private int listEndIndex;
         private bool isOriginalTasks;
 
+        private Ellipse[] ellipseArray;
+        private int highlightPageIndex = 1;
+
         private Task selectedTask;
         private Command parseResult;
         private StackPanel taskView = new StackPanel();
@@ -99,6 +102,8 @@ namespace Type
             renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             taskTextBlockList = new List<TextBlock>();
 
+            ellipseArray = new Ellipse[NUMBER_OF_TASKS_LOADED + 1];
+
             parseResult = Command.Parse(inputBox.Text);
 
             InitializeListBounderIndex();
@@ -125,7 +130,6 @@ namespace Type
         {
             taskView.Children.Clear();
             tasksGrid.Children.Clear();
-
 
             if (renderedTasks.Count == 0)
             {

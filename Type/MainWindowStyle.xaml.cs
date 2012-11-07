@@ -71,6 +71,13 @@ namespace Type
             run.FontWeight = FontWeights.DemiBold;
         }
 
+        // style for highlighted page button 
+        private void StyleHighlightedPageButton(int index)
+        {
+            Ellipse ellipse = ellipseArray[index];
+            ellipse.Fill = Brushes.Black;
+        }
+
         // display blue border
         private void DisplayBlueBorder(StackPanel parentStackPanel)
         {
@@ -91,10 +98,10 @@ namespace Type
             pageButtons.Orientation = Orientation.Horizontal;
             pageButtons.HorizontalAlignment = HorizontalAlignment.Center;
 
-            for (int i = 0; i < pageNumber; i++)
+            for (int i = 1; i < pageNumber + 1; i++)
             {
-                Ellipse ellipse = DrawEllipse();
-                pageButtons.Children.Add(ellipse);
+                ellipseArray[i] = DrawEllipse();
+                pageButtons.Children.Add(ellipseArray[i]);
             }
 
             AddStackPanel(parentStackPanel, pageButtons);

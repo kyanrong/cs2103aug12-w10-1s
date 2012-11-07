@@ -201,6 +201,13 @@ namespace Type
             if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
                 MoveToPreviousPage();
+
+                int tempIndex = highlightPageIndex - 1;
+                if (isWithinPageRange(tempIndex))
+                {
+                    highlightPageIndex = tempIndex;
+                    StyleHighlightedPageButton(highlightPageIndex);
+                }
             }
         }
         
@@ -211,6 +218,27 @@ namespace Type
             if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
                 MoveToNextPage();
+                
+                int tempIndex = highlightPageIndex + 1;
+                if (isWithinPageRange(tempIndex))
+                {
+                    highlightPageIndex = tempIndex;
+                    StyleHighlightedPageButton(highlightPageIndex);
+                }
+            }
+        }
+
+        private bool isWithinPageRange(int tempIndex)
+        {
+            int pages = GetPageNumber();
+
+            if (tempIndex > 0 && tempIndex < pages + 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
