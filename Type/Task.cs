@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Type
 {
@@ -240,8 +241,56 @@ namespace Type
 
             // parse dates
             Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.DateTimeT(this.rawText, this.lastMod);
-            if (dateTimeMatch.Item1 != string.Empty)
+
+            string datestring = dateTimeMatch.Item1;
+            if (datestring != string.Empty)
             {
+                // check lastMod and string.
+                // reparse if necessary
+                Match m;
+                Regex re3 = new Regex(RegExp.DATE3, RegexOptions.IgnoreCase);
+                m = re3.Match(datestring);
+                if (m.Success)
+                {
+                    // check if lastMod is today
+                    if (this.lastMod != DateTime.Today)
+                    {
+                        // if not today.
+                        // change to date.
+                        string replaceby = this.lastMod.Day + "/" + this.lastMod.Month;
+                        string newRawText = re3.Replace(this.rawText, replaceby);
+
+                        // replace rawtext
+                        this.rawText = newRawText;
+
+                        // re-parse;
+                        this.Parse();
+                        return;
+                    }
+                }
+
+                Regex re4 = new Regex(RegExp.DATE4, RegexOptions.IgnoreCase);
+                m = re4.Match(datestring);
+                if (m.Success)
+                {
+                    // check if lastMod is today
+                    if (this.lastMod != DateTime.Today)
+                    {
+                        // if not today.
+                        // change to date.
+                        string replaceby = this.lastMod.AddDays(1).Day + "/" + this.lastMod.AddDays(1).Month;
+                        string newRawText = re4.Replace(this.rawText, replaceby);
+
+                        // replace rawtext
+                        this.rawText = newRawText;
+
+                        // re-parse;
+                        this.Parse();
+                        return;
+                    }
+                }
+
+
                 // we have a match
                 var datetime = dateTimeMatch.Item1;
 
@@ -333,6 +382,8 @@ namespace Type
                 }
                 // replace this.tokens.
                 this.tokens = res;
+
+
             }
         }
         #endregion
