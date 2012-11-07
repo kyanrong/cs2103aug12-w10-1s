@@ -304,7 +304,7 @@ namespace Type
         }
 
         // Marks all done tasks as archived
-        public void ArchiveAll(bool addToUndoStack = true)
+        public void ArchiveAll()
         {
             var changed = new List<Task>();
             foreach (var t in tasks)
@@ -321,11 +321,8 @@ namespace Type
                 }
             }
 
-            if (addToUndoStack)
-            {
-                // add action to undo stack
-                this.PushUndo(UndoArchiveAll, null, changed);
-            }
+            // add action to undo stack
+            this.PushUndo(UndoArchiveAll, null, changed);
         }
 
         // @author A0092104
