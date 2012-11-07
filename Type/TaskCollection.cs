@@ -181,6 +181,13 @@ namespace Type
                     item.Add(task.Done.ToString());
                     break;
 
+                case UndoDoneAll:
+                    foreach (var t in tasks)
+                    {
+                        item.Add(t.Id.ToString());
+                    }
+                    break;
+
                 case UndoArchive:
                     item.Add(task.Id.ToString());
                     item.Add(task.Archive.ToString());
@@ -334,7 +341,7 @@ namespace Type
             List<Task> affected = new List<Task>();
             foreach (var tag in hashTags)
             {
-                affected.Concat(ArchiveAllByHashTag(tag));
+                affected.AddRange(ArchiveAllByHashTag(tag));
             }
 
             this.PushUndo(UndoArchiveAll, null, affected);
@@ -349,7 +356,7 @@ namespace Type
             List<Task> affected = new List<Task>();
             foreach (var tag in hashTags)
             {
-                affected.Concat(UpdateDoneByHashTag(tag));
+                affected.AddRange(UpdateDoneByHashTag(tag));
             }
 
             this.PushUndo(UndoDoneAll, null, affected);
