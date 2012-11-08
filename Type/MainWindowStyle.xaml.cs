@@ -40,34 +40,34 @@ namespace Type
         {
             run.TextDecorations = TextDecorations.Strikethrough;
             run.FontStyle = FontStyles.Italic;
-            run.Foreground = Brushes.SlateGray;
+            run.Foreground = new SolidColorBrush(Color.FromArgb(255, 155, 157, 164));
         }
 
         // Style for hashtags (blue)
         private void StyleHashTags(Run run)
         {
-            run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x18, 0x23, 0x7f));
+            run.Foreground = new SolidColorBrush(Color.FromArgb(255, 14, 101, 118));
             run.FontWeight = FontWeights.DemiBold;
         }
 
         // Style for datetime (red)
         private void StyleDateTime(Run run)
         {
-            run.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0xd7, 0x00, 0x00));
+            run.Foreground = new SolidColorBrush(Color.FromArgb(255, 228, 77, 77));
             run.FontWeight = FontWeights.DemiBold;
         }
 
         // Style for priorityhigh (orange)
         private void StylePriorityHigh(Run run)
         {
-            run.Foreground = Brushes.Gold;
+            run.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 118, 20));
             run.FontWeight = FontWeights.DemiBold;
         }
 
         // Style for prioritylow (green)
         private void StylePriorityLow(Run run)
         {
-            run.Foreground = Brushes.OliveDrab;
+            run.Foreground = new SolidColorBrush(Color.FromArgb(255, 152, 163, 62));
             run.FontWeight = FontWeights.DemiBold;
         }
 
@@ -75,7 +75,7 @@ namespace Type
         private void StyleHighlightedPageButton(int index)
         {
             Ellipse ellipse = pageButtonArray[index];
-            ellipse.Fill = Brushes.Black;
+            ellipse.Fill = new SolidColorBrush(Color.FromArgb(255, 89, 81, 70));
         }
 
         // Display blue border after each task
@@ -126,8 +126,8 @@ namespace Type
         {
             Line blueLine = new Line();
 
-            blueLine.Stroke = Brushes.SkyBlue;
-            blueLine.StrokeThickness = 0.5;
+            blueLine.Stroke = new SolidColorBrush(Color.FromArgb(255, 128, 182, 248));
+            blueLine.StrokeThickness = 0.7;
             blueLine.X1 = 0;
             blueLine.Y1 = 0;
             blueLine.X2 = 484;
@@ -140,7 +140,7 @@ namespace Type
         {
             Rectangle dashedLine = new Rectangle();
 
-            dashedLine.Stroke = Brushes.SandyBrown;
+            dashedLine.Stroke = new SolidColorBrush(Color.FromArgb(255, 197, 143, 57));
             dashedLine.StrokeThickness = 0.5;
             dashedLine.StrokeDashArray = new DoubleCollection() { 4, 3 };
             dashedLine.Margin = new Thickness(0, 10, 0, 0);
@@ -153,8 +153,8 @@ namespace Type
         {
             Ellipse ellipse = new Ellipse();
 
-            ellipse.Stroke = Brushes.Gainsboro;
-            ellipse.Fill = Brushes.Gainsboro;
+            ellipse.Stroke = new SolidColorBrush(Color.FromArgb(255, 212, 202, 190));
+            ellipse.Fill = new SolidColorBrush(Color.FromArgb(255, 212, 202, 190));
             ellipse.Margin = new Thickness(3, 10, 0, 0);
             ellipse.Width = 7;
             ellipse.Height = 7;
