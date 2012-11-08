@@ -196,7 +196,7 @@ namespace Type
                 // Highlight target textbox                    
                 if ((i == highlightListIndex + listStartIndex) && isHighlighting)
                 {
-                    text.Background = Brushes.Beige;
+                    text.Background = new SolidColorBrush(Color.FromArgb(255, 230, 243, 244));
 
                     selectedTask = renderedTasks[i];
 
