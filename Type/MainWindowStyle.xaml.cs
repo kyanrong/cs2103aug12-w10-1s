@@ -46,14 +46,14 @@ namespace Type
         // Style for hashtags (blue)
         private void StyleHashTags(Run run)
         {
-            run.Foreground = new SolidColorBrush(Color.FromArgb(255, 14, 101, 118));
+            run.Foreground = new SolidColorBrush(Color.FromArgb(255, 68, 0, 150));
             run.FontWeight = FontWeights.DemiBold;
         }
 
         // Style for datetime (red)
         private void StyleDateTime(Run run)
         {
-            run.Foreground = new SolidColorBrush(Color.FromArgb(255, 228, 77, 77));
+            run.Foreground = new SolidColorBrush(Color.FromArgb(255, 244, 0, 0));
             run.FontWeight = FontWeights.DemiBold;
         }
 

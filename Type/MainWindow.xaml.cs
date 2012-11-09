@@ -185,6 +185,7 @@ namespace Type
         {
             TextBlock text = new TextBlock();
 
+            // Display blue border above text
             DisplayBlueBorder(taskView);
 
             // Loop over each task and create task view
@@ -210,6 +211,8 @@ namespace Type
                 }
 
                 taskView.Children.Add(text);
+
+                // Display blue border below text
                 DisplayBlueBorder(taskView);
             }
         }
@@ -218,6 +221,8 @@ namespace Type
         private void DisplayEmptyViewList()
         {
             TextBlock text = new TextBlock();
+
+            DisplayBlueBorder(tasksGrid);
 
             text.Text = TEXT_NOTASKS;
 
