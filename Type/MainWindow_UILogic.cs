@@ -82,6 +82,8 @@ namespace Type
 
             helpDescriptionPopup.IsOpen = true;
         }
+
+        //@author A0092104U
         private void DoAdd(Command result)
         {
             //The default command is "add".
@@ -92,6 +94,7 @@ namespace Type
             }
         }
 
+        //@author A0092104U
         private void DoGenericCommand(Command result)
         {
             Task target = null;
@@ -217,6 +220,7 @@ namespace Type
         #endregion
 
         #region Context Escape
+        //@author A0092104U
         private void HandleEscapeKey()
         {
             // If we are highlighting something, we stop highlighting, but do not hide the window;
@@ -262,6 +266,7 @@ namespace Type
             }
         }
 
+        //@author A0092104U
         private void StartHighlighting()
         {
             highlightListIndex = 0;
@@ -269,12 +274,14 @@ namespace Type
             ResetSelection();
         }
 
+        //@author A0092104U
         private void StopHighlighting()
         {
             isHighlighting = false;
             ResetSelection();
         }
 
+        //@author A0092104U
         private void ResetSelection()
         {
             // We have a non-ambiguous match iff there is exactly one task rendered.

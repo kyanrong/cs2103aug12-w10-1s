@@ -32,19 +32,18 @@ namespace Type
         public Presenter()
         {
             //Sequence is important here. Messing up the sequence may result in race conditions.
+
+            //Set task comparator to the default comparator.
             comparator = Task.DefaultComparison;
+
+            //Create Task Collection.
             tasks = new TaskCollection();
-            ui = new MainWindow(GetTasksWithPartialText, GetTasksNoFilter, GetTasksByHashTags);
-            ui.RequestExecute += new RequestExecuteEventHandler(ui_RequestExecute);
+
+            CreateUI();
             SetGlobalHook();
             SetDateChangeNotifier();
 #if !DEBUG
-            //Show UI on first launch.
-            if (!Installer.IsInstalled())
-            {
-                ShowUi();
-                Installer.EmbedOnFirstRun();
-            }
+            ShowUIOnFirstLaunch();
 #endif
         }
 
@@ -168,7 +167,7 @@ namespace Type
         }
         #endregion
 
-        #region Helper Methods
+        #region UI Event Handlers
         void ui_RequestExecute(object sender, CommandEventArgs e)
         {
             //In edit mode, the only valid command is 'add'.
@@ -181,6 +180,14 @@ namespace Type
             {
                 Execute(e.Command, e.Content, e.SelectedTask);
             }
+        }
+        #endregion
+
+        #region Helper Methods
+        private void CreateUI()
+        {
+            ui = new MainWindow(GetTasksWithPartialText, GetTasksNoFilter, GetTasksByHashTags);
+            ui.RequestExecute += new RequestExecuteEventHandler(ui_RequestExecute);
         }
 
         private void SetDateChangeNotifier()
@@ -285,6 +292,17 @@ namespace Type
             //Escape from edit mode after this function call.
             editMode = false;
         }
+
+#if !DEBUG
+        private void ShowUIOnFirstLaunch()
+        {
+            if (!Installer.IsInstalled())
+            {
+                ui.Show();
+                Installer.EmbedOnFirstRun();
+            }
+        }
+#endif
         #endregion
     }
 }

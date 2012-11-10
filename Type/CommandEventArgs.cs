@@ -2,7 +2,7 @@
 
 namespace Type
 {
-    //@author A0092104
+    //@author A0092104U
     public class CommandEventArgs : EventArgs
     {
         public string Command { get; set; }
