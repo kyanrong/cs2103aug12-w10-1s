@@ -54,7 +54,7 @@ namespace Type
             RenderTasks();
         }
 
-        //@author A0092104U
+        //@author A0083834Y
         private void DoEdit(Task selectedTask)
         {
             //Populate inputBox with edit text.
@@ -65,7 +65,7 @@ namespace Type
             MoveCursorToEndOfWord();
         }
 
-        //@author A0092104U
+        //@author A0083834Y
         private void DoSearch(Command result)
         {
             if (result.Text.Trim() != string.Empty)
@@ -94,7 +94,7 @@ namespace Type
             }
         }
 
-        //@author A0092104U
+        //@author A0088574M
         private void DoGenericCommand(Command result)
         {
             Task target = null;
@@ -124,6 +124,7 @@ namespace Type
             }
         }
 
+        //@author A0083834Y
         private void PopulateHelpList()
         {
             // Populate helpDescription List
@@ -220,7 +221,7 @@ namespace Type
         #endregion
 
         #region Context Escape
-        //@author A0092104U
+        //@author A0088574M
         private void HandleEscapeKey()
         {
             // If we are highlighting something, we stop highlighting, but do not hide the window;
@@ -250,6 +251,7 @@ namespace Type
         #endregion
 
         #region Selection Methods
+        //@author A0088574M
         private void InitializeListBounderIndex()
         {
             highlightListIndex = 0;
@@ -289,6 +291,7 @@ namespace Type
             selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
         }
 
+        //@author A0088574M
         //if the list index is out of bound then set it back to the correct bound
         private void CheckListIndexBound()
         {
