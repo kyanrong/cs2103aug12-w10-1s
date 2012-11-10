@@ -12,11 +12,11 @@ namespace Type
     public partial class MainWindow : Window
     {
         #region Page Navigation Handlers
-
         //@author A0088574M
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
         {
+            //when not at the first page and not yet start highlighting
             if (!isHighlighting && listStartIndex != 0)
             {
                 StartHighlighting();
@@ -24,6 +24,7 @@ namespace Type
 
             highlightListIndex--;
 
+            //when current highlight is at the first task
             if (highlightListIndex < 0 && listStartIndex == 0)
             {
                 StopHighlighting();
@@ -53,6 +54,7 @@ namespace Type
                 highlightListIndex++;
             }
 
+            //when hightlight index out of bound, and current page is not the last page
             if ((highlightListIndex > NUMBER_OF_TASKS_DISPLAYED - 1) && (listEndIndex != renderedTasks.Count))
             {
                 MoveToNextPage();
@@ -86,54 +88,6 @@ namespace Type
         #endregion
 
         #region Page Navigation Helper Methods
-        //@author A0083834Y
-        // Get number of pages in current task list
-        private int GetPageNumber()
-        {
-            int pages;
-
-            if (renderedTasks.Count < NUMBER_OF_TASKS_DISPLAYED)
-            {
-                pages = 1;
-            }
-            else if (renderedTasks.Count % NUMBER_OF_TASKS_DISPLAYED != 0)
-            {
-                pages = renderedTasks.Count / NUMBER_OF_TASKS_DISPLAYED + 1;
-            }
-            else
-            {
-                pages = renderedTasks.Count / NUMBER_OF_TASKS_DISPLAYED;
-            }
-
-            return pages;
-        }
-
-        //@author A0083834Y
-        //Check if highlightPageIndex will be within the min and max page number
-        private bool isWithinPageRange(int tempIndex)
-        {
-            int pages = GetPageNumber();
-
-            if (tempIndex > 0 && tempIndex < pages + 1)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        //@author A0083834Y
-        //Style page button if index is within range
-        private void highlightPageButton()
-        {
-            if (isWithinPageRange(highlightPageIndex))
-            {
-                StyleHighlightedPageButton(highlightPageIndex);
-            }
-        }
-
         //@author A0088574M
         //go to next page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
@@ -144,8 +98,6 @@ namespace Type
             {
                 return;
             }
-
-            highlightPageIndex++;
 
             listEndIndex += NUMBER_OF_TASKS_DISPLAYED;
             listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
@@ -169,8 +121,6 @@ namespace Type
                 return;
             }
 
-            highlightPageIndex--;
-
             listStartIndex -= NUMBER_OF_TASKS_DISPLAYED;
             listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
 
@@ -180,6 +130,27 @@ namespace Type
             ResetSelection();
 
             RefreshViewList();
+        }
+        #endregion
+
+        #region Page Button
+        //@author A0083834Y
+        //Style page button if index is within range
+        private void highlightPageButton()
+        {
+            StyleHighlightedPageButton(GetCurrentPageNumber());
+        }
+        #endregion
+
+        #region Page Number
+        private int GetTotalPageNumber()
+        {
+            return (renderedTasks.Count - 1) / NUMBER_OF_TASKS_DISPLAYED + 1;
+        }
+
+        private int GetCurrentPageNumber()
+        {
+            return (listEndIndex - 1) / NUMBER_OF_TASKS_DISPLAYED + 1;
         }
         #endregion
     }
