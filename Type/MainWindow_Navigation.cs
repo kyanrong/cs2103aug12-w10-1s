@@ -12,6 +12,7 @@ namespace Type
     public partial class MainWindow : Window
     {
         #region Page Navigation Handlers
+
         //@author A0088574M
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
@@ -111,7 +112,6 @@ namespace Type
             }
 
             return pages;
-
         }
 
         //@author A0083834Y
@@ -141,7 +141,7 @@ namespace Type
             }
         }
 
-
+        //@author A0088574M
         //go to next page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToNextPage()
@@ -163,6 +163,7 @@ namespace Type
             RefreshViewList();
         }
 
+        //@author A0088574M
         //go to previous page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToPreviousPage()

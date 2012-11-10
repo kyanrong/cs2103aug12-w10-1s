@@ -7,11 +7,11 @@ using System.IO;
 using Type;
 
 namespace DataStoreTest
-{
+{ 
+    //@author A0088574M
     [TestClass]
     public class InsertRowTest
     {
-        //@author A0088574M
         [TestMethod]
         public void InsertEmptyListTest()
         {
