@@ -10,6 +10,7 @@ using Type;
 namespace Language
 {
     [TestClass]
+    //@author A0082877M
     public class TimeTest
     {
         [TestMethod]
