@@ -10,7 +10,7 @@ namespace Type
     public delegate void ShortcutPressedEventHandler(object sender, EventArgs e);
     #endregion
 
-    // @author A0092104U
+    //@author A0092104U
     class GlobalKeyCombinationHook
     {
         #region Constants
