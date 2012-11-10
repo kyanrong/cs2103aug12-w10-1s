@@ -34,7 +34,8 @@ namespace Type
             //Sequence is important here. Messing up the sequence may result in race conditions.
             comparator = Task.DefaultComparison;
             tasks = new TaskCollection();
-            ui = new MainWindow(GetTasksWithPartialText, HandleCommand, GetTasksNoFilter, GetTasksByHashTags);
+            ui = new MainWindow(GetTasksWithPartialText, GetTasksNoFilter, GetTasksByHashTags);
+            ui.RequestExecute += new RequestExecuteEventHandler(ui_RequestExecute);
             SetGlobalHook();
             SetDateChangeNotifier();
 #if !DEBUG
@@ -119,27 +120,6 @@ namespace Type
             resultSet.Sort(comparator);
             return resultSet;
         }
-
-        /// <summary>
-        /// Parses a raw string and executes its command, if valid.
-        /// If no valid command is found, this method does nothing.
-        /// </summary>
-        /// <param name="cmd">Command.</param>
-        /// <param name="content">Text of the Command.</param>
-        /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
-        private void HandleCommand(string cmd, string content, Task selected = null)
-        {
-            //In edit mode, the only valid command is 'add'.
-            //Otherwise, accept all commands.
-            if (editMode)
-            {
-                EditModeSelectedTask(cmd, content);
-            }
-            else
-            {
-                Execute(cmd, content, selected);
-            }
-        }
         #endregion
 
         #region Decision Making
@@ -189,6 +169,20 @@ namespace Type
         #endregion
 
         #region Helper Methods
+        void ui_RequestExecute(object sender, CommandEventArgs e)
+        {
+            //In edit mode, the only valid command is 'add'.
+            //Otherwise, accept all commands.
+            if (editMode)
+            {
+                EditModeSelectedTask(e.Command, e.Content);
+            }
+            else
+            {
+                Execute(e.Command, e.Content, e.SelectedTask);
+            }
+        }
+
         private void SetDateChangeNotifier()
         {
             dateNotifier = new DateChangeNotifier();
