@@ -11,7 +11,7 @@ namespace Type
     public class RegExp
     {
         #region regular expressions
-        // date re
+        // Date Regular Expressions
         // 1. DDMM[YY[YY]]
         public static string DATE1 = "\\b\\d{1,2}\\/\\d{1,2}(?:\\/\\d{2,4})?\\b";
         // 2 DD string_rep_of_month [YY[YY]]
@@ -21,7 +21,7 @@ namespace Type
         public static string DATE3 = "\\btoday|tdy\\b";
         public static string DATE4 = "\\btomorrow|tmr\\b";
         
-        // time re
+        // Time Regular Expressions
         // 1. NN(am|pm)
         public static string TIME1 = "\\b\\d{1,2}(?:am|pm)\\b";
         // 2. NN:NN[am|pm]
@@ -31,42 +31,54 @@ namespace Type
         public static string DateRE = "(?:" + DATE1 + "|" + DATE2 + "|" + DATE3 + "|" + DATE4 + ")";
         public static string TimeRE = "(?:" + TIME1 + "|" + TIME2 + ")";
 
-        // datetime re
+        // Date + Time Regular Expressions
         // 1. date [time]
         public static string DateTime1 = DateRE + "(?:\\s" + TimeRE + ")?";
         // 2. time [date]
         public static string DateTime2 = TimeRE + "(?:\\s" + DateRE + ")?";
 
-        // Combine cases
+        // Combined Cases
         public static string DateTimeRE = DateTime1 + "|" + DateTime2;
+        
+        // Priority Regular Expressions
+        public static string PLUS = "\\B\\+(\\d+)$";
+        public static string MINUS = "\\B\\-(\\d+)$";
+
+        // Hash Tag Regular Expressions
+        public static string HASHTAG = "#(.+?)\\b";
         #endregion
 
         #region priority
+        // Returns a tuple of the matching string and corresponding priority given an input string
         public static Tuple<string, int> Priority(string input)
         {
             Match m;
-            Regex plus = new Regex("\\B\\+(\\d+)$");
+            // check for positive priority
+            Regex plus = new Regex(PLUS);
             m = plus.Match(input);
             if (m.Success)
             {
                 return Tuple.Create(m.Value, int.Parse(m.Groups[1].Value));
             }
-            
-            Regex minus = new Regex("\\B\\-(\\d+)$");
+
+            // check for negative priority
+            Regex minus = new Regex(MINUS);
             m = minus.Match(input);
             if (m.Success)
             {
                 return Tuple.Create(m.Value, -1 * int.Parse(m.Groups[1].Value));
             }
-
+            
+            // return default value of 0.
             return Tuple.Create(string.Empty, 0);
         }
         #endregion
 
         #region hashtag
+        // Returns a list of hashtags present in the input string.
         public static List<string> HashTags(string input)
         {
-            Regex r = new Regex("#(.+?)\\b");
+            Regex r = new Regex(HASHTAG);
             List<string> result = new List<string>();
             Match m = r.Match(input);
             while (m.Success)
