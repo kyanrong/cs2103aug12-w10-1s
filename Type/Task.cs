@@ -80,7 +80,7 @@ namespace Type
         // 2's Int64
         // M                                                                              L
         // ---- ---- ---- ---- ---- ---- ---- ----  ---- ---- ---- ---- ---- ---- ---- ----
-        // DOMM MMMM MMMM MMMM MMMM MMMM MMMM MTPP  PPPP PPPP IIII IIII IIII IIII IIII IIII
+        // DSOM MMMM MMMM MMMM MMMM MMMM MMMM MTPP  PPPP PPPP IIII IIII IIII IIII IIII IIII
         // D = Done      - Bit Flag (0-false)
         // O = Overdue   - Bit Flag (0-false)
         // M = Magnitude - Unsigned Little Endian Integer representing number of days
@@ -93,10 +93,16 @@ namespace Type
             long isDueToday = 0;
             long isOverdue = 0;
             long magnitude = 0;
+            long isStarted = 0;
 
             if (this.Done)
             {
                 isDone = ((long)1 << 63);
+            }
+
+            if (this.HasStarted())
+            {
+                isStarted = ((long)1 << 62);
             }
 
             var ticksDiff = DateTime.Now.Ticks - this.End.Ticks;
@@ -107,14 +113,14 @@ namespace Type
             }
             else if (this.OverdueToday())
             {
-                isOverdue = ((long)1 << 62);
+                isOverdue = ((long)1 << 61);
                 minutes = (long)(new TimeSpan(ticksDiff)).TotalMinutes;
             }
             else if (this.Future())
             {
                 minutes = (long)(new TimeSpan(ticksDiff)).TotalMinutes;
             }
-            magnitude = (minutes << 35) & (long)0x3FFFFFF800000000;
+            magnitude = (minutes << 35) & (long)0x1FFFFFF800000000;
 
             Debug.Assert(this.priority >= -256 && this.priority <= 511);
             long priority256 = ((long)(this.priority + 256) << 24) & (long)0x00000003FF000000;
@@ -122,11 +128,20 @@ namespace Type
             long taskId = ((long)this.Id & (long)0x0000000000FFFFFF);
             Debug.Assert(this.Id == taskId);
 
-            return (isDone | isDueToday | isOverdue | priority256 | taskId | magnitude);
+            return (isDone | isDueToday | isOverdue | priority256 | taskId | magnitude | isStarted);
         }
         #endregion
 
         #region Sort Order Helper Methods
+        private bool HasStarted()
+        {
+            if (this.hasStart & this.Start >= DateTime.Now)
+            {
+                return false;
+            }
+            return true;
+        }
+
         private bool Future()
         {
             if (hasEnd)
