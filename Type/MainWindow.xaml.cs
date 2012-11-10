@@ -65,7 +65,6 @@ namespace Type
         private bool isOriginalTasks;
 
         private Ellipse[] pageButtonArray;
-        private int highlightPageIndex = 1;
 
         private Task selectedTask;
         private Command parseResult;

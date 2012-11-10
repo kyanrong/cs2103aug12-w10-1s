@@ -137,8 +137,7 @@ namespace Type
             tasksGrid.Children.Add(taskView);
 
             // Display page buttons
-            int pages = GetPageNumber();
-            DisplayPageButton(tasksGrid, pages);
+            DisplayPageButton(tasksGrid);
             highlightPageButton();
 
             DisplayDashedBorder(tasksGrid);
@@ -225,13 +224,15 @@ namespace Type
         }
 
         // Display page button (gray)
-        private void DisplayPageButton(StackPanel parentStackPanel, int pageNumber)
+        private void DisplayPageButton(StackPanel parentStackPanel)
         {
             StackPanel pageButtons = new StackPanel();
             pageButtons.Orientation = Orientation.Horizontal;
             pageButtons.HorizontalAlignment = HorizontalAlignment.Center;
 
-            for (int i = 1; i < pageNumber + 1; i++)
+            int totalPage = GetTotalPageNumber();
+
+            for (int i = 1; i < totalPage + 1; i++)
             {
                 pageButtonArray[i] = DrawEllipse();
                 pageButtons.Children.Add(pageButtonArray[i]);
