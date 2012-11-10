@@ -82,6 +82,9 @@
     <Compile Include="Installer.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="DataStore.cs" />
+    <Compile Include="MainWindow_UILogic.cs" />
+    <Compile Include="MainWindow_Navigation.cs" />
+    <Compile Include="MainWindow_Drawing.cs" />
     <Compile Include="RegExp.cs">
       <SubType>Code</SubType>
     </Compile>
