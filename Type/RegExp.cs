@@ -361,7 +361,7 @@ namespace Type
                 
                     result = new DateTime(year, month, day);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // invalid date.
                     // set date match to false.
@@ -388,7 +388,7 @@ namespace Type
                     int year = result.Year;
                     result = new DateTime(year, month, day, hour, minutes, 0);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // invalid time
                     // set time match to false
