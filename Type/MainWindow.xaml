@@ -12,7 +12,7 @@
             <RowDefinition Height="288*" />
             <RowDefinition Height="12*" />
         </Grid.RowDefinitions>
-        <TextBox Height="36" HorizontalAlignment="Left" Margin="22,1,0,0" Name="inputBox" VerticalAlignment="Top" Width="459" TextChanged="inputBox_TextChanged" KeyUp="inputBox_KeyUp" FontFamily="GillSans" FontSize="20" Padding="3" BorderThickness="0" Grid.Row="1" Grid.Column="1" />
+        <TextBox Height="36" HorizontalAlignment="Left" Margin="22,1,0,0" Name="inputBox" VerticalAlignment="Top" Width="459" TextChanged="inputBox_TextChanged" KeyUp="InputBox_KeyUp" FontFamily="GillSans" FontSize="20" Padding="3" BorderThickness="0" Grid.Row="1" Grid.Column="1" />
         <Label Height="36" HorizontalAlignment="Left" Margin="22,1,0,0" Name="inputBoxLabel" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" Grid.Row="1" Grid.Column="1" />
         <Border BorderBrush="#B5E05D72" BorderThickness="0 0 0.8 0" Grid.ColumnSpan="2" Grid.RowSpan="3" Height="323" HorizontalAlignment="Left" Margin="1,0,0,0" Name="sideBorder" VerticalAlignment="Top" Width="25" Panel.ZIndex="1"></Border>
         <StackPanel Name="tasksGrid" Margin="0,40,23,7" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1"/>

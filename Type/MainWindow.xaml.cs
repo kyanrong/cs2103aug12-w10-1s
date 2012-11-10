@@ -154,7 +154,7 @@ namespace Type
         }
 
         // Event Listener, onKeyUp Input Box
-        private void inputBox_KeyUp(object sender, KeyEventArgs e)
+        private void InputBox_KeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
