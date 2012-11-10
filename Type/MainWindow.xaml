@@ -1,0 +1,32 @@
+﻿<Window x:Class="Type.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525" WindowStartupLocation="CenterScreen" Topmost="True" WindowStyle="SingleBorderWindow" ShowInTaskbar="False" ResizeMode="NoResize" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    <Grid Name="mainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="493*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="11*" />
+            <RowDefinition Height="288*" />
+            <RowDefinition Height="12*" />
+        </Grid.RowDefinitions>
+        <TextBox Height="36" HorizontalAlignment="Left" Margin="22,1,0,0" Name="inputBox" VerticalAlignment="Top" Width="459" TextChanged="inputBox_TextChanged" KeyUp="inputBox_KeyUp" FontFamily="GillSans" FontSize="20" Padding="3" BorderThickness="0" Grid.Row="1" Grid.Column="1" />
+        <Label Height="36" HorizontalAlignment="Left" Margin="22,1,0,0" Name="inputBoxLabel" VerticalAlignment="Top" Width="477" FontFamily="GillSans" FontSize="20" Content="start typing..." Foreground="#E6A7A7A7" Grid.Row="1" Grid.Column="1" />
+        <Border BorderBrush="#B5E05D72" BorderThickness="0 0 0.8 0" Grid.ColumnSpan="2" Grid.RowSpan="3" Height="323" HorizontalAlignment="Left" Margin="1,0,0,0" Name="sideBorder" VerticalAlignment="Top" Width="25" Panel.ZIndex="1"></Border>
+        <StackPanel Name="tasksGrid" Margin="0,40,23,7" Grid.Row="1" Grid.RowSpan="2" Grid.Column="1"/>
+        <Popup Name="invalidCmdPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Height="25" Grid.ColumnSpan="2" Margin="0,0,23,101" Grid.RowSpan="2">
+            <TextBlock Text="Invalid command entered. Type :help or ? for more information." Foreground="DarkSlateGray" Background="#FFF5F297" FontStyle="Italic" FontFamily="GillSans" FontSize="14" Padding="5" />
+        </Popup>
+        <Popup Name="helpDescriptionPopup" PlacementTarget="{Binding ElementName=inputBox}" IsOpen="False" StaysOpen="False" Placement="Bottom" Grid.Row="1" Grid.Column="1" Margin="0,0,0,12" Grid.RowSpan="2">
+            <ItemsControl Name="helpDescriptionListBox" ItemsSource="{Binding}" FontFamily="GillSans" FontSize="14" BorderThickness="0" Background="SeaShell" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Popup>
+    </Grid>
+</Window>
