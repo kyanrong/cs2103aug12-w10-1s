@@ -80,9 +80,6 @@
     </ApplicationDefinition>
     <Compile Include="DateChangeNotifier.cs" />
     <Compile Include="Installer.cs" />
-    <Compile Include="MainWindowDoCommand.xaml.cs" />
-    <Compile Include="MainWindowKeyUp.xaml.cs" />
-    <Compile Include="MainWindowStyle.xaml.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="DataStore.cs" />
     <Compile Include="RegExp.cs">
