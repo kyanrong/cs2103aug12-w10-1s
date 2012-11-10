@@ -221,7 +221,7 @@ namespace Type
         #endregion
 
         #region Context Escape
-        //@author A0088574M
+        //@author A0092104U
         private void HandleEscapeKey()
         {
             // If we are highlighting something, we stop highlighting, but do not hide the window;
