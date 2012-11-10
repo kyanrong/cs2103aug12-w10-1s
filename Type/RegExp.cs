@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Type
 {
+    //@author A0082877M
     public class RegExp
     {
         #region regular expressions
