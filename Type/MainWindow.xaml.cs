@@ -49,7 +49,6 @@ namespace Type
         #endregion
 
         #region Fields
-        private List<String> helpDescription = new List<String>();
 
         private FilterSuggestionsCallback GetFilterSuggestions;
         private GetTasksCallback GetTasks;
@@ -64,11 +63,13 @@ namespace Type
         private int listEndIndex;
         private bool isOriginalTasks;
 
-        private Ellipse[] pageButtonArray;
+        private List<Ellipse> pageButtonList;
 
         private Task selectedTask;
         private Command parseResult;
-        private StackPanel taskView = new StackPanel();
+        private StackPanel taskView;
+        private StackPanel pageButtons;
+
         #endregion
 
         #region Events
@@ -84,26 +85,27 @@ namespace Type
             this.GetTasks = GetTasks;
             this.GetTasksByHashTag = GetTasksByHashTag;
 
+            //create stack panel here
+            taskView = new StackPanel();
+            pageButtons = new StackPanel();
+
             // Focus cursor in input box
             inputBox.Focus();
 
             // Display input label
             DisplayInputLabel();
 
-            // Populate help lists
-            PopulateHelpList();
-
             // Bootstrap tasks
             isOriginalTasks = true;
             renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
             taskTextBlockList = new List<TextBlock>();
 
-            pageButtonArray = new Ellipse[NUMBER_OF_TASKS_LOADED + 1];
-
             parseResult = Command.Parse(inputBox.Text);
 
             InitializeListBounderIndex();
             StopHighlighting();
+
+            pageButtonList = new List<Ellipse>();
 
             RenderTasks();
         }

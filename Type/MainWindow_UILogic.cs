@@ -78,6 +78,8 @@ namespace Type
         //@author A0083834Y
         private void DoHelp()
         {
+            List<String> helpDescription = PopulateHelpList();        
+
             helpDescriptionListBox.DataContext = helpDescription;
 
             helpDescriptionPopup.IsOpen = true;
@@ -125,8 +127,10 @@ namespace Type
         }
 
         //@author A0083834Y
-        private void PopulateHelpList()
+        private List<string> PopulateHelpList()
         {
+            List<String> helpDescription = new List<String>();
+
             // Populate helpDescription List
             helpDescription.Add("Create new task");
             helpDescription.Add("<task>");
@@ -160,6 +164,8 @@ namespace Type
 
             helpDescription.Add("Sort the display");
             helpDescription.Add(":sort <field>");
+
+            return helpDescription;
         }
         #endregion
 
@@ -254,14 +260,12 @@ namespace Type
         //@author A0088574M
         private void InitializeListBounderIndex()
         {
-            highlightListIndex = 0;
             listStartIndex = 0;
 
             if (renderedTasks.Count > NUMBER_OF_TASKS_DISPLAYED)
             {
                 listEndIndex = NUMBER_OF_TASKS_DISPLAYED;
             }
-
             else
             {
                 listEndIndex = renderedTasks.Count;

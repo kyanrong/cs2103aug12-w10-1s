@@ -97,6 +97,7 @@ namespace Type
             StopHighlighting();
 
             taskTextBlockList.Clear();
+
             InitializeListBounderIndex();
 
             RenderTasksDecorations();
@@ -138,7 +139,6 @@ namespace Type
 
             // Display page buttons
             DisplayPageButton(tasksGrid);
-            highlightPageButton();
 
             DisplayDashedBorder(tasksGrid);
         }
@@ -201,14 +201,7 @@ namespace Type
             run.Foreground = new SolidColorBrush(Color.FromArgb(255, 152, 163, 62));
             run.FontWeight = FontWeights.DemiBold;
         }
-
-        // Style for highlighted page button 
-        private void StyleHighlightedPageButton(int index)
-        {
-            Ellipse ellipse = pageButtonArray[index];
-            ellipse.Fill = new SolidColorBrush(Color.FromArgb(255, 89, 81, 70));
-        }
-
+        
         // Display blue border after each task
         private void DisplayBlueBorder(StackPanel parentStackPanel)
         {
@@ -226,16 +219,26 @@ namespace Type
         // Display page button (gray)
         private void DisplayPageButton(StackPanel parentStackPanel)
         {
-            StackPanel pageButtons = new StackPanel();
+            pageButtons.Children.Clear();
             pageButtons.Orientation = Orientation.Horizontal;
             pageButtons.HorizontalAlignment = HorizontalAlignment.Center;
 
-            int totalPage = GetTotalPageNumber();
+            int highlightPage = GetCurrentPageNumber() - 1;//have to offset by 1 for base 0 indexing
 
-            for (int i = 1; i < totalPage + 1; i++)
+            for (int i = 0; i < GetTotalPageNumber() ; i++)
             {
-                pageButtonArray[i] = DrawEllipse();
-                pageButtons.Children.Add(pageButtonArray[i]);
+                pageButtonList.Add(DrawEllipse());
+
+                if (i == highlightPage)
+                {
+                    pageButtonList[i].Fill = new SolidColorBrush(Color.FromArgb(255, 89, 81, 70));
+                }
+                else
+                {
+                    pageButtonList[i].Fill = new SolidColorBrush(Color.FromArgb(255, 212, 202, 190));
+                }
+                
+                pageButtons.Children.Add(pageButtonList[i]);
             }
 
             AddStackPanel(parentStackPanel, pageButtons);
@@ -287,7 +290,6 @@ namespace Type
             Ellipse ellipse = new Ellipse();
 
             ellipse.Stroke = new SolidColorBrush(Color.FromArgb(255, 212, 202, 190));
-            ellipse.Fill = new SolidColorBrush(Color.FromArgb(255, 212, 202, 190));
             ellipse.Margin = new Thickness(3, 10, 0, 0);
             ellipse.Width = 7;
             ellipse.Height = 7;
