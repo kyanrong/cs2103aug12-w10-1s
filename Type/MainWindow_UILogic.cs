@@ -54,7 +54,7 @@ namespace Type
             RenderTasks();
         }
 
-        //@author A0092104U
+        //@author A0083834Y
         private void DoEdit(Task selectedTask)
         {
             //Populate inputBox with edit text.
@@ -65,7 +65,7 @@ namespace Type
             MoveCursorToEndOfWord();
         }
 
-        //@author A0092104U
+        //@author A0083834Y
         private void DoSearch(Command result)
         {
             if (result.Text.Trim() != string.Empty)
@@ -94,7 +94,7 @@ namespace Type
             }
         }
 
-        //@author A0092104U
+        //@author A0088574M
         private void DoGenericCommand(Command result)
         {
             Task target = null;
@@ -221,7 +221,7 @@ namespace Type
         #endregion
 
         #region Context Escape
-        //@author A0092104U
+        //@author A0088574M
         private void HandleEscapeKey()
         {
             // If we are highlighting something, we stop highlighting, but do not hide the window;
