@@ -79,6 +79,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DateChangeNotifier.cs" />
+    <Compile Include="Installer.cs" />
     <Compile Include="MainWindowDoCommand.xaml.cs" />
     <Compile Include="MainWindowKeyUp.xaml.cs" />
     <Compile Include="MainWindowStyle.xaml.cs" />

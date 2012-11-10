@@ -46,6 +46,13 @@ namespace Type
             }
             dateNotifier = new DateChangeNotifier();
             dateNotifier.DateChange += new DateChangeEventHandler(dateNotifier_DateChange);
+
+            //Show UI on first launch.
+            if (!Installer.IsInstalled())
+            {
+                ShowUi();
+                Installer.EmbedOnFirstRun();
+            }
         }
 
         ~Presenter()
