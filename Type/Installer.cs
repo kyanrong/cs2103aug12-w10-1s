@@ -4,6 +4,7 @@ using Microsoft.Win32;
 
 namespace Type
 {
+#if !DEBUG
     class Installer
     {
         #region Constants
@@ -83,4 +84,5 @@ namespace Type
         }
         #endregion
     }
+#endif
 }

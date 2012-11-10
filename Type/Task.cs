@@ -133,6 +133,7 @@ namespace Type
         #endregion
 
         #region Sort Order Helper Methods
+        //@author A0092104U
         private bool HasStarted()
         {
             if (this.hasStart & this.Start >= DateTime.Now)
@@ -142,6 +143,7 @@ namespace Type
             return true;
         }
 
+        //@author A0092104U
         private bool Future()
         {
             if (hasEnd)
@@ -151,6 +153,7 @@ namespace Type
             return false;
         }
 
+        //@author A0092104U
         private bool OverdueToday()
         {
             if (hasEnd)
@@ -160,6 +163,7 @@ namespace Type
             return false;
         }
 
+        //@author A0092104U
         private bool DueToday()
         {
             if (hasEnd)
@@ -171,6 +175,7 @@ namespace Type
         #endregion
 
         #region Constructors
+        //@author A0082877M
         // from row.
         public Task(List<string> row)
         {
@@ -184,6 +189,7 @@ namespace Type
             this.lastMod = row.Count < 4 ? DateTime.Today : DateTime.Parse(row[3]);
             this.Setup();
         }
+        //@author A0082877M
         // from rawText
         public Task(string rawText)
         {
@@ -195,11 +201,11 @@ namespace Type
             this.lastMod = DateTime.Today;
             this.Setup();
         }
-
+        //@author A0082877M
         private void Setup()
         {
-            // other misc setup
-            // TODO.
+            // other misc setup steps
+            // none atm.
 
             // parse the input
             this.Parse();
@@ -207,6 +213,7 @@ namespace Type
         #endregion
 
         #region Parsing
+        //@author A0082877M
         public void Parse()
         {
             // default token.
@@ -404,12 +411,14 @@ namespace Type
         #endregion
 
         #region Helper Methods
+        //@author A0082877M
         public Task Clone()
         {
             return new Task(this.ToRow());
         }
 
         // returns row of strings for storing
+        //@author A0082877M
         public List<string> ToRow()
         {
             var row = new List<string>();

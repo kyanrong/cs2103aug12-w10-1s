@@ -9,6 +9,7 @@ using Type;
 namespace Language
 {
     [TestClass]
+    //@author A0082877M
     public class DateTest
     {
         [TestMethod]
@@ -32,7 +33,13 @@ namespace Language
             string x = "This should 12/1 match";
             Assert.AreEqual(RegExp.DateTimeT(x).Item1, "12/1");
             int year = DateTime.Today.Year;
-            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year + 1, 1, 12));
+
+            if (DateTime.Today > new DateTime(year, 1, 12))
+            {
+                year++;
+            }
+
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year, 1, 12));
         }
 
         [TestMethod]
@@ -41,6 +48,10 @@ namespace Language
             string x = "This should 12/11 match";
             Assert.AreEqual(RegExp.DateTimeT(x).Item1, "12/11");
             int year = DateTime.Today.Year;
+            if (DateTime.Today > new DateTime(year, 11, 12))
+            {
+                year++;
+            }
             Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year, 11, 12));
         }
 
@@ -180,17 +191,6 @@ namespace Language
             foreach (string x in l)
             {
                 Assert.AreEqual(RegExp.DateTimeT(x).Item1, "12 January");
-            }
-        }
-
-        [TestMethod]
-        public void NegativeTests3()
-        {
-            List<string> l = new List<string>();
-            l.Add("Thisby12/12/12");
-            foreach (string x in l)
-            {
-                // Assert.AreEqual(RegExp.Date(x).Item1, string.Empty);
             }
         }
 
