@@ -87,7 +87,7 @@ namespace Type
             //The default command is "add".
             if (result.Text.Trim() != string.Empty)
             {
-                ExecuteCommand(result.CommandText, result.Text);
+                OnRequestExecute(new CommandEventArgs(result.CommandText, result.Text));
                 inputBox.Clear();
             }
         }
@@ -106,7 +106,7 @@ namespace Type
                 }
             }
 
-            ExecuteCommand(result.CommandText, result.Text, target);
+            OnRequestExecute(new CommandEventArgs(result.CommandText, result.Text, target));
 
             // Clear the input box if the command was not edit.
             // If the command was edit, and a null task was sent to the Presenter,

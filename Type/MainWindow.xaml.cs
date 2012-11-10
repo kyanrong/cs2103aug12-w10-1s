@@ -18,15 +18,6 @@ namespace Type
     public delegate IList<Task> FilterSuggestionsCallback(string partialText);
 
     /// <summary>
-    /// Parses a raw string and executes its command, if valid.
-    /// If no valid command is found, this method does nothing.
-    /// </summary>
-    /// <param name="cmd">Command.</param>
-    /// <param name="content">Text of the Command.</param>
-    /// <param name="selected">Selected task. Throws an exception if no reference is specified, but the command requires one.</param>
-    public delegate void ExecuteCommandCallback(string cmd, string content, Task selectedTask = null);
-
-    /// <summary>
     /// Retrieves a list of tasks to be displayed.
     /// </summary>
     /// <param name="num">Number of tasks to retrieve.</param>
@@ -44,6 +35,8 @@ namespace Type
     /// Forces the UI to redraw its contents based on the current input box state.
     /// </summary>
     public delegate void ForceRedrawCallback();
+
+    public delegate void RequestExecuteEventHandler(object sender, CommandEventArgs e);
     #endregion
 
     public partial class MainWindow : Window
@@ -58,7 +51,6 @@ namespace Type
         #region Fields
         private List<String> helpDescription = new List<String>();
 
-        private ExecuteCommandCallback ExecuteCommand;
         private FilterSuggestionsCallback GetFilterSuggestions;
         private GetTasksCallback GetTasks;
         private GetTasksByHashTagCallback GetTasksByHashTag;
@@ -80,13 +72,16 @@ namespace Type
         private StackPanel taskView = new StackPanel();
         #endregion
 
+        #region Events
+        public event RequestExecuteEventHandler RequestExecute;
+        #endregion
+
         #region Constructors
-        public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, ExecuteCommandCallback ExecuteCommand, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
+        public MainWindow(FilterSuggestionsCallback GetFilterSuggestions, GetTasksCallback GetTasks, GetTasksByHashTagCallback GetTasksByHashTag)
         {
             InitializeComponent();
 
             this.GetFilterSuggestions = GetFilterSuggestions;
-            this.ExecuteCommand = ExecuteCommand;
             this.GetTasks = GetTasks;
             this.GetTasksByHashTag = GetTasksByHashTag;
 
@@ -197,6 +192,13 @@ namespace Type
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
+        }
+        #endregion
+
+        #region Event Methods
+        protected virtual void OnRequestExecute(CommandEventArgs e)
+        {
+            if (RequestExecute != null) RequestExecute(this, e);
         }
         #endregion
     }
