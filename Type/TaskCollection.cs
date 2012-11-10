@@ -215,17 +215,7 @@ namespace Type
         }
         #endregion
 
-        #region User Actions
-        // Delete Task (used in undo.)
-        private void Delete(int index)
-        {
-            // delete in collection
-            tasks.Remove(this.GetTask(index));
-
-            // delete in data store.
-            dataStore.DeleteRow(index);
-        }
-        
+        #region User Actions    
         // Create Task
         public Task Create(string input)
         {
@@ -451,6 +441,16 @@ namespace Type
         #endregion
 
         #region Helper Methods
+        // Delete Task (used in undo.)
+        private void Delete(int index)
+        {
+            // delete in collection
+            tasks.Remove(this.GetTask(index));
+
+            // delete in data store.
+            dataStore.DeleteRow(index);
+        }
+
         // Get Task
         private Task GetTask(int id)
         {
