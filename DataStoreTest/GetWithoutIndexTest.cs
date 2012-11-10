@@ -7,11 +7,11 @@ using System.IO;
 using Type;
 
 namespace DataStoreTest
-{
+{  
+    //@author A0088574M
     [TestClass]
     public class GetWithoutIndexTest
     {
-        //@author A0088574M
         [TestMethod]
         //if the file is empty then will get empty table
         public void WhenFileIsEmptyTest()

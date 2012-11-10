@@ -139,6 +139,7 @@ namespace Type
             // Display page buttons
             int pages = GetPageNumber();
             DisplayPageButton(tasksGrid, pages);
+            highlightPageButton();
 
             DisplayDashedBorder(tasksGrid);
         }
