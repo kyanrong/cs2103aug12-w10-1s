@@ -35,18 +35,8 @@ namespace Type
             comparator = Task.DefaultComparison;
             tasks = new TaskCollection();
             ui = new MainWindow(GetTasksWithPartialText, HandleCommand, GetTasksNoFilter, GetTasksByHashTags);
-            try
-            {
-                globalHook = (new GlobalKeyCombinationHook(ui, ShowUi, COMBINATION_MOD, COMBINATION_TRIGGER)).StartListening();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(ERR_HOTKEY);
-                Application.Current.Shutdown(ERR_HOTKEY_CODE);
-            }
-            dateNotifier = new DateChangeNotifier();
-            dateNotifier.DateChange += new DateChangeEventHandler(dateNotifier_DateChange);
-
+            SetGlobalHook();
+            SetDateChangeNotifier();
 #if !DEBUG
             //Show UI on first launch.
             if (!Installer.IsInstalled())
@@ -68,7 +58,7 @@ namespace Type
         /// <summary>
         /// Displays the UI window. Called when a defined key combination is pressed.
         /// </summary>
-        public void ShowUi()
+        void globalHook_ShortcutPressed(object sender, EventArgs e)
         {
             ui.Show();
         }
@@ -199,6 +189,27 @@ namespace Type
         #endregion
 
         #region Helper Methods
+        private void SetDateChangeNotifier()
+        {
+            dateNotifier = new DateChangeNotifier();
+            dateNotifier.DateChange += new DateChangeEventHandler(dateNotifier_DateChange);
+        }
+
+        private void SetGlobalHook()
+        {
+            try
+            {
+                globalHook = new GlobalKeyCombinationHook(ui, COMBINATION_MOD, COMBINATION_TRIGGER);
+                globalHook.ShortcutPressed += new ShortcutPressedEventHandler(globalHook_ShortcutPressed);
+                globalHook.StartListening();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(ERR_HOTKEY);
+                Application.Current.Shutdown(ERR_HOTKEY_CODE);
+            }
+        }
+
         private void HandleCommand_Archive(string content, Task selected)
         {
             var tags = GetHashTagList(content);
