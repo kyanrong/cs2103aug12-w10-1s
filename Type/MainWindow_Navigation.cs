@@ -12,6 +12,7 @@ namespace Type
     public partial class MainWindow : Window
     {
         #region Page Navigation Handlers
+
         //@author A0088574M
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
@@ -70,9 +71,6 @@ namespace Type
             if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
                 MoveToPreviousPage();
-
-                int tempIndex = highlightPageIndex - 1;
-                highlightPageButton(tempIndex);
             }
         }
 
@@ -83,9 +81,6 @@ namespace Type
             if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
                 MoveToNextPage();
-
-                int tempIndex = highlightPageIndex + 1;
-                highlightPageButton(tempIndex);
             }
         }
         #endregion
@@ -111,7 +106,6 @@ namespace Type
             }
 
             return pages;
-
         }
 
         //@author A0083834Y
@@ -132,16 +126,15 @@ namespace Type
 
         //@author A0083834Y
         //Style page button if index is within range
-        private void highlightPageButton(int tempIndex)
+        private void highlightPageButton()
         {
-            if (isWithinPageRange(tempIndex))
+            if (isWithinPageRange(highlightPageIndex))
             {
-                highlightPageIndex = tempIndex;
                 StyleHighlightedPageButton(highlightPageIndex);
             }
         }
 
-
+        //@author A0088574M
         //go to next page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToNextPage()
@@ -151,6 +144,8 @@ namespace Type
             {
                 return;
             }
+
+            highlightPageIndex++;
 
             listEndIndex += NUMBER_OF_TASKS_DISPLAYED;
             listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
@@ -163,6 +158,7 @@ namespace Type
             RefreshViewList();
         }
 
+        //@author A0088574M
         //go to previous page, will modify listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToPreviousPage()
@@ -172,6 +168,8 @@ namespace Type
             {
                 return;
             }
+
+            highlightPageIndex--;
 
             listStartIndex -= NUMBER_OF_TASKS_DISPLAYED;
             listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
