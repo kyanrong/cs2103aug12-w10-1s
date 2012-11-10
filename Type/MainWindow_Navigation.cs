@@ -133,15 +133,6 @@ namespace Type
         }
         #endregion
 
-        #region Page Button
-        //@author A0083834Y
-        //Style page button if index is within range
-        private void highlightPageButton()
-        {
-            StyleHighlightedPageButton(GetCurrentPageNumber());
-        }
-        #endregion
-
         #region Page Number
         private int GetTotalPageNumber()
         {
