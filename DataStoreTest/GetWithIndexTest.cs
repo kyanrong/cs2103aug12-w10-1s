@@ -8,10 +8,10 @@ using Type;
 
 namespace DataStoreTest
 {
+    //@author A0088574M
     [TestClass]
     public class GetWithIndexTest
-    {
-        //@author A0088574M
+    {     
         [TestMethod]
         [ExpectedException(typeof(MissingFieldException))]
         //will throw an exception if the file is changed until the index is missing
