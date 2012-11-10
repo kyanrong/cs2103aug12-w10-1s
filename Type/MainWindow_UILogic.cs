@@ -124,6 +124,7 @@ namespace Type
             }
         }
 
+        //@author A0083834Y
         private void PopulateHelpList()
         {
             // Populate helpDescription List
@@ -250,6 +251,7 @@ namespace Type
         #endregion
 
         #region Selection Methods
+        //@author A0088574M
         private void InitializeListBounderIndex()
         {
             highlightListIndex = 0;
@@ -289,6 +291,7 @@ namespace Type
             selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
         }
 
+        //@author A0088574M
         //if the list index is out of bound then set it back to the correct bound
         private void CheckListIndexBound()
         {
