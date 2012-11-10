@@ -23,6 +23,7 @@ namespace Type
         #endregion
 
         #region Constructors
+        //@author A0082877M
         // Constructor
         public TaskCollection()
         {
@@ -43,6 +44,7 @@ namespace Type
             this.Fetch();
         }
 
+        //@author A0082877M
         // Fetch Tasks from Flatfile
         private void Fetch()
         {
@@ -80,6 +82,7 @@ namespace Type
         public const string UndoArchive = "archive";
         public const string UndoArchiveAll = "archiveall";
 
+        //@author A0082877M
         public void Undo()
         {
             // check if stack is empty
@@ -158,6 +161,7 @@ namespace Type
             undoDataStore.DeleteRow(undoItem.Key);
         }
     
+        //@author A0082877M
         // push action and its relevent data to the undo stack.
         private void PushUndo(string cmd, Task task, List<Task> tasks = null)
         {
@@ -204,6 +208,7 @@ namespace Type
             this.PersistUndo(item);
         }
 
+        //@author A0082877M
         // saves stack item to file and updates stack of task collection.
         private void PersistUndo(List<string> item)
         {
@@ -216,6 +221,7 @@ namespace Type
         #endregion
 
         #region User Actions
+        //@author A0082877M
         // Create Task
         public Task Create(string input)
         {
@@ -238,6 +244,7 @@ namespace Type
             return t;
         }
         
+        //@author A0082877M
         // Update rawText
         public Task UpdateRawText(int id, string str, bool addToUndoStack = true)
         {
@@ -262,6 +269,7 @@ namespace Type
             return t;
         }
 
+        //@author A0082877M
         // Update done
         public Task UpdateDone(int id, bool done, bool addToUndoStack = true)
         {
@@ -281,6 +289,7 @@ namespace Type
             return t;
         }
 
+        //@author A0082877M
         // Update archive
         public Task UpdateArchive(int id, bool archiveStatus, bool addToUndoStack = true)
         {
@@ -300,6 +309,7 @@ namespace Type
             return t;
         }
 
+        //@author A0082877M
         // Marks all done tasks as archived
         public void ArchiveAll()
         {
@@ -359,6 +369,7 @@ namespace Type
             undoDataStore.ClearFile("undostack.csv");
         }
 
+        //@author A0082877M
         // Get number of Tasks starting from skip
         public List<Task> Get(int number, int skip = 0)
         {
@@ -372,6 +383,7 @@ namespace Type
             return pending.GetRange(skip, skip + number);
         }
 
+        //@author A0082877M
         // Filter All
         public List<Task> FilterAll(string input)
         {
@@ -422,6 +434,7 @@ namespace Type
             }
         }
 
+        //@author A0082877M
         public void MidnightReParse()
         {
             foreach (var t in tasks)
@@ -441,6 +454,7 @@ namespace Type
         #endregion
 
         #region Helper Methods
+        //@author A0082877M
         // Delete Task (used in undo.)
         private void Delete(int index)
         {
@@ -451,12 +465,14 @@ namespace Type
             dataStore.DeleteRow(index);
         }
 
+        //@author A0082877M
         // Get Task
         private Task GetTask(int id)
         {
             return tasks.Find(task => task.Id == id);
         }
 
+        //@author A0082877M
         // Get All Tasks
         private IList<Task> Get()
         {
