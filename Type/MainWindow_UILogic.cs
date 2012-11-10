@@ -82,6 +82,7 @@ namespace Type
 
             helpDescriptionPopup.IsOpen = true;
         }
+
         private void DoAdd(Command result)
         {
             //The default command is "add".
@@ -246,16 +247,16 @@ namespace Type
         #endregion
 
         #region Selection Methods
+
+        //@author A0088574M
         private void InitializeListBounderIndex()
         {
-            highlightListIndex = 0;
             listStartIndex = 0;
 
             if (renderedTasks.Count > NUMBER_OF_TASKS_DISPLAYED)
             {
                 listEndIndex = NUMBER_OF_TASKS_DISPLAYED;
             }
-
             else
             {
                 listEndIndex = renderedTasks.Count;
@@ -282,6 +283,7 @@ namespace Type
             selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
         }
 
+        //@author A0088574M
         //if the list index is out of bound then set it back to the correct bound
         private void CheckListIndexBound()
         {
@@ -296,6 +298,7 @@ namespace Type
             }
         }
 
+        //@author A0088574M
         //if the highLightIndex out of bound the set it back to the correct bound
         private void CheckHighlightIndexBound()
         {
@@ -303,6 +306,7 @@ namespace Type
             {
                 highlightListIndex = 0;
             }
+
             if (highlightListIndex > (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED)
             {
                 highlightListIndex = (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED;
