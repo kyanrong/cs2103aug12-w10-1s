@@ -10,7 +10,7 @@ namespace Type
     sealed class Logger
     {
         #region Constants
-        private string TEXT_EXCEPTION = "Exception: ";
+        private const string TEXT_EXCEPTION = "Exception: ";
         #endregion
 
         #region Fields
@@ -62,7 +62,7 @@ namespace Type
         {
             if (!File.Exists(path))
             {
-                File.Create(path);
+                File.Create(path).Close();
             }
         }
         #endregion
