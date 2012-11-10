@@ -8,12 +8,15 @@ namespace Type
 {
     public class DataStore
     {
+        #region Fields
         private const char SEPERATOR = ',';
-        private const char ESCAPE = '\\';
+        private const char ESCAPE = '\\';//the actual escape key is \ only, the first \ is use to escape it
 
         private string path;
         private int nextIndex;
+        #endregion
 
+        #region Constructor
         //@author A0088574M
         // only Constructor
         public DataStore(string fileName)
@@ -40,7 +43,9 @@ namespace Type
                 fs.Close();
             }
         }
+        #endregion
 
+        #region DataStore Handler
         // append a new row to the file and return a unique ID that identify that row value
         public int InsertRow(List<string> row)
         {
@@ -219,7 +224,9 @@ namespace Type
         {
             File.Delete(fileName);
         }
+        #endregion
 
+        #region DataStore Helper Methods
         //@author A0088574M
         // Converts List<string> into a string of comma separated values
         // appends index in front.
@@ -313,4 +320,5 @@ namespace Type
             return Tuple.Create(index, contents);
         }
     }
+        #endregion
 }
