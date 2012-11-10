@@ -71,9 +71,6 @@ namespace Type
             if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
                 MoveToPreviousPage();
-
-                int tempIndex = highlightPageIndex - 1;
-                highlightPageButton(tempIndex);
             }
         }
 
@@ -84,9 +81,6 @@ namespace Type
             if (parseResult.CommandText == Command.Search || inputBox.Text == string.Empty)
             {
                 MoveToNextPage();
-
-                int tempIndex = highlightPageIndex + 1;
-                highlightPageButton(tempIndex);
             }
         }
         #endregion
@@ -132,11 +126,10 @@ namespace Type
 
         //@author A0083834Y
         //Style page button if index is within range
-        private void highlightPageButton(int tempIndex)
+        private void highlightPageButton()
         {
-            if (isWithinPageRange(tempIndex))
+            if (isWithinPageRange(highlightPageIndex))
             {
-                highlightPageIndex = tempIndex;
                 StyleHighlightedPageButton(highlightPageIndex);
             }
         }
@@ -151,6 +144,8 @@ namespace Type
             {
                 return;
             }
+
+            highlightPageIndex++;
 
             listEndIndex += NUMBER_OF_TASKS_DISPLAYED;
             listStartIndex = listEndIndex - NUMBER_OF_TASKS_DISPLAYED;
@@ -173,6 +168,8 @@ namespace Type
             {
                 return;
             }
+
+            highlightPageIndex--;
 
             listStartIndex -= NUMBER_OF_TASKS_DISPLAYED;
             listEndIndex = listStartIndex + NUMBER_OF_TASKS_DISPLAYED;
