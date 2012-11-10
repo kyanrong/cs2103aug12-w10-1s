@@ -133,6 +133,7 @@ namespace Type
         #endregion
 
         #region Sort Order Helper Methods
+        //@author A0092104U
         private bool HasStarted()
         {
             if (this.hasStart & this.Start >= DateTime.Now)
@@ -142,6 +143,7 @@ namespace Type
             return true;
         }
 
+        //@author A0092104U
         private bool Future()
         {
             if (hasEnd)
@@ -151,6 +153,7 @@ namespace Type
             return false;
         }
 
+        //@author A0092104U
         private bool OverdueToday()
         {
             if (hasEnd)
@@ -160,6 +163,7 @@ namespace Type
             return false;
         }
 
+        //@author A0092104U
         private bool DueToday()
         {
             if (hasEnd)

@@ -463,7 +463,7 @@ namespace Type
             return tasks;
         }
 
-        // @author A0092104
+        //@author A0092104U
         // Marks all Tasks that contain the specified tag as Done.
         private List<Task> UpdateDoneByHashTag(string tag)
         {
@@ -479,7 +479,7 @@ namespace Type
             return affected;
         }
 
-        // @author A0092104
+        //@author A0092104U
         // Archives all Tasks the contain the specified Hash Tag
         private List<Task> ArchiveAllByHashTag(string tag)
         {
@@ -495,7 +495,7 @@ namespace Type
             return affected;
         }
 
-        // @author A0092104U
+        //@author A0092104U
         // Changes the archive status of a task.
         // If the task is archived, we append the hashtag #archive so that it shows up in searches.
         // If the task is unarchived, we remove all hashtags #archive to return it to its original state.

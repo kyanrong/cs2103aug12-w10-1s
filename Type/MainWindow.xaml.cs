@@ -196,6 +196,7 @@ namespace Type
         #endregion
 
         #region Event Methods
+        //@author A0092104U
         protected virtual void OnRequestExecute(CommandEventArgs e)
         {
             if (RequestExecute != null) RequestExecute(this, e);
