@@ -203,7 +203,7 @@ namespace Type
         {
             var tags = GetHashTagList(content);
 
-            if (tags == null && content.Trim() != string.Empty && selected != null)
+            if (tags == null && selected != null)
             {
                 //Archive selected.
                 tasks.UpdateArchive(selected.Id, true);
