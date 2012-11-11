@@ -138,9 +138,18 @@ namespace Type
 
                 else if (parseResult.CommandText != Command.Add && parseResult.Text!=string.Empty)
                 {
-                    isOriginalTasks = false;
-                    renderedTasks = GetFilterSuggestions(parseResult.Text);
-                    RenderTasks();
+                    if (parseResult.Text.StartsWith("#"))
+                    {
+                        isOriginalTasks = false;
+                        renderedTasks = GetTasksByHashTag(parseResult.Text);
+                        RenderTasks();
+                    }
+                    else
+                    {
+                        isOriginalTasks = false;
+                        renderedTasks = GetFilterSuggestions(parseResult.Text);
+                        RenderTasks();
+                    }
                 }
 
                 else if (!isOriginalTasks && parseResult.Text == string.Empty)
