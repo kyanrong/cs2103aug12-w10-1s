@@ -131,11 +131,11 @@ namespace Type
         /// </summary>
         /// <param name="num">Number of tasks to retrieve.</param>
         /// <returns>Read-only list of tasks.</returns>
-        private IList<Task> GetTasksNoFilter(int num)
+        private IList<Task> GetTasksNoFilter()
         {
             typeLog.Log(LOG_DEL_NOFILTER);
 
-            var resultSet = tasks.Get(num);
+            var resultSet = tasks.GetNotArchiveTasks();
             resultSet.Sort(comparator);
             return resultSet;
         }

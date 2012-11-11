@@ -49,7 +49,7 @@ namespace Type
             if (parseResult.CommandText != Command.Search)
             {
                 isOriginalTasks = true;
-                renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+                renderedTasks = GetTasks();
             }
 
             RenderTasks();
@@ -126,7 +126,76 @@ namespace Type
                 inputBox.Clear();
             }
         }
+        #endregion
 
+        #region AutoComplete
+        //@author A0092104U
+        private void HandleAutoComplete()
+        {
+            const string SPACE = " ";
+
+            // AutoComplete is only defined if there are rendered tasks on screen.
+            if (renderedTasks != null && renderedTasks.Count > 0)
+            {
+                // If the command is Invalid, we try to autocomplete the command.
+                // Otherwise, we complete the task.
+                if ((parseResult.CommandText == Command.Invalid || parseResult.IsAlias) && parseResult.Text == string.Empty)
+                {
+                    inputBox.Text += (Command.TryComplete(inputBox.Text.Substring(1)) + SPACE);
+                    MoveCursorToEndOfWord();
+                }
+                else
+                {
+                    // If the input text is just the command, we append a space so that 
+                    // the user can continue typing.
+                    // Otherwise, we complete the partially written task.
+                    int completeBegin;
+                    if (inputBox.Text.EndsWith(parseResult.CommandText))
+                    {
+                        inputBox.Text += SPACE;
+                        MoveCursorToEndOfWord();
+                    }
+                    else if ((completeBegin = LCPIndex(parseResult.Text, renderedTasks[0].RawText)) >= 0)
+                    {
+                        inputBox.Text = inputBox.Text.Trim() + renderedTasks[0].RawText.Substring(completeBegin + 1);
+                        MoveCursorToEndOfWord();
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Context Escape
+        //@author A0092104U
+        private void HandleEscapeKey()
+        {
+            // If we are highlighting something, we stop highlighting, but do not hide the window;
+            // We also refresh the view so that the highlight no longer shows.
+            // If the input box is not empty, we clear the input box, but do not hide the window.
+            // Otherwise, we hide the window.
+            // If the input box contains only whitespace (which will not be caught by the first condition),
+            // we clear it before hiding the window.
+            if (isHighlighting)
+            {
+                StopHighlighting();
+                RefreshViewList();
+            }
+            else if (inputBox.Text.Trim() != string.Empty)
+            {
+                inputBox.Clear();
+            }
+            else
+            {
+                if (inputBox.Text.Trim() == string.Empty)
+                {
+                    inputBox.Clear();
+                }
+                this.Hide();
+            }
+        }
+        #endregion
+
+        #region Helper Methods
         //@author A0083834Y
         private List<string> PopulateHelpList()
         {
@@ -168,43 +237,6 @@ namespace Type
 
             return helpDescription;
         }
-        #endregion
-
-        #region AutoComplete
-        //@author A0092104U
-        private void HandleAutoComplete()
-        {
-            const string SPACE = " ";
-
-            // AutoComplete is only defined if there are rendered tasks on screen.
-            if (renderedTasks != null && renderedTasks.Count > 0)
-            {
-                // If the command is Invalid, we try to autocomplete the command.
-                // Otherwise, we complete the task.
-                if ((parseResult.CommandText == Command.Invalid || parseResult.IsAlias) && parseResult.Text == string.Empty)
-                {
-                    inputBox.Text += (Command.TryComplete(inputBox.Text.Substring(1)) + SPACE);
-                    MoveCursorToEndOfWord();
-                }
-                else
-                {
-                    // If the input text is just the command, we append a space so that 
-                    // the user can continue typing.
-                    // Otherwise, we complete the partially written task.
-                    int completeBegin;
-                    if (inputBox.Text.EndsWith(parseResult.CommandText))
-                    {
-                        inputBox.Text += SPACE;
-                        MoveCursorToEndOfWord();
-                    }
-                    else if ((completeBegin = LCPIndex(parseResult.Text, renderedTasks[0].RawText)) >= 0)
-                    {
-                        inputBox.Text = inputBox.Text.Trim() + renderedTasks[0].RawText.Substring(completeBegin + 1);
-                        MoveCursorToEndOfWord();
-                    }
-                }
-            }
-        }
 
         //@author A0092104U
         // Finds the longest common prefix of a and b.
@@ -225,103 +257,11 @@ namespace Type
             }
             return found;
         }
-        #endregion
 
-        #region Context Escape
-        //@author A0092104U
-        private void HandleEscapeKey()
+        //@author A0083834Y
+        private void MoveCursorToEndOfWord()
         {
-            // If we are highlighting something, we stop highlighting, but do not hide the window;
-            // We also refresh the view so that the highlight no longer shows.
-            // If the input box is not empty, we clear the input box, but do not hide the window.
-            // Otherwise, we hide the window.
-            // If the input box contains only whitespace (which will not be caught by the first condition),
-            // we clear it before hiding the window.
-            if (isHighlighting)
-            {
-                StopHighlighting();
-                RefreshViewList();
-            }
-            else if (inputBox.Text.Trim() != string.Empty)
-            {
-                inputBox.Clear();
-            }
-            else
-            {
-                if (inputBox.Text.Trim() == string.Empty)
-                {
-                    inputBox.Clear();
-                }
-                this.Hide();
-            }
-        }
-        #endregion
-
-        #region Selection Methods
-        //@author A0088574M
-        private void InitializeListBounderIndex()
-        {
-            listStartIndex = 0;
-
-            if (renderedTasks.Count > NUMBER_OF_TASKS_DISPLAYED)
-            {
-                listEndIndex = NUMBER_OF_TASKS_DISPLAYED;
-            }
-            else
-            {
-                listEndIndex = renderedTasks.Count;
-            }
-        }
-
-        //@author A0092104U
-        private void StartHighlighting()
-        {
-            highlightListIndex = 0;
-            isHighlighting = true;
-            ResetSelection();
-        }
-
-        //@author A0092104U
-        private void StopHighlighting()
-        {
-            isHighlighting = false;
-            ResetSelection();
-        }
-
-        //@author A0092104U
-        private void ResetSelection()
-        {
-            // We have a non-ambiguous match iff there is exactly one task rendered.
-            // Otherwise, set the selectedTask to null to represent no task selected.
-            selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
-        }
-
-        //@author A0088574M
-        //if the list index is out of bound then set it back to the correct bound
-        private void CheckListIndexBound()
-        {
-            if (listStartIndex < 0)
-            {
-                listStartIndex = 0;
-            }
-
-            if (listEndIndex > renderedTasks.Count)
-            {
-                listEndIndex = renderedTasks.Count;
-            }
-        }
-
-        //if the highLightIndex out of bound the set it back to the correct bound
-        private void CheckHighlightIndexBound()
-        {
-            if (highlightListIndex < 0)
-            {
-                highlightListIndex = 0;
-            }
-            if (highlightListIndex > (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED)
-            {
-                highlightListIndex = (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED;
-            }
+            inputBox.Select(inputBox.Text.Length, 0);
         }
         #endregion
     }

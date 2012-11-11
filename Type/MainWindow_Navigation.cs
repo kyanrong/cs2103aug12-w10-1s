@@ -89,7 +89,7 @@ namespace Type
 
         #region Page Navigation Helper Methods
         //@author A0088574M
-        //go to next page, will modify listStartIndex and listEndIndex
+        //go to next page, by modifying listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToNextPage()
         {
@@ -111,7 +111,7 @@ namespace Type
         }
 
         //@author A0088574M
-        //go to previous page, will modify listStartIndex and listEndIndex
+        //go to previous page, by modifying listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToPreviousPage()
         {
@@ -133,16 +133,89 @@ namespace Type
         }
         #endregion
 
-        #region Page Number
+        #region Page Number Methods
         //@author A0083834Y
         private int GetTotalPageNumber()
         {
             return (renderedTasks.Count - 1) / NUMBER_OF_TASKS_DISPLAYED + 1;
         }
 
+        //@author A0088574M
         private int GetCurrentPageNumber()
         {
             return (listEndIndex - 1) / NUMBER_OF_TASKS_DISPLAYED + 1;
+        }
+        #endregion
+
+        #region Highlight Methods
+        //@author A0092104U
+        private void StartHighlighting()
+        {
+            highlightListIndex = 0;
+            isHighlighting = true;
+            ResetSelection();
+        }
+
+        //@author A0092104U
+        private void StopHighlighting()
+        {
+            isHighlighting = false;
+            ResetSelection();
+        }
+
+        //@author A0092104U
+        private void ResetSelection()
+        {
+            // We have a non-ambiguous match iff there is exactly one task rendered.
+            // Otherwise, set the selectedTask to null to represent no task selected.
+            selectedTask = renderedTasks.Count == 1 ? renderedTasks[0] : null;
+        }
+
+        //@author A0088574M
+        //if the highLightIndex out of bound the set it back to the correct bound
+        private void CheckHighlightIndexBound()
+        {
+            if (highlightListIndex < 0)
+            {
+                highlightListIndex = 0;
+            }
+
+            if (highlightListIndex > (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED)
+            {
+                highlightListIndex = (listEndIndex - 1) % NUMBER_OF_TASKS_DISPLAYED;
+            }
+        }
+        #endregion
+
+        #region Display List Index Methods
+        //@author A0088574M
+        private void InitializeListBounderIndex()
+        {
+            listStartIndex = 0;
+
+            if (renderedTasks.Count > NUMBER_OF_TASKS_DISPLAYED)
+            {
+                listEndIndex = NUMBER_OF_TASKS_DISPLAYED;
+            }
+            else
+            {
+                listEndIndex = renderedTasks.Count;
+            }
+        }
+        
+        //@author A0088574M
+        //if the list index is out of bound then set it back to the correct bound
+        private void CheckListIndexBound()
+        {
+            if (listStartIndex < 0)
+            {
+                listStartIndex = 0;
+            }
+
+            if (listEndIndex > renderedTasks.Count)
+            {
+                listEndIndex = renderedTasks.Count;
+            }
         }
         #endregion
     }
