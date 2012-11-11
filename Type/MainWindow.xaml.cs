@@ -112,6 +112,7 @@ namespace Type
         #endregion
 
         #region WPF Events
+        //@author A0083834Y
         // Event Listener when Input Box text changes.
         private void inputBox_TextChanged(object sender, TextChangedEventArgs e)
         {

@@ -103,7 +103,6 @@ namespace Type
             RefreshViewList();
         }
 
-        //@author A0083834Y
         // Input Label
         private void DisplayInputLabel()
         {
@@ -142,7 +141,6 @@ namespace Type
             DisplayDashedBorder(tasksGrid);
         }
 
-        //@author A0083834Y
         // Default style for text 
         private void DefaultStyle(TextBlock textBlock)
         {

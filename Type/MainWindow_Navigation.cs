@@ -134,6 +134,7 @@ namespace Type
         #endregion
 
         #region Page Number
+        //@author A0083834Y
         private int GetTotalPageNumber()
         {
             return (renderedTasks.Count - 1) / NUMBER_OF_TASKS_DISPLAYED + 1;
