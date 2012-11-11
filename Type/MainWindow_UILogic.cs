@@ -12,6 +12,7 @@ namespace Type
     public partial class MainWindow : Window
     {
         #region Command Handlers
+        //@author A0083834Y
         private void HandleSendCommand()
         {
             switch (parseResult.CommandText)
