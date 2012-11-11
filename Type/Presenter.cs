@@ -299,7 +299,10 @@ namespace Type
             if (tags == null)
             {
                 typeLog.Log(LOG_DONE_SELECTED);
-                tasks.UpdateDone(selected.Id, true);
+                if (selected != null)
+                {
+                    tasks.UpdateDone(selected.Id, true);
+                }
             }
             else
             {
