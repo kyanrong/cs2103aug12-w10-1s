@@ -34,7 +34,7 @@ namespace Type
 
         // Other Properties
         public int Id { get; set; }
-        public DateTime lastMod { get; set; }
+        public DateTime LastMod { get; set; }
         public int Priority { get; private set; }
         private bool HasStart;
         public DateTime Start { get; private set; }
@@ -181,7 +181,7 @@ namespace Type
             this.rawText = row[0];
             this.Done = Boolean.Parse(row[1]);
             this.Archive = Boolean.Parse(row[2]);
-            this.lastMod = row.Count < 4 ? DateTime.Today : DateTime.Parse(row[3]);
+            this.LastMod = row.Count < 4 ? DateTime.Today : DateTime.Parse(row[3]);
             this.Setup();
         }
         //@author A0082877M
@@ -193,7 +193,7 @@ namespace Type
             this.Archive = false;
             this.HasEnd = false;
             this.HasStart = false;
-            this.lastMod = DateTime.Today;
+            this.LastMod = DateTime.Today;
             this.Setup();
         }
         //@author A0082877M
@@ -262,7 +262,7 @@ namespace Type
             }
 
             // parse dates
-            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.GetDateTime(this.rawText, this.lastMod);
+            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.GetDateTime(this.rawText, this.LastMod);
 
             string datestring = dateTimeMatch.Item1;
             if (datestring != string.Empty)
@@ -275,11 +275,11 @@ namespace Type
                 if (m.Success)
                 {
                     // check if lastMod is today
-                    if (this.lastMod != DateTime.Today)
+                    if (this.LastMod != DateTime.Today)
                     {
                         // if not today.
                         // change to date.
-                        string replaceby = this.lastMod.Day + "/" + this.lastMod.Month;
+                        string replaceby = this.LastMod.Day + "/" + this.LastMod.Month;
                         string newRawText = re3.Replace(this.rawText, replaceby);
 
                         // replace rawtext
@@ -296,11 +296,11 @@ namespace Type
                 if (m.Success)
                 {
                     // check if lastMod is today
-                    if (this.lastMod != DateTime.Today)
+                    if (this.LastMod != DateTime.Today)
                     {
                         // if not today.
                         // change to date.
-                        string replaceby = this.lastMod.AddDays(1).Day + "/" + this.lastMod.AddDays(1).Month;
+                        string replaceby = this.LastMod.AddDays(1).Day + "/" + this.LastMod.AddDays(1).Month;
                         string newRawText = re4.Replace(this.rawText, replaceby);
 
                         // replace rawtext
@@ -425,7 +425,7 @@ namespace Type
             row.Add(this.RawText);
             row.Add(this.Done.ToString());
             row.Add(this.Archive.ToString());
-            row.Add(this.lastMod.ToString());
+            row.Add(this.LastMod.ToString());
             return row;
         }
 
