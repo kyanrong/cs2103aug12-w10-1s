@@ -298,9 +298,9 @@ namespace Type
 
             if (tags == null)
             {
-                typeLog.Log(LOG_DONE_SELECTED);
                 if (selected != null)
                 {
+                    typeLog.Log(LOG_DONE_SELECTED);
                     tasks.UpdateDone(selected.Id, true);
                 }
             }
