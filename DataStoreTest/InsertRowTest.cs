@@ -109,7 +109,7 @@ namespace DataStoreTest
             FileStream fs = new FileStream("Normal_InsertRow", FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
 
-            Assert.AreEqual("1,project meeting,,,3,True", sr.ReadLine());
+            Assert.AreEqual("1,project meeting,\\,,3,True", sr.ReadLine());
             Assert.AreEqual("2,homework,3/11,-1,#cs", sr.ReadLine());
             Assert.AreEqual("3,bill on 7/nov #personal +3,False,True", sr.ReadLine());//taskcollection.csv format
             Assert.AreEqual("4,edit,23,task description", sr.ReadLine());//undostack.csv format
