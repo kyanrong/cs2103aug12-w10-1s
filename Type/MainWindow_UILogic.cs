@@ -308,6 +308,16 @@ namespace Type
             {
                 listEndIndex = renderedTasks.Count;
             }
+
+            if (renderedTasks.Count == 0)
+            {
+                InitializeListBounderIndex();
+            }
+
+            if (listStartIndex + NUMBER_OF_TASKS_DISPLAYED > listEndIndex)
+            {
+                listEndIndex = renderedTasks.Count;
+            }
         }
 
         //if the highLightIndex out of bound the set it back to the correct bound
