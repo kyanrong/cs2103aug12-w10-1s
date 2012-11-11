@@ -138,7 +138,7 @@ namespace Type
 
                 else if (parseResult.CommandText != Command.Add && parseResult.Text!=string.Empty)
                 {
-                    if (parseResult.Text.StartsWith("#"))
+                    if (parseResult.Text.StartsWith(Command.HashToken))
                     {
                         isOriginalTasks = false;
                         renderedTasks = GetTasksByHashTag(parseResult.Text);
