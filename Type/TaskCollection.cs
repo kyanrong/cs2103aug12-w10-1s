@@ -259,7 +259,7 @@ namespace Type
             }
 
             // update lastMod
-            t.lastMod = DateTime.Today;
+            t.LastMod = DateTime.Today;
             t.RawText = str;
 
             // change row in datastore
