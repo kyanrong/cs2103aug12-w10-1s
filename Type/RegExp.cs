@@ -91,7 +91,7 @@ namespace Type
         #endregion
 
         #region datetime
-        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input, DateTime today)
+        public static Tuple<string, DateTime?, DateTime?> GetDateTime(string input, DateTime today)
         {
             DateTime? datetime = null;
             Match m;
@@ -130,9 +130,9 @@ namespace Type
             return Tuple.Create(String.Empty, datetime, datetime);
         }
 
-        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input)
+        public static Tuple<string, DateTime?, DateTime?> GetDateTime(string input)
         {
-            return DateTimeT(input, DateTime.Today);
+            return GetDateTime(input, DateTime.Today);
         }
         #endregion
 
@@ -192,16 +192,8 @@ namespace Type
             }
             else
             {
-                int twoDigitYear = year % 100;
                 int yearTokenValue = int.Parse(yearToken);
-                if (yearTokenValue >= twoDigitYear)
-                {
-                    year = 2000 + yearTokenValue;
-                }
-                else
-                {
-                    year = 2100 + yearTokenValue;
-                }
+                year = 2000 + yearTokenValue;
             }
             return year;
         }
