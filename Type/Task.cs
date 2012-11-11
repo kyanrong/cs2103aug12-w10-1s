@@ -243,11 +243,14 @@ namespace Type
                         if (token.Item1.Contains(hashtag))
                         {
                             string[] split = token.Item1.Split(new string[] { hashtag }, StringSplitOptions.None);
-                            res.Add(Tuple.Create(split[0], ParsedType.String));
-                            
-                            res.Add(Tuple.Create(hashtag, ParsedType.HashTag));
 
-                            res.Add(Tuple.Create(split[1], ParsedType.String));
+                            res.Add(Tuple.Create(split[0], ParsedType.String));
+                            for (int i = 1; i < split.Length; i++)
+                            {
+                                res.Add(Tuple.Create(hashtag, ParsedType.HashTag));
+                                res.Add(Tuple.Create(split[i], ParsedType.String));
+
+                            }
                         }
                         else
                         {
