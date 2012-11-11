@@ -194,13 +194,13 @@ namespace Type
             {
                 int twoDigitYear = year % 100;
                 int yearTokenValue = int.Parse(yearToken);
-                if (yearTokenValue > twoDigitYear)
+                if (yearTokenValue >= twoDigitYear)
                 {
-                    year = 1900 + yearTokenValue;
+                    year = 2000 + yearTokenValue;
                 }
                 else
                 {
-                    year = 2000 + yearTokenValue;
+                    year = 2100 + yearTokenValue;
                 }
             }
             return year;

@@ -58,9 +58,25 @@ namespace Language
         [TestMethod]
         public void dd_mm_yy()
         {
-            string x = "This should 12/11/11 match";
-            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "12/11/11");
-            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(2011, 11, 12));
+            string x = "This should 12/11/12 match";
+            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "12/11/12");
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(2012, 11, 12));
+        }
+
+        [TestMethod]
+        public void dd_mm_yy2()
+        {
+            string x = "This should 12/11/12 match";
+            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "12/11/12");
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(2012, 11, 12));
+        }
+
+        [TestMethod]
+        public void dd_mm_yy3()
+        {
+            string x = "This should 12/11/13 match";
+            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "12/11/13");
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(2013, 11, 12));
         }
 
         [TestMethod]
@@ -125,9 +141,9 @@ namespace Language
         [TestMethod]
         public void deadline_dd_mm_yy()
         {
-            string x = "This should by 12/11/11 match";
-            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "by 12/11/11");
-            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(2011, 11, 12));
+            string x = "This should by 12/11/12 match";
+            Assert.AreEqual(RegExp.DateTimeT(x).Item1, "by 12/11/12");
+            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(2012, 11, 12));
         }
 
         [TestMethod]
