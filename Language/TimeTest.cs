@@ -57,7 +57,7 @@ namespace Language
         public void dd_m()
         {
             string x = "This should 12/1 2pm match";
-            DateTime res = (DateTime) RegExp.DateTimeT(x).Item3;
+            DateTime res = (DateTime) RegExp.GetDateTime(x).Item3;
             Assert.AreEqual(
                 res.Day,
                  12

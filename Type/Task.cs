@@ -35,10 +35,10 @@ namespace Type
         // Other Properties
         public int Id { get; set; }
         public DateTime lastMod { get; set; }
-        public int priority { get; private set; }
-        private bool hasStart;
+        public int Priority { get; private set; }
+        private bool HasStart;
         public DateTime Start { get; private set; }
-        private bool hasEnd;
+        private bool HasEnd;
         public DateTime End { get; private set; }
 
         public string RawText
@@ -53,11 +53,6 @@ namespace Type
                 this.Parse();
             }
         }
-
-        //public IList<string> Tags
-        //{
-        //    get { return tags.AsReadOnly(); }
-        //}
 
         public IList<Tuple<string, ParsedType>> Tokens
         {
@@ -122,8 +117,8 @@ namespace Type
             }
             magnitude = (minutes << 35) & (long)0x1FFFFFF800000000;
 
-            Debug.Assert(this.priority >= -256 && this.priority <= 511);
-            long priority256 = ((long)(this.priority + 256) << 24) & (long)0x00000003FF000000;
+            Debug.Assert(this.Priority >= -256 && this.Priority <= 511);
+            long priority256 = ((long)(this.Priority + 256) << 24) & (long)0x00000003FF000000;
 
             long taskId = ((long)this.Id & (long)0x0000000000FFFFFF);
             Debug.Assert(this.Id == taskId);
@@ -136,7 +131,7 @@ namespace Type
         //@author A0092104U
         private bool HasStarted()
         {
-            if (this.hasStart & this.Start >= DateTime.Now)
+            if (this.HasStart & this.Start >= DateTime.Now)
             {
                 return false;
             }
@@ -146,7 +141,7 @@ namespace Type
         //@author A0092104U
         private bool Future()
         {
-            if (hasEnd)
+            if (HasEnd)
             {
                 return this.End > DateTime.Now;
             }
@@ -156,7 +151,7 @@ namespace Type
         //@author A0092104U
         private bool OverdueToday()
         {
-            if (hasEnd)
+            if (HasEnd)
             {
                 return this.End < DateTime.Now;
             }
@@ -166,7 +161,7 @@ namespace Type
         //@author A0092104U
         private bool DueToday()
         {
-            if (hasEnd)
+            if (HasEnd)
             {
                 return this.End == DateTime.Now;
             }
@@ -196,8 +191,8 @@ namespace Type
             this.rawText = rawText;
             this.Done = false;
             this.Archive = false;
-            this.hasEnd = false;
-            this.hasStart = false;
+            this.HasEnd = false;
+            this.HasStart = false;
             this.lastMod = DateTime.Today;
             this.Setup();
         }
@@ -267,7 +262,7 @@ namespace Type
             }
 
             // parse dates
-            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.DateTimeT(this.rawText, this.lastMod);
+            Tuple<string, DateTime?, DateTime?> dateTimeMatch = RegExp.GetDateTime(this.rawText, this.lastMod);
 
             string datestring = dateTimeMatch.Item1;
             if (datestring != string.Empty)
@@ -324,13 +319,13 @@ namespace Type
                 if (dateTimeMatch.Item2 != null)
                 {
                     this.Start = (DateTime) dateTimeMatch.Item2;
-                    this.hasStart = true;
+                    this.HasStart = true;
                 }
 
                 if (dateTimeMatch.Item3 != null)
                 {
                     this.End = (DateTime) dateTimeMatch.Item3;
-                    this.hasEnd = true;
+                    this.HasEnd = true;
                 }
 
                 // find token contain datetime.
@@ -369,7 +364,7 @@ namespace Type
             Tuple<string, int> priority = RegExp.Priority(this.rawText);
             if (priority.Item1 != string.Empty)
             {
-                this.priority = priority.Item2;
+                this.Priority = priority.Item2;
 
                 // find token containing priority
                 var res = new List<Tuple<string, ParsedType>>();
