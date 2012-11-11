@@ -21,7 +21,6 @@ namespace Type
         //Log file path.
         private const string LOG_PATH = "type.log";
         private const string LOG_APP_FULL_INIT = "Application Fully Initialized.";
-        private const string LOG_APP_DESTORYED = "Application Destroyed.";
         private const string LOG_SHORTCUT = "Shortcut Combination detected. Showing UI...";
         private const string LOG_DATE_CHANGE = "DateChange event detected. Reparsing Tasks, Forcing UI Redraw.";
         private const string LOG_DEL_PARTIALTEXT = "GetTasksWithPartialText() called.";
@@ -84,8 +83,6 @@ namespace Type
         {
             //We need to unregister the hotkey when the application closes to be a good Windows citizen.
             globalHook.StopListening();
-
-            typeLog.Log(LOG_APP_DESTORYED);
         }
         #endregion
 
