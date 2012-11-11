@@ -333,30 +333,38 @@ namespace Type
         }
 
         //@author A0092104U
-        // Archives all Tasks that contain any listed Hash Tag.
+        // Archives all Tasks that contain all listed Hash Tags.
         public void ArchiveAllByHashTags(IList<string> hashTags)
         {
             Debug.Assert(hashTags != null);
 
-            List<Task> affected = new List<Task>();
-            foreach (var tag in hashTags)
+            var affected = new List<Task>();
+            foreach (var task in tasks)
             {
-                affected.AddRange(ArchiveAllByHashTag(tag));
+                if (HashTagsMatch(task, hashTags))
+                {
+                    affected.Add(task);
+                    this.UpdateArchive(task.Id, true, false);
+                }
             }
 
             this.PushUndo(UndoArchiveAll, null, affected);
         }
 
         //@author A0092104U
-        // Marks all Tasks that contain any listed Hash Tag as Done.
+        // Marks all Tasks that contain all listed Hash Tags as Done.
         public void UpdateDoneByHashTags(IList<string> hashTags)
         {
             Debug.Assert(hashTags != null);
 
-            List<Task> affected = new List<Task>();
-            foreach (var tag in hashTags)
+            var affected = new List<Task>();
+            foreach (var task in tasks)
             {
-                affected.AddRange(UpdateDoneByHashTag(tag));
+                if (HashTagsMatch(task, hashTags))
+                {
+                    affected.Add(task);
+                    this.UpdateDone(task.Id, true, false);
+                }
             }
 
             this.PushUndo(UndoDoneAll, null, affected);
@@ -471,38 +479,6 @@ namespace Type
         }
 
         //@author A0092104U
-        // Marks all Tasks that contain the specified tag as Done.
-        private List<Task> UpdateDoneByHashTag(string tag)
-        {
-            var affected = new List<Task>();
-            foreach (var t in tasks)
-            {
-                if (t.Tags.Contains(tag))
-                {
-                    affected.Add(t);
-                    this.UpdateDone(t.Id, true, false);
-                }
-            }
-            return affected;
-        }
-
-        //@author A0092104U
-        // Archives all Tasks the contain the specified Hash Tag
-        private List<Task> ArchiveAllByHashTag(string tag)
-        {
-            var affected = new List<Task>();
-            foreach (var t in tasks)
-            {
-                if (t.Tags.Contains(tag))
-                {
-                    affected.Add(t);
-                    this.UpdateArchive(t.Id, true, false);
-                }
-            }
-            return affected;
-        }
-
-        //@author A0092104U
         // Changes the archive status of a task.
         // If the task is archived, we append the hashtag #archive so that it shows up in searches.
         // If the task is unarchived, we remove all hashtags #archive to return it to its original state.
@@ -528,6 +504,21 @@ namespace Type
             }
 
             t.Archive = archiveStatus;
+        }
+
+        //@author A0092104U
+        // Checks if 'task' contains all the hash tags in 'hashTags'.
+        private static bool HashTagsMatch(Task task, IList<string> hashTags)
+        {
+            bool matchCriteria = true;
+            for (int i = 0; i < hashTags.Count && matchCriteria; i++)
+            {
+                if (!task.Tags.Contains(hashTags[i]))
+                {
+                    matchCriteria = false;
+                }
+            }
+            return matchCriteria;
         }
         #endregion
     }
