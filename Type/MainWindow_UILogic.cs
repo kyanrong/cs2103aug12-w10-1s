@@ -208,7 +208,7 @@ namespace Type
             helpDescription.Add("Complete a task");
             helpDescription.Add(":done <task>");
 
-            helpDescription.Add("Complete all tasks with a tag");
+            helpDescription.Add("Complete all tasks with the specified hash tag");
             helpDescription.Add(":done #<tag name>");
 
             helpDescription.Add("Archive all completed tasks");
@@ -217,7 +217,7 @@ namespace Type
             helpDescription.Add("Archive a single task");
             helpDescription.Add(":archive <task>");
 
-            helpDescription.Add("Archive all tasks with a tag");
+            helpDescription.Add("Archive all tasks with the specified hash tag");
             helpDescription.Add(":archive #<tag name>");
 
             helpDescription.Add("Edit a task");
@@ -232,8 +232,8 @@ namespace Type
             helpDescription.Add("Show archived tasks");
             helpDescription.Add("/archive <tag name> [<tag name>] ...");
 
-            helpDescription.Add("Sort the display");
-            helpDescription.Add(":sort <field>");
+            helpDescription.Add("Help(Displays this list)");
+            helpDescription.Add(":help or ?");
 
             return helpDescription;
         }

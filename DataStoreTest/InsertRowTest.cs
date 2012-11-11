@@ -59,7 +59,7 @@ namespace DataStoreTest
         }
 
         [TestMethod]
-        //testing normal circumstances with symbol ",", integer, boolean,
+        //testing possible normal circumstances with symbol ",","\" integer, boolean,
         //date, priority, hash tag, taskcollection.csv and undostack.csv format
         public void NormalTest()
         {
@@ -67,7 +67,7 @@ namespace DataStoreTest
             List<string> myList = new List<string>();
 
             myList.Add("project meeting");
-            myList.Add(",");//test special symbol ","
+            myList.Add(", \\");//test separator "," and escape key "\"
             myList.Add(3.ToString());//test integer
             myList.Add(true.ToString());//test boolean
 
@@ -85,17 +85,17 @@ namespace DataStoreTest
             actualUniqueID = myData.InsertRow(myList);
             Assert.AreEqual(2, actualUniqueID);
 
-            //actual taskcollection.csv format
+            //simulate taskcollection.csv format
             myList.Clear();
-            myList.Add("bill on 7/nov #personal +3");
-            myList.Add(false.ToString());
-            myList.Add(true.ToString());
+            myList.Add("bill on 7 nov #personal +3");//test raw string
+            myList.Add(false.ToString());//test boolean
+            myList.Add(true.ToString());//test escape key
 
             //check if the unique ID is correct
             actualUniqueID = myData.InsertRow(myList);
             Assert.AreEqual(3, actualUniqueID);
 
-            //actual undostack.csv format for edit
+            //simulate undostack.csv format for edit
             myList.Clear();
             myList.Add("edit");
             myList.Add(23.ToString());
@@ -109,9 +109,9 @@ namespace DataStoreTest
             FileStream fs = new FileStream("Normal_InsertRow", FileMode.Open, FileAccess.Read);
             StreamReader sr = new StreamReader(fs);
 
-            Assert.AreEqual("1,project meeting,\\,,3,True", sr.ReadLine());
+            Assert.AreEqual("1,project meeting,\\, \\\\,3,True", sr.ReadLine());
             Assert.AreEqual("2,homework,3/11,-1,#cs", sr.ReadLine());
-            Assert.AreEqual("3,bill on 7/nov #personal +3,False,True", sr.ReadLine());//taskcollection.csv format
+            Assert.AreEqual("3,bill on 7 nov #personal +3,False,True", sr.ReadLine());//taskcollection.csv format
             Assert.AreEqual("4,edit,23,task description", sr.ReadLine());//undostack.csv format
             Assert.AreEqual(null, sr.ReadLine());//end of file
 
