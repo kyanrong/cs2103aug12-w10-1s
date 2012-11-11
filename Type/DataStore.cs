@@ -7,7 +7,8 @@ using System.IO;
 namespace Type
 {
     public class DataStore
-    {
+    {        
+        //@author A0088574M
         #region Fields
         private const char SEPERATOR = ',';//follow CSV format
         private const char ESCAPE = '\\';//the actual escape key is \ only, the first \ is use to escape it
@@ -17,8 +18,7 @@ namespace Type
         #endregion
 
         #region Constructor
-        //@author A0088574M
-        // only Constructor
+        // only provide one Constructor
         public DataStore(string fileName)
         {
             // initialize Data Store with fileName
@@ -227,8 +227,8 @@ namespace Type
         }
         #endregion
 
-        #region DataStore Helper Methods
         //@author A0088574M
+        #region DataStore Helper Methods
         // Converts List<string> into a string of comma separated values
         // appends index in front.
         private string ProcessListToString(int index, List<string> list)
@@ -270,7 +270,7 @@ namespace Type
         // Clear the file and replace the contents with a list of string
         private void WriteToFile(List<string> rows)
         {
-            // open and truncate file, clear its content
+            // open and truncate file to clear its content
             FileStream fs = new FileStream(path, FileMode.Truncate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
 

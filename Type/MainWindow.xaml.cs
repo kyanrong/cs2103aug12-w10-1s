@@ -41,6 +41,7 @@ namespace Type
 
     public partial class MainWindow : Window
     {
+        //@author A0083834Y
         #region Constants
         private const string TEXT_WELCOME = "start typing...";
         private const string TEXT_NOTASKS = "no tasks.";
@@ -112,7 +113,6 @@ namespace Type
         #endregion
 
         #region WPF Events
-        //@author A0083834Y
         // Event Listener when Input Box text changes.
         private void inputBox_TextChanged(object sender, TextChangedEventArgs e)
         {

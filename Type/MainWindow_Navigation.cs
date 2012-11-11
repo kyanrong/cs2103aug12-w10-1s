@@ -10,9 +10,9 @@ using System.Windows.Shapes;
 namespace Type
 {
     public partial class MainWindow : Window
-    {
-        #region Page Navigation Handlers
+    {        
         //@author A0088574M
+        #region Page Navigation Handlers
         //modify the highlight index and may go to the previous page.
         private void HandleUpArrow()
         {
@@ -87,8 +87,8 @@ namespace Type
         }
         #endregion
 
-        #region Page Navigation Helper Methods
         //@author A0088574M
+        #region Page Navigation Helper Methods
         //go to next page, by modifying listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToNextPage()
@@ -110,7 +110,6 @@ namespace Type
             RefreshViewList();
         }
 
-        //@author A0088574M
         //go to previous page, by modifying listStartIndex and listEndIndex
         //may modify highlightIndex
         private void MoveToPreviousPage()
@@ -187,8 +186,8 @@ namespace Type
         }
         #endregion
 
-        #region Display List Index Methods
         //@author A0088574M
+        #region Display List Index Methods
         private void InitializeListBounderIndex()
         {
             listStartIndex = 0;
@@ -203,7 +202,6 @@ namespace Type
             }
         }
         
-        //@author A0088574M
         //if the list index is out of bound then set it back to the correct bound
         private void CheckListIndexBound()
         {
