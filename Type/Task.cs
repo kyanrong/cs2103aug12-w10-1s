@@ -224,8 +224,13 @@ namespace Type
 
             // parse hashtags
             this.Tags = RegExp.HashTags(this.RawText);
+            // sort tags by lengths.
+            var lengths = from element in this.Tags
+                          orderby -element.Length
+                          select element;
 
-            foreach (string hashtag in this.Tags)
+
+            foreach (string hashtag in lengths)
             {
                 // find token contain hashtag.
                 var res = new List<Tuple<string, ParsedType>>();
