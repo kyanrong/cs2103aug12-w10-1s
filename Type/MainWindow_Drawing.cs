@@ -98,6 +98,8 @@ namespace Type
 
             taskTextBlockList.Clear();
 
+            InitializeListBounderIndex();
+
             RenderTasksDecorations();
 
             RefreshViewList();
@@ -119,8 +121,6 @@ namespace Type
         // need to refresh list view whenever any task is changed
         private void RefreshViewList()
         {
-            CheckListIndexBound();
-
             taskView.Children.Clear();
             tasksGrid.Children.Clear();
 
