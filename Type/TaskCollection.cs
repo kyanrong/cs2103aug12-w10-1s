@@ -371,16 +371,14 @@ namespace Type
 
         //@author A0082877M
         // Get number of Tasks starting from skip
-        public List<Task> Get(int number, int skip = 0)
+        public List<Task> GetNotArchiveTasks()
         {
             // only return pending tasks
             List<Task> pending = tasks.FindAll(
                 task => task.Archive == false
             );
 
-            // to prevent going over the range
-            number = number < pending.Count ? number : pending.Count;
-            return pending.GetRange(skip, skip + number);
+            return pending;
         }
 
         //@author A0082877M
@@ -470,13 +468,6 @@ namespace Type
         private Task GetTask(int id)
         {
             return tasks.Find(task => task.Id == id);
-        }
-
-        //@author A0082877M
-        // Get All Tasks
-        private IList<Task> Get()
-        {
-            return tasks;
         }
 
         //@author A0092104U
