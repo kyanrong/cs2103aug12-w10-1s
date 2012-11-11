@@ -103,7 +103,7 @@ namespace Type
         {
             typeLog.Log(LOG_DATE_CHANGE);
 
-            tasks.MidnightReParse();
+            tasks.ReparseAll();
             ui.ForceRedraw();
         }
         #endregion
@@ -157,7 +157,7 @@ namespace Type
                 }
             }
 
-            var resultSet = tasks.ByHashTags(tags);
+            var resultSet = tasks.GetTasksByHashTags(tags);
             resultSet.Sort(comparator);
             return resultSet;
         }

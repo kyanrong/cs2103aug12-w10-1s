@@ -398,7 +398,7 @@ namespace Type
         /// </summary>
         /// <param name="hashTags">List of hash tags to filter by.</param>
         /// <returns>List of Tasks that match criteria.</returns>
-        public List<Task> ByHashTags(IList<string> hashTags)
+        public List<Task> GetTasksByHashTags(IList<string> hashTags)
         {
             var resultSet = new HashSet<Task>();
 
@@ -433,7 +433,7 @@ namespace Type
         }
 
         //@author A0082877M
-        public void MidnightReParse()
+        public void ReparseAll()
         {
             foreach (var t in tasks)
             {
