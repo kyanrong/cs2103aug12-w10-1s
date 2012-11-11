@@ -28,12 +28,11 @@ namespace Type
             Touch(this.path);
             fs = new FileStream(this.path, FileMode.Append);
             sw = new StreamWriter(fs);
+            sw.AutoFlush = true;
         }
 
         ~Logger()
         {
-            sw.Flush();
-            sw.Close();
             fs.Close();
         }
         #endregion
@@ -42,13 +41,11 @@ namespace Type
         public void Log(string text)
         {
             sw.WriteLine(TimeStamp() + text);
-            sw.Flush();
         }
 
         public void LogException(string text)
         {
             sw.WriteLine(TimeStamp() + TEXT_EXCEPTION + text);
-            sw.Flush();
         }
         #endregion
 
