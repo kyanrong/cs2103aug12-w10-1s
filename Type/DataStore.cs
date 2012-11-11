@@ -9,7 +9,7 @@ namespace Type
     public class DataStore
     {
         #region Fields
-        private const char SEPERATOR = ',';
+        private const char SEPERATOR = ',';//follow CSV format
         private const char ESCAPE = '\\';//the actual escape key is \ only, the first \ is use to escape it
 
         private string path;
@@ -63,7 +63,7 @@ namespace Type
         }
 
         // The value of the row with the index will be changed to the new value
-        // will not change the file data if the index out of bound
+        // will not change the file data if the index is not found
         // throw MissingFieldException if any index checked in the file before the target index is found missing
         public void ChangeRow(int index, List<string> row)
         {
@@ -107,7 +107,7 @@ namespace Type
         }
 
         // returns row given index
-        // if index out of bound or not found will return null
+        // if index parameter not found will return null
         // throw MissingFieldException if any index checked in the file before the target index is found missing
         public List<string> Get(int index)
         {
@@ -245,8 +245,10 @@ namespace Type
                     {
                         tempString += ESCAPE;
                     }
+
                     tempString += str[i];
                 }
+
                 result += SEPERATOR + tempString;
             }
 
@@ -268,7 +270,7 @@ namespace Type
         // Clear the file and replace the contents with a list of string
         private void WriteToFile(List<string> rows)
         {
-            // open and truncate file.
+            // open and truncate file, clear its content
             FileStream fs = new FileStream(path, FileMode.Truncate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
 
@@ -294,12 +296,12 @@ namespace Type
             {
                 if (rawString[i] == SEPERATOR)
                 {
-                    contents.Add("");
+                    contents.Add("");//start a new string in the list
                     count++;
                 }
                 else if (rawString[i] == ESCAPE)
                 {
-                    i++;
+                    i++;//skip the escape key
                     contents[count] += rawString[i];
                 }
                 else
@@ -315,7 +317,7 @@ namespace Type
                 throw new System.MissingFieldException("missing index");
             }
 
-            // build row contents
+            // build row contents, remove the unique index number
             contents.RemoveAt(0);
 
             return Tuple.Create(index, contents);

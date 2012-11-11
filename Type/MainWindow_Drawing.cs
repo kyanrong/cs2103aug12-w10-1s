@@ -11,14 +11,74 @@ namespace Type
 {
     public partial class MainWindow : Window
     {
-        #region Drawing
+        #region Render Tasks Method
         //@author A0083834Y
-        // Used for auto complete.
-        private void MoveCursorToEndOfWord()
+        // call this method when the list of task is modified
+        private void RenderTasks()
         {
-            inputBox.Select(inputBox.Text.Length, 0);
+            StopHighlighting();
+
+            taskTextBlockList.Clear();
+
+            InitializeListBounderIndex();
+
+            RenderTasksDecorations();
+
+            RefreshViewList();
         }
 
+        //render all task and generate the list of textblock
+        private void RenderTasksDecorations()
+        {
+            for (int i = 0; i < renderedTasks.Count; i++)
+            {
+                TextBlock text = new TextBlock();
+
+                // Style tokens within the textblock
+                foreach (Tuple<string, Task.ParsedType> tuple in renderedTasks[i].Tokens)
+                {
+                    Run run = new Run(tuple.Item1);
+                    // Style Runs
+                    if (renderedTasks[i].Done)
+                    {
+                        StyleDoneParsedTypes(run);
+                    }
+                    else
+                    {
+                        if (tuple.Item2 == Task.ParsedType.HashTag)
+                        {
+                            StyleHashTags(run);
+                        }
+
+                        // Style Dates
+                        if (tuple.Item2 == Task.ParsedType.DateTime)
+                        {
+                            StyleDateTime(run);
+                        }
+
+                        // Style PriorityHigh
+                        if (tuple.Item2 == Task.ParsedType.PriorityHigh)
+                        {
+                            StylePriorityHigh(run);
+                        }
+
+                        // Style PriorityLow
+                        if (tuple.Item2 == Task.ParsedType.PriorityLow)
+                        {
+                            StylePriorityLow(run);
+                        }
+                    }
+
+                    text.Inlines.Add(run);
+                }
+
+                StyleTasks(text);
+                taskTextBlockList.Add(text);
+            }
+        }
+        #endregion
+
+        #region UI Methods
         //@author A0092104U
         /// <summary>
         /// Forces the UI to update its task list and redraw.
@@ -38,6 +98,32 @@ namespace Type
             }
         }
 
+        //@author A0088574M
+        // only refresh display view
+        private void RefreshViewList()
+        {
+            taskView.Children.Clear();
+            tasksGrid.Children.Clear();
+
+            if (renderedTasks.Count == 0)
+            {
+                DisplayEmptyViewList();
+            }
+            else
+            {
+                DisplayNonEmptyViewList();
+            }
+
+            // Append task view to grid view
+            tasksGrid.Children.Add(taskView);
+
+            DisplayPageButton(tasksGrid);
+
+            DisplayDashedBorder(tasksGrid);
+        }
+        #endregion
+
+        #region Display Method
         //@author A0083834Y
         // If task list is not empty
         private void DisplayNonEmptyViewList()
@@ -91,20 +177,6 @@ namespace Type
             DisplayBlueBorder(taskView);
         }
 
-        // Generate list of text block
-        private void RenderTasks()
-        {
-            StopHighlighting();
-
-            taskTextBlockList.Clear();
-
-            InitializeListBounderIndex();
-
-            RenderTasksDecorations();
-
-            RefreshViewList();
-        }
-
         // Input Label
         private void DisplayInputLabel()
         {
@@ -117,32 +189,51 @@ namespace Type
                 inputBoxLabel.Content = "";
             }
         }
-
-        // need to refresh list view whenever any task is changed
-        private void RefreshViewList()
+        // Display blue border after each task
+        private void DisplayBlueBorder(StackPanel parentStackPanel)
         {
-            taskView.Children.Clear();
-            tasksGrid.Children.Clear();
-
-            if (renderedTasks.Count == 0)
-            {
-                DisplayEmptyViewList();
-            }
-            else
-            {
-                DisplayNonEmptyViewList();
-            }
-
-            // Append task view to grid view
-            tasksGrid.Children.Add(taskView);
-
-            DisplayPageButton(tasksGrid);
-
-            DisplayDashedBorder(tasksGrid);
+            Line line = DrawBlueLine();
+            AddStackPanel(parentStackPanel, line);
         }
 
+        // Display dashed border at the end of current page
+        private void DisplayDashedBorder(StackPanel parentStackPanel)
+        {
+            Rectangle dashedLine = DrawDashedLine();
+            AddStackPanel(parentStackPanel, dashedLine);
+        }
+
+        private void DisplayPageButton(StackPanel parentStackPanel)
+        {
+            pageButtons.Children.Clear();
+            pageButtons.Orientation = Orientation.Horizontal;
+            pageButtons.HorizontalAlignment = HorizontalAlignment.Center;
+
+            int highlightPage = GetCurrentPageNumber() - 1;//have to offset by 1 for base 0 indexing
+
+            for (int i = 0; i < GetTotalPageNumber(); i++)
+            {
+                pageButtonList.Add(DrawEllipse());
+
+                if (i == highlightPage)
+                {
+                    pageButtonList[i].Fill = new SolidColorBrush(Color.FromArgb(255, 89, 81, 70));
+                }
+                else
+                {
+                    pageButtonList[i].Fill = new SolidColorBrush(Color.FromArgb(255, 212, 202, 190));
+                }
+
+                pageButtons.Children.Add(pageButtonList[i]);
+            }
+
+            AddStackPanel(parentStackPanel, pageButtons);
+        }
+        #endregion
+
+        #region Style Method
         // Default style for text 
-        private void DefaultStyle(TextBlock textBlock)
+        private void StyleDefault(TextBlock textBlock)
         {
             textBlock.FontSize = 20;
             textBlock.FontFamily = new FontFamily("GillSans");
@@ -152,14 +243,14 @@ namespace Type
         // Style for active tasks
         private void StyleTasks(TextBlock textBlock)
         {
-            DefaultStyle(textBlock);
+            StyleDefault(textBlock);
             textBlock.Margin = new Thickness(15, 0, 0, 0);
         }
 
         // Style for "no tasks" text
         private void StyleNoTasks(TextBlock textBlock)
         {
-            DefaultStyle(textBlock);
+            StyleDefault(textBlock);
             textBlock.TextAlignment = TextAlignment.Center;
         }
 
@@ -198,63 +289,9 @@ namespace Type
             run.Foreground = new SolidColorBrush(Color.FromArgb(255, 152, 163, 62));
             run.FontWeight = FontWeights.DemiBold;
         }
-        
-        // Display blue border after each task
-        private void DisplayBlueBorder(StackPanel parentStackPanel)
-        {
-            Line line = DrawBlueLine();
-            AddStackPanel(parentStackPanel, line);
-        }
+        #endregion
 
-        // Display dashed border at the end of current page
-        private void DisplayDashedBorder(StackPanel parentStackPanel)
-        {
-            Rectangle dashedLine = DrawDashedLine();
-            AddStackPanel(parentStackPanel, dashedLine);
-        }
-
-        // Display page button (gray)
-        private void DisplayPageButton(StackPanel parentStackPanel)
-        {
-            pageButtons.Children.Clear();
-            pageButtons.Orientation = Orientation.Horizontal;
-            pageButtons.HorizontalAlignment = HorizontalAlignment.Center;
-
-            int highlightPage = GetCurrentPageNumber() - 1;//have to offset by 1 for base 0 indexing
-
-            for (int i = 0; i < GetTotalPageNumber() ; i++)
-            {
-                pageButtonList.Add(DrawEllipse());
-
-                if (i == highlightPage)
-                {
-                    pageButtonList[i].Fill = new SolidColorBrush(Color.FromArgb(255, 89, 81, 70));
-                }
-                else
-                {
-                    pageButtonList[i].Fill = new SolidColorBrush(Color.FromArgb(255, 212, 202, 190));
-                }
-                
-                pageButtons.Children.Add(pageButtonList[i]);
-            }
-
-            AddStackPanel(parentStackPanel, pageButtons);
-        }
-
-        // Append shape to parent stackpanel
-        private void AddStackPanel(StackPanel parentStackPanel, Shape shape)
-        {
-            StackPanel border = new StackPanel();
-            border.Children.Add(shape);
-            parentStackPanel.Children.Add(border);
-        }
-
-        // Append child stackpanel to parent stackpanel (for page buttons)
-        private void AddStackPanel(StackPanel parentStackPanel, StackPanel childStackPanel)
-        {
-            parentStackPanel.Children.Add(childStackPanel);
-        }
-
+        #region Draw Method
         private Line DrawBlueLine()
         {
             Line blueLine = new Line();
@@ -293,54 +330,21 @@ namespace Type
 
             return ellipse;
         }
+        #endregion
 
-        private void RenderTasksDecorations()
+        #region AddStackPanel Method
+        // Append shape to parent stackpanel
+        private void AddStackPanel(StackPanel parentStackPanel, Shape shape)
         {
-            for (int i = 0; i < renderedTasks.Count; i++)
-            {
-                TextBlock text = new TextBlock();
+            StackPanel border = new StackPanel();
+            border.Children.Add(shape);
+            parentStackPanel.Children.Add(border);
+        }
 
-                // Style tokens within the textblock
-                foreach (Tuple<string, Task.ParsedType> tuple in renderedTasks[i].Tokens)
-                {
-                    Run run = new Run(tuple.Item1);
-                    // Style Runs
-                    if (renderedTasks[i].Done)
-                    {
-                        StyleDoneParsedTypes(run);
-                    }
-                    else
-                    {
-                        if (tuple.Item2 == Task.ParsedType.HashTag)
-                        {
-                            StyleHashTags(run);
-                        }
-
-                        // Style Dates
-                        if (tuple.Item2 == Task.ParsedType.DateTime)
-                        {
-                            StyleDateTime(run);
-                        }
-
-                        // Style PriorityHigh
-                        if (tuple.Item2 == Task.ParsedType.PriorityHigh)
-                        {
-                            StylePriorityHigh(run);
-                        }
-
-                        // Style PriorityLow
-                        if (tuple.Item2 == Task.ParsedType.PriorityLow)
-                        {
-                            StylePriorityLow(run);
-                        }
-                    }
-
-                    text.Inlines.Add(run);
-                }
-
-                StyleTasks(text);
-                taskTextBlockList.Add(text);
-            }
+        // Append child stackpanel to parent stackpanel (for page buttons)
+        private void AddStackPanel(StackPanel parentStackPanel, StackPanel childStackPanel)
+        {
+            parentStackPanel.Children.Add(childStackPanel);
         }
         #endregion
     }

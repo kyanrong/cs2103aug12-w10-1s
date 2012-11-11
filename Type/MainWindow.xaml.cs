@@ -22,7 +22,7 @@ namespace Type
     /// </summary>
     /// <param name="num">Number of tasks to retrieve.</param>
     /// <returns>Read-only list of tasks.</returns>
-    public delegate IList<Task> GetTasksCallback(int num);
+    public delegate IList<Task> GetTasksCallback();
 
     /// <summary>
     /// Retrieves a list of tasks tagged with at least one hash tag.
@@ -97,7 +97,7 @@ namespace Type
 
             // Bootstrap tasks
             isOriginalTasks = true;
-            renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+            renderedTasks = GetTasks();
             taskTextBlockList = new List<TextBlock>();
 
             parseResult = Command.Parse(inputBox.Text);
@@ -123,7 +123,7 @@ namespace Type
             if (inputBox.Text == string.Empty)
             {
                 isOriginalTasks = true;
-                renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+                renderedTasks = GetTasks();
                 RenderTasks();
             }
 
@@ -155,7 +155,7 @@ namespace Type
                 else if (!isOriginalTasks && parseResult.Text == string.Empty)
                 {
                     isOriginalTasks = true;
-                    renderedTasks = GetTasks(NUMBER_OF_TASKS_LOADED);
+                    renderedTasks = GetTasks();
                     RenderTasks();
                 }
             }
