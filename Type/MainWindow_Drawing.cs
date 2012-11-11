@@ -12,6 +12,7 @@ namespace Type
     public partial class MainWindow : Window
     {
         #region Render Tasks Method
+        //@author A0083834Y
         // call this method when the list of task is modified
         private void RenderTasks()
         {
