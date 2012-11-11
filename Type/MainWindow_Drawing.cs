@@ -98,8 +98,6 @@ namespace Type
 
             taskTextBlockList.Clear();
 
-            InitializeListBounderIndex();
-
             RenderTasksDecorations();
 
             RefreshViewList();
@@ -119,9 +117,11 @@ namespace Type
             }
         }
 
-        // Render List of Tasks.
+        // need to refresh list view whenever any task is changed
         private void RefreshViewList()
         {
+            CheckListIndexBound();
+
             taskView.Children.Clear();
             tasksGrid.Children.Clear();
 
@@ -137,7 +137,6 @@ namespace Type
             // Append task view to grid view
             tasksGrid.Children.Add(taskView);
 
-            // Display page buttons
             DisplayPageButton(tasksGrid);
 
             DisplayDashedBorder(tasksGrid);
