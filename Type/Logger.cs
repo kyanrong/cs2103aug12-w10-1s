@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Type
 {
-    //@author A0092104U 
+    //@author A0092104U
     sealed class Logger
     {
         #region Constants
