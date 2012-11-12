@@ -4,6 +4,7 @@ using Microsoft.Win32;
 
 namespace Type
 {
+    //@author A0092104U
 #if !DEBUG
     class Installer
     {
