@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace Type
 {
     public class DataStore
-    {
-        private const char SEPERATOR = ',';
-        private const char ESCAPE = '/';
+    {        
+        //@author A0088574M
+        #region Fields
+        private const char SEPERATOR = ',';//follow CSV format
+        private const char ESCAPE = '\\';//the actual escape key is \ only, the first \ is use to escape it
 
         private string path;
         private int nextIndex;
+        #endregion
 
-        //@author A0088574M
-        // only Constructor
+        #region Constructor
+        // only provide one Constructor
         public DataStore(string fileName)
         {
             // initialize Data Store with fileName
@@ -40,6 +41,9 @@ namespace Type
                 fs.Close();
             }
         }
+        #endregion
+
+        #region DataStore Handler
 
         // append a new row to the file and return a unique ID that identify that row value
         public int InsertRow(List<string> row)
@@ -57,7 +61,7 @@ namespace Type
         }
 
         // The value of the row with the index will be changed to the new value
-        // will not change the file data if the index out of bound
+        // will not change the file data if the index is not found
         // throw MissingFieldException if any index checked in the file before the target index is found missing
         public void ChangeRow(int index, List<string> row)
         {
@@ -101,7 +105,7 @@ namespace Type
         }
 
         // returns row given index
-        // if index out of bound or not found will return null
+        // if index parameter not found will return null
         // throw MissingFieldException if any index checked in the file before the target index is found missing
         public List<string> Get(int index)
         {
@@ -214,12 +218,15 @@ namespace Type
             WriteToFile(list);
         }
 
+        //@author A0083834Y
         public void ClearFile(String fileName)
         {
             File.Delete(fileName);
         }
+        #endregion
 
         //@author A0088574M
+        #region DataStore Helper Methods
         // Converts List<string> into a string of comma separated values
         // appends index in front.
         private string ProcessListToString(int index, List<string> list)
@@ -236,8 +243,10 @@ namespace Type
                     {
                         tempString += ESCAPE;
                     }
+
                     tempString += str[i];
                 }
+
                 result += SEPERATOR + tempString;
             }
 
@@ -259,7 +268,7 @@ namespace Type
         // Clear the file and replace the contents with a list of string
         private void WriteToFile(List<string> rows)
         {
-            // open and truncate file.
+            // open and truncate file to clear its content
             FileStream fs = new FileStream(path, FileMode.Truncate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
 
@@ -285,12 +294,12 @@ namespace Type
             {
                 if (rawString[i] == SEPERATOR)
                 {
-                    contents.Add("");
+                    contents.Add("");//start a new string in the list
                     count++;
                 }
                 else if (rawString[i] == ESCAPE)
                 {
-                    i++;
+                    i++;//skip the escape key
                     contents[count] += rawString[i];
                 }
                 else
@@ -306,10 +315,11 @@ namespace Type
                 throw new System.MissingFieldException("missing index");
             }
 
-            // build row contents
+            // build row contents, remove the unique index number
             contents.RemoveAt(0);
 
             return Tuple.Create(index, contents);
         }
     }
+        #endregion
 }

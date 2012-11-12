@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Type
 {
+    //@author A0092104U
     public sealed class Command
     {
         #region Fields
@@ -17,7 +16,6 @@ namespace Type
         #endregion
 
         #region Methods
-        // @author A0092104
         public Command(string CommandText, string Text, bool IsAlias)
         {
             Debug.Assert(!CommandText.StartsWith(Command.Token));
@@ -44,7 +42,6 @@ namespace Type
             Debug.Assert(acceptedCommands.Count == 6);
         }
 
-        // @author A0092104
         /// <summary>
         /// Tries to auto complete a command based on the supplied prefix.
         /// </summary>
@@ -73,7 +70,6 @@ namespace Type
             }
         }
 
-        // @author A0092104
         /// <summary>
         /// Parses input by splitting it into a token containing the command's text, and a token containing the rest of the input.
         /// </summary>
@@ -138,7 +134,6 @@ namespace Type
             return new Command(cmd, input.Trim(), isAlias);
         }
 
-        //@author A0092104
         private static string SplitCommand(ref string input)
         {
             string cmd;
@@ -156,7 +151,6 @@ namespace Type
             return cmd;
         }
 
-        // @author A0092104
         private static string RemoveCommandToken(string input)
         {
             input = input.Substring(Command.Token.Length);
@@ -168,6 +162,7 @@ namespace Type
         //Tokens.
         public const string Token = ":";
         public const string SearchToken = "/";
+        public const string HashToken = "#";
 
         //Enumeration of accepted explicit commands.
         public const string Edit = "edit";

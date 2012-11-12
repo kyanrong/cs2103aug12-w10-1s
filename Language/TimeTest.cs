@@ -10,6 +10,7 @@ using Type;
 namespace Language
 {
     [TestClass]
+    //@author A0082877M
     public class TimeTest
     {
         [TestMethod]
@@ -56,8 +57,21 @@ namespace Language
         public void dd_m()
         {
             string x = "This should 12/1 2pm match";
-            int year = DateTime.Today.Year;
-            Assert.AreEqual(RegExp.DateTimeT(x).Item3, new DateTime(year, 1, 12, 14, 0, 0));
+            DateTime res = (DateTime) RegExp.GetDateTime(x).Item3;
+            Assert.AreEqual(
+                res.Day,
+                 12
+            );
+
+            Assert.AreEqual(
+                res.Month,
+                 1
+            );
+
+            Assert.AreEqual(
+                res.Hour,
+                 14
+            );
         }
 
     }
