@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Type
 {
@@ -22,7 +21,8 @@ namespace Type
         private Stack<KeyValuePair<int, List<string>>> undoStack;
         #endregion
 
-        #region Construction Methods
+        #region Constructors
+        //@author A0082877M
         // Constructor
         public TaskCollection()
         {
@@ -43,6 +43,7 @@ namespace Type
             this.Fetch();
         }
 
+        //@author A0082877M
         // Fetch Tasks from Flatfile
         private void Fetch()
         {
@@ -80,6 +81,7 @@ namespace Type
         public const string UndoArchive = "archive";
         public const string UndoArchiveAll = "archiveall";
 
+        //@author A0082877M
         public void Undo()
         {
             // check if stack is empty
@@ -158,6 +160,7 @@ namespace Type
             undoDataStore.DeleteRow(undoItem.Key);
         }
     
+        //@author A0082877M
         // push action and its relevent data to the undo stack.
         private void PushUndo(string cmd, Task task, List<Task> tasks = null)
         {
@@ -181,6 +184,13 @@ namespace Type
                     item.Add(task.Done.ToString());
                     break;
 
+                case UndoDoneAll:
+                    foreach (var t in tasks)
+                    {
+                        item.Add(t.Id.ToString());
+                    }
+                    break;
+
                 case UndoArchive:
                     item.Add(task.Id.ToString());
                     item.Add(task.Archive.ToString());
@@ -197,6 +207,7 @@ namespace Type
             this.PersistUndo(item);
         }
 
+        //@author A0082877M
         // saves stack item to file and updates stack of task collection.
         private void PersistUndo(List<string> item)
         {
@@ -209,16 +220,7 @@ namespace Type
         #endregion
 
         #region User Actions
-        // Delete Task (used in undo.)
-        private void Delete(int index)
-        {
-            // delete in collection
-            tasks.Remove(this.GetTask(index));
-
-            // delete in data store.
-            dataStore.DeleteRow(index);
-        }
-        
+        //@author A0082877M
         // Create Task
         public Task Create(string input)
         {
@@ -241,6 +243,7 @@ namespace Type
             return t;
         }
         
+        //@author A0082877M
         // Update rawText
         public Task UpdateRawText(int id, string str, bool addToUndoStack = true)
         {
@@ -255,7 +258,7 @@ namespace Type
             }
 
             // update lastMod
-            t.lastMod = DateTime.Today;
+            t.LastMod = DateTime.Today;
             t.RawText = str;
 
             // change row in datastore
@@ -265,6 +268,7 @@ namespace Type
             return t;
         }
 
+        //@author A0082877M
         // Update done
         public Task UpdateDone(int id, bool done, bool addToUndoStack = true)
         {
@@ -284,6 +288,7 @@ namespace Type
             return t;
         }
 
+        //@author A0082877M
         // Update archive
         public Task UpdateArchive(int id, bool archiveStatus, bool addToUndoStack = true)
         {
@@ -303,8 +308,9 @@ namespace Type
             return t;
         }
 
+        //@author A0082877M
         // Marks all done tasks as archived
-        public void ArchiveAll(bool addToUndoStack = true)
+        public void ArchiveAll()
         {
             var changed = new List<Task>();
             foreach (var t in tasks)
@@ -321,62 +327,68 @@ namespace Type
                 }
             }
 
-            if (addToUndoStack)
-            {
-                // add action to undo stack
-                this.PushUndo(UndoArchiveAll, null, changed);
-            }
+            // add action to undo stack
+            this.PushUndo(UndoArchiveAll, null, changed);
         }
 
-        // @author A0092104
-        // Archives all Tasks that contain any listed Hash Tag.
+        //@author A0092104U
+        // Archives all Tasks that contain all listed Hash Tags.
         public void ArchiveAllByHashTags(IList<string> hashTags)
         {
             Debug.Assert(hashTags != null);
 
-            List<Task> affected = new List<Task>();
-            foreach (var tag in hashTags)
+            var affected = new List<Task>();
+            foreach (var task in tasks)
             {
-                affected.Concat(ArchiveAllByHashTag(tag));
+                if (HashTagsMatch(task, hashTags))
+                {
+                    affected.Add(task);
+                    this.UpdateArchive(task.Id, true, false);
+                }
             }
 
             this.PushUndo(UndoArchiveAll, null, affected);
         }
 
-        // @author A0092104
-        // Marks all Tasks that contain any listed Hash Tag as Done.
+        //@author A0092104U
+        // Marks all Tasks that contain all listed Hash Tags as Done.
         public void UpdateDoneByHashTags(IList<string> hashTags)
         {
             Debug.Assert(hashTags != null);
 
-            List<Task> affected = new List<Task>();
-            foreach (var tag in hashTags)
+            var affected = new List<Task>();
+            foreach (var task in tasks)
             {
-                affected.Concat(UpdateDoneByHashTag(tag));
+                if (HashTagsMatch(task, hashTags))
+                {
+                    affected.Add(task);
+                    this.UpdateDone(task.Id, true, false);
+                }
             }
 
             this.PushUndo(UndoDoneAll, null, affected);
         }
 
+        //@author A0083834Y
         public void Clear()
         {
             dataStore.ClearFile("taskcollection.csv");
             undoDataStore.ClearFile("undostack.csv");
         }
 
+        //@author A0082877M
         // Get number of Tasks starting from skip
-        public List<Task> Get(int number, int skip = 0)
+        public List<Task> GetNotArchiveTasks()
         {
             // only return pending tasks
             List<Task> pending = tasks.FindAll(
                 task => task.Archive == false
             );
 
-            // to prevent going over the range
-            number = number < pending.Count ? number : pending.Count;
-            return pending.GetRange(skip, skip + number);
+            return pending;
         }
 
+        //@author A0082877M
         // Filter All
         public List<Task> FilterAll(string input)
         {
@@ -387,13 +399,13 @@ namespace Type
             );
         }
 
-        // @author A0092104U
+        //@author A0092104U
         /// <summary>
         /// Filters the current TaskCollection by hash tags. Specifying more than one hash tag takes the intersection of results. (logical AND)
         /// </summary>
         /// <param name="hashTags">List of hash tags to filter by.</param>
         /// <returns>List of Tasks that match criteria.</returns>
-        public List<Task> ByHashTags(IList<string> hashTags)
+        public List<Task> GetTasksByHashTags(IList<string> hashTags)
         {
             var resultSet = new HashSet<Task>();
 
@@ -426,54 +438,46 @@ namespace Type
                 }
             }
         }
+
+        //@author A0082877M
+        public void ReparseAll()
+        {
+            foreach (var t in tasks)
+            {
+                var clone = t.Clone();
+                t.Parse();
+
+                // check if differ
+                if (t.RawText != clone.RawText)
+                {
+                    // change row in datastore
+                    List<string> row = t.ToRow();
+                    dataStore.ChangeRow(t.Id, row);
+                }
+            }
+        }
         #endregion
 
         #region Helper Methods
+        //@author A0082877M
+        // Delete Task (used in undo.)
+        private void Delete(int index)
+        {
+            // delete in collection
+            tasks.Remove(this.GetTask(index));
+
+            // delete in data store.
+            dataStore.DeleteRow(index);
+        }
+
+        //@author A0082877M
         // Get Task
         private Task GetTask(int id)
         {
             return tasks.Find(task => task.Id == id);
         }
 
-        // Get All Tasks
-        private IList<Task> Get()
-        {
-            return tasks;
-        }
-
-        // @author A0092104
-        // Marks all Tasks that contain the specified tag as Done.
-        private List<Task> UpdateDoneByHashTag(string tag)
-        {
-            var affected = new List<Task>();
-            foreach (var t in tasks)
-            {
-                if (t.Tags.Contains(tag))
-                {
-                    affected.Add(t);
-                    this.UpdateDone(t.Id, true, false);
-                }
-            }
-            return affected;
-        }
-
-        // @author A0092104
-        // Archives all Tasks the contain the specified Hash Tag
-        private List<Task> ArchiveAllByHashTag(string tag)
-        {
-            var affected = new List<Task>();
-            foreach (var t in tasks)
-            {
-                if (t.Tags.Contains(tag))
-                {
-                    affected.Add(t);
-                    this.UpdateArchive(t.Id, true, false);
-                }
-            }
-            return affected;
-        }
-
-        // @author A0092104U
+        //@author A0092104U
         // Changes the archive status of a task.
         // If the task is archived, we append the hashtag #archive so that it shows up in searches.
         // If the task is unarchived, we remove all hashtags #archive to return it to its original state.
@@ -499,6 +503,21 @@ namespace Type
             }
 
             t.Archive = archiveStatus;
+        }
+
+        //@author A0092104U
+        // Checks if 'task' contains all the hash tags in 'hashTags'.
+        private static bool HashTagsMatch(Task task, IList<string> hashTags)
+        {
+            bool matchCriteria = true;
+            for (int i = 0; i < hashTags.Count && matchCriteria; i++)
+            {
+                if (!task.Tags.Contains(hashTags[i]))
+                {
+                    matchCriteria = false;
+                }
+            }
+            return matchCriteria;
         }
         #endregion
     }

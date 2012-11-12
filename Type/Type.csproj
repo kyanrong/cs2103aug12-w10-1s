@@ -78,17 +78,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="MainWindowDoCommand.xaml.cs" />
-    <Compile Include="MainWindowKeyUp.xaml.cs" />
-    <Compile Include="MainWindowStyle.xaml.cs" />
+    <Compile Include="CommandEventArgs.cs" />
+    <Compile Include="DateChangeNotifier.cs" />
+    <Compile Include="Installer.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="DataStore.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="MainWindow_UILogic.cs" />
+    <Compile Include="MainWindow_Navigation.cs" />
+    <Compile Include="MainWindow_Drawing.cs" />
     <Compile Include="RegExp.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TaskCollection.cs" />
     <Compile Include="Presenter.cs" />
-    <Compile Include="LocalInstaller.cs" />
     <Compile Include="GlobalKeyCombinationHook.cs" />
     <Compile Include="Task.cs" />
     <Page Include="MainWindow.xaml">

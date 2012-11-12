@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
 
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Type
 {
+    //@author A0082877M
     public class RegExp
     {
-        // date re
+        #region regular expressions
+        // Date Regular Expressions
         // 1. DDMM[YY[YY]]
         public static string DATE1 = "\\b\\d{1,2}\\/\\d{1,2}(?:\\/\\d{2,4})?\\b";
         // 2 DD string_rep_of_month [YY[YY]]
@@ -19,7 +19,7 @@ namespace Type
         public static string DATE3 = "\\btoday|tdy\\b";
         public static string DATE4 = "\\btomorrow|tmr\\b";
         
-        // time re
+        // Time Regular Expressions
         // 1. NN(am|pm)
         public static string TIME1 = "\\b\\d{1,2}(?:am|pm)\\b";
         // 2. NN:NN[am|pm]
@@ -29,39 +29,54 @@ namespace Type
         public static string DateRE = "(?:" + DATE1 + "|" + DATE2 + "|" + DATE3 + "|" + DATE4 + ")";
         public static string TimeRE = "(?:" + TIME1 + "|" + TIME2 + ")";
 
-        // datetime re
+        // Date + Time Regular Expressions
         // 1. date [time]
         public static string DateTime1 = DateRE + "(?:\\s" + TimeRE + ")?";
         // 2. time [date]
         public static string DateTime2 = TimeRE + "(?:\\s" + DateRE + ")?";
 
-        // Combine cases
+        // Combined Cases
         public static string DateTimeRE = DateTime1 + "|" + DateTime2;
+        
+        // Priority Regular Expressions
+        public static string PLUS = "\\B\\+(\\d+)$";
+        public static string MINUS = "\\B\\-(\\d+)$";
 
+        // Hash Tag Regular Expressions
+        public static string HASHTAG = "#(.+?)\\b";
+        #endregion
 
+        #region priority
+        // Returns a tuple of the matching string and corresponding priority given an input string
         public static Tuple<string, int> Priority(string input)
         {
             Match m;
-            Regex plus = new Regex("\\B\\+(\\d+)$");
+            // check for positive priority
+            Regex plus = new Regex(PLUS);
             m = plus.Match(input);
             if (m.Success)
             {
                 return Tuple.Create(m.Value, int.Parse(m.Groups[1].Value));
             }
-            
-            Regex minus = new Regex("\\B\\-(\\d+)$");
+
+            // check for negative priority
+            Regex minus = new Regex(MINUS);
             m = minus.Match(input);
             if (m.Success)
             {
                 return Tuple.Create(m.Value, -1 * int.Parse(m.Groups[1].Value));
             }
-
+            
+            // return default value of 0.
             return Tuple.Create(string.Empty, 0);
         }
+        #endregion
 
+        #region hashtag
+        // Returns a list of hashtags present in the input string.
         public static List<string> HashTags(string input)
         {
-            Regex r = new Regex("#(.+?)\\b");
+            Regex r = new Regex(HASHTAG);
             List<string> result = new List<string>();
             Match m = r.Match(input);
             while (m.Success)
@@ -71,9 +86,10 @@ namespace Type
             }
             return result;
         }
+        #endregion
 
-
-        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input, DateTime today)
+        #region datetime
+        public static Tuple<string, DateTime?, DateTime?> GetDateTime(string input, DateTime today)
         {
             DateTime? datetime = null;
             Match m;
@@ -87,7 +103,10 @@ namespace Type
                 var matches = m.Groups;
                 DateTime? start = ParseDateTime(matches[1].Value, today);
                 DateTime? end = ParseDateTime(matches[2].Value, today);
-                return Tuple.Create(m.Value, start, end);
+                if (start != null && end != null)
+                {
+                    return Tuple.Create(m.Value, start, end);
+                }
             }
 
             // DEADLINE TASKS
@@ -97,7 +116,11 @@ namespace Type
             {
                 var matches = m.Groups;
                 DateTime? end = ParseDateTime(matches[1].Value, today);
-                return Tuple.Create(m.Value, datetime, end);
+                if (end != null)
+                {
+                    return Tuple.Create(m.Value, datetime, end);
+                }
+                
             }
 
             // if none of the regexp matches
@@ -105,11 +128,13 @@ namespace Type
             return Tuple.Create(String.Empty, datetime, datetime);
         }
 
-        public static Tuple<string, DateTime?, DateTime?> DateTimeT(string input)
+        public static Tuple<string, DateTime?, DateTime?> GetDateTime(string input)
         {
-            return DateTimeT(input, DateTime.Today);
+            return GetDateTime(input, DateTime.Today);
         }
+        #endregion
 
+        #region datetime helpers
         private static string[] SanitizeToken(string value, string match, char split)
         {
             // check if keyword is matched
@@ -165,20 +190,14 @@ namespace Type
             }
             else
             {
-                int twoDigitYear = year % 100;
                 int yearTokenValue = int.Parse(yearToken);
-                if (yearTokenValue > twoDigitYear)
-                {
-                    year = 1900 + yearTokenValue;
-                }
-                else
-                {
-                    year = 2000 + yearTokenValue;
-                }
+                year = 2000 + yearTokenValue;
             }
             return year;
         }
+        #endregion
 
+        #region date
         // extracts information from a date string and returns it in a tuple
         public static Tuple<int, int, int> DateFromDateString(string input, DateTime today)
         {
@@ -270,6 +289,9 @@ namespace Type
         {
             return DateFromDateString(input, DateTime.Today);
         }
+        #endregion
+
+        #region time
         // extracts information from time string and returns it in a tuple
         public static Tuple<int, int> TimeFromTimeString(string input)
         {
@@ -312,7 +334,9 @@ namespace Type
             // return invalid time tuple
             return Tuple.Create(-1, -1);
         }
+        #endregion
 
+        #region date + time
         // returns datetime object if input string matches one of the acceptable formats
         private static DateTime? ParseDateTime(string input, DateTime today)
         {
@@ -328,19 +352,19 @@ namespace Type
             m = getDate.Match(input);
             if (m.Success)
             {
-                date = true;
-                string dateString = m.Groups[0].Value;
-                var dateTuple = DateFromDateString(dateString, today);
-
-                int year = dateTuple.Item1;
-                int month = dateTuple.Item2;
-                int day = dateTuple.Item3;
-
                 try
                 {
+                    date = true;
+                    string dateString = m.Groups[0].Value;
+                    var dateTuple = DateFromDateString(dateString, today);
+
+                    int year = dateTuple.Item1;
+                    int month = dateTuple.Item2;
+                    int day = dateTuple.Item3;
+                
                     result = new DateTime(year, month, day);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // invalid date.
                     // set date match to false.
@@ -367,7 +391,7 @@ namespace Type
                     int year = result.Year;
                     result = new DateTime(year, month, day, hour, minutes, 0);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // invalid time
                     // set time match to false
@@ -390,5 +414,6 @@ namespace Type
         {
             return ParseDateTime(input, DateTime.Today);
         }
+        #endregion
     }
 }

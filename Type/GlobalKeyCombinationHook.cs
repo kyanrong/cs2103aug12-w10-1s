@@ -1,19 +1,16 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
 
 namespace Type
 {
     #region Delegates
-    /// <summary>
-    /// Handler to execute when a key combination is pressed.
-    /// </summary>
-    internal delegate void KeyCombinationHandler();
+    public delegate void ShortcutPressedEventHandler(object sender, EventArgs e);
     #endregion
 
-    // @author A0092104
+    //@author A0092104U
     class GlobalKeyCombinationHook
     {
         #region Constants
@@ -30,8 +27,17 @@ namespace Type
         private uint modifier;
         private uint vkey;
 
-        //Callback to execute if the key combination is caught.
-        private KeyCombinationHandler combinationHandler;
+        #endregion
+
+        #region Events
+        public event ShortcutPressedEventHandler ShortcutPressed;
+        #endregion
+
+        #region Event Methods
+        protected virtual void OnShortcutPressed(EventArgs e)
+        {
+            if (ShortcutPressed != null) ShortcutPressed(this, e);
+        }
         #endregion
 
         #region Methods
@@ -42,10 +48,9 @@ namespace Type
         /// <param name="combinationHandler">Callback that receives key combination messages.</param>
         /// <param name="modifier">Represents the combination of modifier keys to catch.</param>
         /// <param name="vkey">Represents the VIRTUAL_KEY value fo the key to catch.</param>
-        public GlobalKeyCombinationHook(Window targetWindow, KeyCombinationHandler combinationHandler, uint modifier, uint vkey)
+        public GlobalKeyCombinationHook(Window targetWindow, uint modifier, uint vkey)
         {
             this.targetWindow = targetWindow;
-            this.combinationHandler = combinationHandler;
 
             this.modifier = modifier;
             this.vkey = vkey;
@@ -169,7 +174,7 @@ namespace Type
         {
             if (msg == GlobalKeyCombinationHook.WM_HOTKEY)
             {
-                combinationHandler();
+                OnShortcutPressed(EventArgs.Empty);
                 handled = true;
             }
 
