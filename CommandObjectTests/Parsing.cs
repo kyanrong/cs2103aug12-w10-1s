@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Type;
 
+//@author A0092104U
 namespace CommandObjectTests
 {
     [TestClass]
