@@ -1,4 +1,7 @@
-﻿
+﻿using System;
+using System.IO;
+using Microsoft.Win32;
+
 namespace Type
 {
 #if !DEBUG
